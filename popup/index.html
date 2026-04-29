@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="dashboard-header">
+    <div class="greeting-container">
+        <h1 id="greeting-text">Loading...</h1>
+        <p class="date-text" id="current-date"></p>
+    </div>
+    <button id="btn-options" class="settings-trigger" type="button" aria-label="打开设置">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path fill="currentColor" d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.65l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96c-.5-.38-1.04-.69-1.64-.92l-.36-2.54A.5.5 0 0 0 13.9 1h-3.8a.5.5 0 0 0-.49.42l-.36 2.54c-.6.23-1.14.54-1.64.92l-2.39-.96a.5.5 0 0 0-.6.22L1.7 7.46a.5.5 0 0 0 .12.65l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94L1.82 14.52a.5.5 0 0 0-.12.65l1.92 3.32c.13.22.39.31.6.22l2.39-.96c.5.38 1.04.69 1.64.92l.36 2.54c.04.24.25.42.49.42h3.8c.24 0 .45-.18.49-.42l.36-2.54c.6-.23 1.14-.54 1.64-.92l2.39.96c.22.09.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.65l-2.03-1.58ZM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5Z"/>
+        </svg>
+    </button>
+</header>
+
+<main class="main-panel">
+    <div class="divider">快速查询</div>
+    <section class="card">
+        <div class="quick-actions">
+            <button id="btn-gpa" class="primary-btn" type="button">GPA</button>
+        </div>
+    </section>
+
+    <div class="divider">功能增强</div>
+
+    <section class="feature-stack card">
+        <div class="feature-row">
+            <span class="feature-label">自动登录</span>
+            <label class="ios-switch">
+                <input type="checkbox" id="toggle-login">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="feature-row">
+            <span class="feature-label">选课助手</span>
+            <label class="ios-switch">
+                <input type="checkbox" id="toggle-schedule">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="feature-row">
+            <span class="feature-label">智汇南雍增强</span>
+            <label class="ios-switch">
+                <input type="checkbox" id="toggle-lms">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="feature-row">
+            <span class="feature-label">自动评教</span>
+            <label class="ios-switch">
+                <input type="checkbox" id="toggle-eval">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </section>
+
+    <div class="divider">显示增强</div>
+
+    <section class="feature-stack card">
+        <div class="feature-row">
+            <span class="feature-label">软件工程-SEEC门户显示增强</span>
+            <label class="ios-switch">
+                <input type="checkbox" id="toggle-seec-workpanel">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </section>
+</main>
+
+<script src="popup.js"></script>
+</body>
+</html>
