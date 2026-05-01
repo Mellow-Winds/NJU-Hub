@@ -47,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. 个性化（主题色 / 暗夜模式）
     // ============================================================
 
-    const UI_KEYS = ['ui_theme_color', 'ui_theme_mode'];
+    const UI_KEYS = ['ui_theme_color', 'ui_theme_mode', 'ui_font_family'];
+    const uiStorage = chrome.storage.sync;
 
     const applyTheme = ({ color, mode }) => {
         const safeColor = typeof color === 'string' && color.trim() ? color.trim() : '#0ea5e9';
@@ -67,11 +68,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    const applyFont = (fontKey) => {
+        const nextFont = fontKey || 'google-sans-flex';
+        document.documentElement.setAttribute('data-font', nextFont);
+        const fontSelect = document.getElementById('ui-font-family');
+        if (fontSelect) fontSelect.value = nextFont;
+    };
+
     const persistTheme = async ({ color, mode }) => {
-        await chrome.storage.local.set({
+        await uiStorage.set({
             ui_theme_color: color,
             ui_theme_mode: mode
         });
+    };
+
+    const persistFont = async (fontKey) => {
+        await uiStorage.set({ ui_font_family: fontKey });
     };
 
     // 绑定“个性化”交互
@@ -102,6 +114,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 await persistTheme({ color: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(), mode });
             });
         }
+
+        const fontSelect = document.getElementById('ui-font-family');
+        if (fontSelect) {
+            fontSelect.addEventListener('change', async () => {
+                applyFont(fontSelect.value);
+                await persistFont(fontSelect.value);
+            });
+        }
     };
 
     bindPersonalize();
@@ -111,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================================
 
     const KEYS = [
-        ...UI_KEYS,
         'common-name', 'student_id', 'login_pass',
         'login_autofill', 'login_autologin', 'login_api_url', 'login_api_key', 'login_model',
         'course_major', 'course_pref', 'course_api_url', 'course_api_key', 'course_model',
@@ -128,11 +147,15 @@ document.addEventListener('DOMContentLoaded', () => {
         'toggle-seec-workpanel'
     ];
 
-    chrome.storage.local.get(KEYS, (data) => {
+    Promise.all([
+        uiStorage.get(UI_KEYS),
+        chrome.storage.local.get(KEYS)
+    ]).then(([uiData, data]) => {
         applyTheme({
-            color: data.ui_theme_color || '#0ea5e9',
-            mode: data.ui_theme_mode || 'light'
+            color: uiData.ui_theme_color || '#0ea5e9',
+            mode: uiData.ui_theme_mode || 'light'
         });
+        applyFont(uiData.ui_font_family || 'google-sans-flex');
 
         const setVal = (id, val, defaultVal = '') => {
             const el = document.getElementById(id);
@@ -203,10 +226,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.style.opacity = '0.75';
 
         const config = {
-            // 个性化
-            'ui_theme_color': getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#0ea5e9',
-            'ui_theme_mode': document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light',
-
             'common-name': document.getElementById('common-name').value.trim(),
             'student_id': document.getElementById('common-id').value.trim(),
             'login_pass': document.getElementById('common-pwd').value.trim(),
@@ -250,7 +269,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         config.login_user = config.student_id;
 
+        const uiConfig = {
+            ui_theme_color: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#0ea5e9',
+            ui_theme_mode: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light',
+            ui_font_family: document.documentElement.getAttribute('data-font') || 'google-sans-flex'
+        };
+
         chrome.storage.local.set(config, () => {
+            uiStorage.set(uiConfig, () => {
             setTimeout(() => {
                 btn.innerText = '配置已同步';
                 btn.style.opacity = '1';
@@ -259,6 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     btn.innerText = originalText;
                 }, 1500);
             }, 500);
+            });
         });
     });
 

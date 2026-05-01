@@ -1,4 +1,27 @@
 /* options.css */
+@font-face {
+    font-family: "Google Sans Flex";
+    src: url("./fonts/GoogleSans-VariableFont_GRAD,opsz,wght.ttf") format("truetype");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "MiSans";
+    src: url("./fonts/MiSans-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "MiSans";
+    src: url("./fonts/MiSans-Semibold.woff2") format("woff2");
+    font-weight: 600 700;
+    font-style: normal;
+    font-display: swap;
+}
 :root {
     /* legacy tokens（保留但统一映射到新 token，避免旧规则影响） */
     --primary-color: var(--primary);
@@ -11,19 +34,34 @@
     --card-bg: var(--card);
 }
 
+:root {
+    color-scheme: light;
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+}
+
 body, html {
     margin: 0; padding: 0; height: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: "Google Sans Flex", "MiSans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: var(--content-bg); color: var(--text-main);
     overflow: hidden;
 }
 
 .container { display: flex; height: 100vh; }
+.akari-layout {
+    padding: 14px;
+    gap: 12px;
+    background: var(--bg);
+}
 
 /* 侧边栏 */
 .sidebar {
     width: 240px; background-color: var(--sidebar-bg); color: #fff;
     display: flex; flex-direction: column;
+    border: 1px solid var(--outline-variant, var(--border));
+    border-radius: 20px;
 }
 .sidebar-header { padding: 30px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .logo { font-size: 20px; font-weight: 800; letter-spacing: 0; }
@@ -47,7 +85,12 @@ body, html {
 .btn-save:active { transform: scale(0.96); }
 
 /* 内容区 */
-.content { flex: 1; padding: 40px 60px; overflow-y: auto; }
+.content { flex: 1; padding: 32px 36px; overflow-y: auto; }
+.akari-content {
+    background: var(--surface-container-lowest, var(--card));
+    border: 1px solid var(--outline-variant, var(--border));
+    border-radius: 24px;
+}
 .settings-section { display: none; max-width: 650px; animation: fadeIn 0.3s ease-out; }
 .settings-section.active { display: block; }
 
@@ -143,6 +186,8 @@ input:checked + .slider:before { transform: translateX(20px); }
     --text: #111827;
     --muted: #6b7280;
     --radius: 8px;
+    --outline-variant: #c4c7cf;
+    --surface-container-lowest: #ffffff;
 
     /* Dark tokens（由 [data-theme="dark"] 覆盖） */
     --bg-dark: #0b1220;
@@ -158,6 +203,8 @@ html[data-theme="dark"] {
     --border: var(--border-dark);
     --text: var(--text-dark);
     --muted: var(--muted-dark);
+    --outline-variant: #44474f;
+    --surface-container-lowest: #0b1220;
 }
 
 body, html {
@@ -186,7 +233,7 @@ body, html {
 .nav-item {
     border: 1px solid transparent;
     color: var(--muted) !important;
-    transition: none !important;
+    transition: background-color .2s cubic-bezier(.2,0,0,1), color .2s cubic-bezier(.2,0,0,1), transform .2s cubic-bezier(.2,0,0,1) !important;
 }
 
 .nav-item:hover {
@@ -251,6 +298,7 @@ label {
 input[type="text"], input[type="password"], textarea, select {
     border: 1px solid var(--border) !important;
     border-radius: var(--radius) !important;
+    font-family: inherit !important;
 }
 
 input:focus, textarea:focus, select:focus {
@@ -330,6 +378,14 @@ input:checked + .slider {
     cursor: pointer;
     font-weight: 900;
     font-size: 13px;
+    transition: transform .2s cubic-bezier(.2,0,0,1), box-shadow .2s cubic-bezier(.2,0,0,1), border-color .2s cubic-bezier(.2,0,0,1);
+}
+.color-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+.color-chip:active {
+    transform: scale(.96);
 }
 
 .color-chip .dot {
@@ -354,6 +410,26 @@ input:checked + .slider {
     padding: 6px 10px;
     font-weight: 900;
     font-size: 13px;
+}
+
+/* 动态字体开关 */
+html[data-font="google-sans-flex"] body {
+    font-family: "Google Sans Flex", "MiSans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+html[data-font="misans"] body {
+    font-family: "MiSans", "Google Sans Flex", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+html[data-font="system"] body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+}
+
+/* reveal 动效 */
+@keyframes akari-motion-reveal {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.akari-motion-reveal {
+    animation: akari-motion-reveal .45s cubic-bezier(.2,0,0,1) both;
 }
 
 .color-picker input[type="color"] {

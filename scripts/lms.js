@@ -296,7 +296,7 @@
             const container = document.createElement('div');
             container.id = 'lms-dl-ball-cont';
             container.className = 'lms-ball-cont-fixed';
-            container.innerHTML = `<div class="lms-circle-ball lms-ball-green" id="ball-dl">DL</div>`;
+            container.innerHTML = `<div class="lms-circle-ball lms-ball-green" id="ball-dl">📥</div>`;
             container.onclick = () => this.fetchResources();
             document.body.appendChild(container);
         },
@@ -312,7 +312,7 @@
                 if (!files.length) return;
                 this.showDownloadModal(files);
             } catch (e) {}
-            b.innerText = 'DL';
+            b.innerText = '📥';
         },
         showDownloadModal(files) {
             toggleScrollLock(true);

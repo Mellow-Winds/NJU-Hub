@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="options.css">
 </head>
 <body>
-<div class="container">
+<div class="container akari-layout">
     <nav class="sidebar">
         <div class="sidebar-header">
             <div class="logo">NJU ToolBox</div>
@@ -27,7 +27,7 @@
         </div>
     </nav>
 
-    <main class="content">
+    <main class="content akari-content akari-motion-reveal">
         <section id="section-general" class="settings-section active">
             <h2>个人信息</h2>
             <p class="section-desc">管理你的基础身份信息。所有信息本地保存，不上传云端。</p>
@@ -85,6 +85,16 @@
                         <input type="checkbox" id="ui-dark-mode">
                         <span class="slider round"></span>
                     </label>
+                </div>
+
+                <div class="divider">字体</div>
+                <div class="form-group">
+                    <label for="ui-font-family">界面字体</label>
+                    <select id="ui-font-family" class="nju-select">
+                        <option value="google-sans-flex">Google Sans Flex + MiSans</option>
+                        <option value="misans">MiSans</option>
+                        <option value="system">系统默认</option>
+                    </select>
                 </div>
             </div>
         </section>

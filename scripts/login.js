@@ -12,6 +12,9 @@
         // 总开关或自动填充关闭则退出
         if (cfg['toggle-login'] === false || cfg['login_autofill'] === false) return;
 
+        // --- 防护：确保只执行一次 ---
+        let hasRun = false;
+
         // --- UI: 创建战术状态提示框 ---
         const statusBox = document.createElement('div');
         statusBox.id = 'nju-commander-status';
@@ -32,6 +35,10 @@
 
         // --- 核心执行函数 ---
         async function runLoginSequence() {
+            // 防止重复执行
+            if (hasRun) return;
+            hasRun = true;
+
             const uInput = document.getElementById('username');
             const pInput = document.getElementById('password');
             const img = document.getElementById('captchaImg');
@@ -48,7 +55,8 @@
 
             if (!img) return;
             if (img.naturalWidth === 0) {
-                img.onload = runLoginSequence;
+                // 图片还未加载，等待加载完成后再执行
+                img.addEventListener('load', runLoginSequence, { once: true });
                 return;
             }
 
@@ -67,71 +75,75 @@
 
                 updateStatus('正在识别验证码...', '#ffd700');
 
-                // 核心修复：自动清理末尾多余的 /chat/completions 确保 background.js 拼接不报错
+                // 核心修复：自动清理末尾多余的 /chat/completions 确保拼接正确
                 let safeBaseUrl = cfg['login_api_url'] || "https://api.siliconflow.cn/v1";
                 safeBaseUrl = safeBaseUrl.replace(/\/chat\/completions\/?$/, '');
 
-                // 2. 调用 AI
-                chrome.runtime.sendMessage({
-                    action: 'callAI',
-                    payload: {
-                        apiKey: cfg['login_api_key'],
-                        baseUrl: safeBaseUrl,
+                // 直接调用 AI API
+                const response = await fetch(`${safeBaseUrl}/chat/completions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${cfg['login_api_key']}`
+                    },
+                    body: JSON.stringify({
                         model: cfg['login_model'] || "Qwen/Qwen2-VL-7B-Instruct",
                         messages: [{
                             role: "user",
                             content: [
-                                { type: "text", text: "Read the text. Output ONLY the alphanumeric characters." },
+                                { type: "text", text: "Read the text. Output ONLY the alphanumeric characters. No markdown. No bounding box." },
                                 { type: "image_url", image_url: { url: base64 } }
                             ]
                         }],
                         max_tokens: 10,
                         temperature: 0.1
-                    }
-                }, (response) => {
-                    if (response && response.success) {
-                        let text = response.data.trim();
-                        console.log('[NJU ToolBox] 原始回复:', text);
-                        text = text.replace(/begin|end|of|box|fbox|field/gi, '')
-                            .replace(/[^a-zA-Z0-9]/g, '');
-                        if (text.length > 4) {
-                            text = text.substring(text.length - 4);
-                        }
-
-                        if (text.length === 4) {
-                            updateStatus(`识别成功: ${text}`, "#4cd964");
-                            const cInput = document.getElementById('captcha');
-                            if (cInput) {
-                                cInput.value = text;
-                                // 触发事件确保教务系统 React/Vue 框架感知输入
-                                ['input', 'change', 'blur'].forEach(ev =>
-                                    cInput.dispatchEvent(new Event(ev, { bubbles: true }))
-                                );
-
-                                // 4. 自动登录开关判断
-                                if (cfg['login_autologin'] === true) {
-                                    setTimeout(() => {
-                                        const btn = document.querySelector('.auth_login_btn') || document.getElementById('login_submit');
-                                        if (btn) {
-                                            updateStatus('正在发起登录...', '#4cd964');
-                                            btn.click();
-                                        }
-                                    }, 800);
-                                } else {
-                                    updateStatus('识别完成，请手动登录');
-                                }
-                            }
-                        } else {
-                            updateStatus(`位数异常: ${text}`, '#ff4d4f');
-                        }
-                    } else {
-                        updateStatus(`错误: ${response ? response.error : 'API 超时'}`, '#ff4d4f');
-                    }
+                    })
                 });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                let text = data.choices[0].message.content.trim();
+                console.log('[NJU ToolBox] 原始回复:', text);
+
+                // 清洗数据：参考 NJU-Commander 的逻辑
+                text = text.replace(/beginofbox.*?endofbox|<box>.*?<\/box>|box/gi, '').replace(/[^a-zA-Z0-9]/g, '');
+                if (text.length > 4) {
+                    text = text.substring(text.length - 4);
+                }
+
+                if (text.length === 4) {
+                    updateStatus(`识别成功: ${text}`, "#4cd964");
+                    const cInput = document.getElementById('captcha');
+                    if (cInput) {
+                        cInput.value = text;
+                        // 触发事件确保教务系统 React/Vue 框架感知输入
+                        ['input', 'change', 'blur'].forEach(ev =>
+                            cInput.dispatchEvent(new Event(ev, { bubbles: true }))
+                        );
+
+                        // 4. 自动登录开关判断
+                        if (cfg['login_autologin'] === true) {
+                            setTimeout(() => {
+                                const btn = document.querySelector('.auth_login_btn') || document.getElementById('login_submit');
+                                if (btn) {
+                                    updateStatus('正在发起登录...', '#4cd964');
+                                    btn.click();
+                                }
+                            }, 800);
+                        } else {
+                            updateStatus('识别完成，请手动登录');
+                        }
+                    }
+                } else {
+                    updateStatus(`位数异常: ${text}`, '#ff4d4f');
+                }
 
             } catch (err) {
                 console.error(err);
-                updateStatus('脚本运行异常', '#ff4d4f');
+                updateStatus(`错误: ${err.message || 'API 超时'}`, '#ff4d4f');
             }
         }
 

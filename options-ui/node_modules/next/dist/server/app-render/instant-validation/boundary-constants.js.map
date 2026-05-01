@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../src/server/app-render/instant-validation/boundary-constants.ts"],"sourcesContent":["export const INSTANT_VALIDATION_BOUNDARY_NAME =\n  '__next_instant_validation_boundary__'\n"],"names":["INSTANT_VALIDATION_BOUNDARY_NAME"],"mappings":";;;;+BAAaA;;;eAAAA;;;AAAN,MAAMA,mCACX","ignoreList":[0]}

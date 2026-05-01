@@ -352,4 +352,3 @@
     setTimeout(() => clearInterval(clickTimer), 5000);
   });
 })();
-
