@@ -780,4 +780,33 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    // 10. Privacy Policy Modal
+    // ============================================================
+    const privacyBtn = document.getElementById('btn-privacy-policy');
+    if (privacyBtn) {
+        privacyBtn.onclick = () => {
+            const privacyHtml = `
+                <div style="color:#44474F;font-size:14px;line-height:1.8;">
+                    <p style="margin-top:0;"><strong style="color:#1A1B21;font-size:16px;">数据收集与使用</strong></p>
+                    <p>本插件<strong>不收集、不存储、不上传</strong>任何用户个人数据至开发者服务器。所有配置信息（包括学号、密码、API Key、课表数据、课程评价等）均<strong>仅存储于您本地浏览器的 Chrome Storage 中</strong>，开发者无法访问这些数据。</p>
+
+                    <p style="margin-top:20px;"><strong style="color:#1A1B21;font-size:16px;">第三方 AI 服务</strong></p>
+                    <p>当您使用自动登录（验证码识别）、选课助手等 AI 功能时，插件会将相关请求数据（如验证码图片、课程信息等）发送至<strong>您自行配置</strong>的第三方 AI 服务提供商（如 SiliconFlow、OpenAI、智谱 AI 等）。这些请求<strong>直接由您的浏览器发送至对应 API 地址</strong>，不经过开发者服务器。请参阅对应服务提供商的隐私政策以了解其数据处理方式。</p>
+
+                    <p style="margin-top:20px;"><strong style="color:#1A1B21;font-size:16px;">权限使用说明</strong></p>
+                    <p><code style="background:#E8E8EF;padding:1px 6px;border-radius:4px;font-size:13px;">storage</code> — 用于在本地保存您的配置信息、课表数据和课程评价。</p>
+                    <p><code style="background:#E8E8EF;padding:1px 6px;border-radius:4px;font-size:13px;">activeTab / scripting</code> — 用于在当前标签页注入功能增强脚本（GPA查询、课表抓取、自动评教等），仅在您主动触发的页面上执行。</p>
+                    <p><code style="background:#E8E8EF;padding:1px 6px;border-radius:4px;font-size:13px;">host_permissions</code> — 用于访问南大相关系统（统一认证、教务系统、LMS、SEEC 等）以提供自动登录、课表同步、LMS 增强等核心功能，以及访问您配置的 AI API 地址以提供 AI 辅助功能。</p>
+
+                    <p style="margin-top:20px;"><strong style="color:#1A1B21;font-size:16px;">您的权利</strong></p>
+                    <p>您可以随时在插件设置页面查看、修改或清除所有存储的数据。卸载插件将自动清除所有本地存储数据。如对隐私政策有任何疑问，请通过下方联系方式与开发者联系。</p>
+
+                    <p style="margin-top:20px;"><strong style="color:#1A1B21;font-size:16px;">政策更新</strong></p>
+                    <p>本隐私政策可能随插件功能更新而调整，最新版本将在插件设置页面中同步更新。建议您定期查看。</p>
+                </div>
+            `;
+            NjuModal.open('隐私政策', privacyHtml);
+        };
+    }
+
 });
