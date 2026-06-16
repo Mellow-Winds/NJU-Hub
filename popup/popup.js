@@ -2,9 +2,50 @@ document.addEventListener('DOMContentLoaded', () => {
     updateGreeting();
     loadDashboardData();
     bindEvents();
+    initRipples();
+    loadTheme();
 });
 
-// 1. 动态问候语逻辑
+// ── MD3 Ripple Effect ──────────────────────────────────────────────
+
+function initRipples() {
+    const targets = document.querySelectorAll('.primary-btn, .settings-trigger');
+    targets.forEach(el => {
+        el.style.position = el.style.position || 'relative';
+        el.style.overflow = 'hidden';
+        el.addEventListener('pointerdown', (e) => {
+            const rect = el.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const size = Math.max(el.clientWidth, el.clientHeight) * 2;
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (x - size / 2) + 'px';
+            ripple.style.top = (y - size / 2) + 'px';
+            el.appendChild(ripple);
+            ripple.offsetHeight; // force reflow
+            ripple.classList.add('animate');
+            ripple.addEventListener('animationend', () => ripple.remove());
+        });
+    });
+}
+
+// ── Material Color Utilities — Theme ───────────────────────────────
+
+function loadTheme() {
+    const MCU = window.MaterialColorUtils;
+    if (!MCU) return;
+
+    chrome.storage.sync.get(['ui_theme_color', 'ui_theme_mode'], (uiData) => {
+        const color = uiData.ui_theme_color || '#0ea5e9';
+        const isDark = uiData.ui_theme_mode === 'dark';
+        MCU.applyTheme(color, isDark);
+    });
+}
+
+// ── Dynamic Greeting ───────────────────────────────────────────────
+
 function updateGreeting() {
     const hours = new Date().getHours();
     const greetingText = document.getElementById('greeting-text');
@@ -15,7 +56,6 @@ function updateGreeting() {
     else timeGreeting = "晚上好";
 
     chrome.storage.local.get(['common-name', 'student_id'], (res) => {
-        // 逻辑：姓名优先
         const displayName = res['common-name'] || res['student_id'] || "指挥官";
         greetingText.innerText = `${timeGreeting}，${displayName}`;
     });
@@ -24,7 +64,8 @@ function updateGreeting() {
     document.getElementById('current-date').innerText = new Date().toLocaleDateString('zh-CN', options);
 }
 
-// 2. 加载仪表盘状态
+// ── Dashboard State ────────────────────────────────────────────────
+
 function loadDashboardData() {
     const keys = [
         'toggle-login',
@@ -34,7 +75,6 @@ function loadDashboardData() {
         'toggle-seec-workpanel'
     ];
     chrome.storage.local.get(keys, (data) => {
-        // 渲染 iOS 开关状态：只有明确写 false 才关闭；保持与现有脚本“默认开启”的习惯一致
         ['toggle-login', 'toggle-schedule', 'toggle-eval', 'toggle-lms', 'toggle-seec-workpanel'].forEach((id) => {
             const el = document.getElementById(id);
             if (!el) return;
@@ -43,20 +83,20 @@ function loadDashboardData() {
     });
 }
 
-// 3. 事件绑定
+// ── Event Bindings ─────────────────────────────────────────────────
+
 function bindEvents() {
-    // 侧边栏跳转
+    // Settings page
     document.getElementById('btn-options').onclick = () => chrome.runtime.openOptionsPage();
 
-    // 功能开关（iOS Switch）
+    // Feature toggles
     document.querySelectorAll('input[type="checkbox"][id^="toggle-"]').forEach((input) => {
         input.addEventListener('change', () => {
-            const key = input.id;
-            chrome.storage.local.set({ [key]: input.checked });
+            chrome.storage.local.set({ [input.id]: input.checked });
         });
     });
 
-    // 快速查询：GPA
+    // GPA quick access
     document.getElementById('btn-gpa').onclick = () => {
         chrome.tabs.create({ url: 'http://elite.nju.edu.cn/exchangesystem/' });
     };

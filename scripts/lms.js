@@ -16,7 +16,7 @@
         // - 下载/视频开关：从 chrome.storage.local 读取
 
         const DEFAULT_CONFIG = {
-            video: { speed: 1.0, autoJump: false, removeRestrictions: true },
+            video: { autoJump: false, removeRestrictions: true },
             download: { defaultSelectAll: false, showCheckbox: true },
             appearance: { opacity: 0.85, blur: 10, radius: 14 }
         };
@@ -26,15 +26,9 @@
         const loadConfig = async () => {
             const data = await chrome.storage.local.get([
                 'ui_theme_color',
-                // legacy
-                'lms_speed',
-                // new
-                'lms_video_speed', 'lms_video_autojump', 'lms_video_remove_restrict',
+                'lms_video_autojump', 'lms_video_remove_restrict',
                 'lms_dl_default_all', 'lms_dl_show_checkbox'
             ]);
-
-            const speed = parseFloat(data.lms_video_speed ?? data.lms_speed ?? Config.video.speed);
-            if (!Number.isNaN(speed)) Config.video.speed = speed;
 
             if (typeof data.lms_video_autojump === 'boolean') Config.video.autoJump = data.lms_video_autojump;
             if (typeof data.lms_video_remove_restrict === 'boolean') Config.video.removeRestrictions = data.lms_video_remove_restrict;
@@ -43,13 +37,6 @@
 
             const themeColor = typeof data.ui_theme_color === 'string' && data.ui_theme_color.trim() ? data.ui_theme_color.trim() : '#0ea5e9';
             return { themeColor };
-        };
-
-        const persistSpeed = async () => {
-            await chrome.storage.local.set({
-                lms_video_speed: String(Config.video.speed),
-                lms_speed: String(Config.video.speed) // legacy
-            });
         };
 
     // ==========================================
@@ -138,8 +125,6 @@
 
             #lms-cfg-cont { bottom: 30px; left: 30px; }
             #lms-dl-ball-cont { bottom: 30px; right: 30px; }
-            #lms-speed-ball-cont { top: 50%; right: 30px; transform: translateY(-50%); }
-
             .lms-ball-white { background: white; border: 1px solid rgba(0,0,0,0.1); color: #333; font-size: 22px; }
             .lms-ball-green { background: var(--lms-green); font-size: 20px; }
             .lms-ball-main { background: var(--lms-main); }
@@ -154,7 +139,6 @@
             @keyframes lmsFadeOut { from { opacity: 1; } to { opacity: 0; } }
             @keyframes lmsZoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
             @keyframes lmsZoomOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.95); } }
-            @keyframes lmsSlideInLeft { from { opacity: 0; transform: translateY(-50%) translateX(15px); } to { opacity: 1; transform: translateY(-50%) translateX(0); } }
 
             .lms-header { padding: 18px 24px; border-bottom: 1px solid rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.5); flex-shrink: 0; border-radius: var(--lms-radius) var(--lms-radius) 0 0; }
             .lms-header h3 { margin: 0; font-size: 18px; color: #333; font-weight: 700; letter-spacing: -0.5px; }
@@ -183,24 +167,6 @@
             .lms-btn-danger { color: #ff4d4f; border-color: #ffccc7; }
             .lms-btn-danger:hover { background: #fff1f0; border-color: #ff4d4f; }
 
-            .lms-speed-panel { position: absolute; right: 65px; top: 50%; transform: translateY(-50%); background: var(--lms-panel-bg); backdrop-filter: blur(var(--lms-blur)); border-radius: var(--lms-radius); border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 10px 40px rgba(0,0,0,0.15); padding: 12px; display: none; flex-direction: column; width: 160px; box-sizing: border-box; }
-            .lms-speed-panel::after { content: ''; position: absolute; right: -20px; top: 0; width: 20px; height: 100%; }
-            #lms-speed-ball-cont:hover .lms-speed-panel { display: flex; animation: lmsSlideInLeft 0.3s var(--lms-ease); }
-
-            .speed-item { padding: 9px 0; text-align: center; font-size: 14px; color: #444; cursor: pointer; border-radius: 8px; transition: all 0.2s var(--lms-ease); font-weight: 500; opacity: 0; animation: lmsStaggerFade 0.3s var(--lms-ease) forwards; }
-            @keyframes lmsStaggerFade { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
-            .speed-item:nth-child(1) { animation-delay: 0.02s; } .speed-item:nth-child(2) { animation-delay: 0.04s; }
-            .speed-item:nth-child(3) { animation-delay: 0.06s; } .speed-item:nth-child(4) { animation-delay: 0.08s; }
-            .speed-item:nth-child(5) { animation-delay: 0.10s; } .speed-item:nth-child(6) { animation-delay: 0.12s; }
-            .speed-item:nth-child(7) { animation-delay: 0.14s; } .speed-item:nth-child(8) { animation-delay: 0.16s; }
-            .custom-speed-box { opacity: 0; animation: lmsStaggerFade 0.3s var(--lms-ease) forwards; animation-delay: 0.18s; }
-            .speed-item:hover { background: rgba(0,0,0,0.05); color: var(--lms-main); transform: scale(1.03); }
-            .speed-item.active { background: rgba(var(--lms-rgb), 0.15); color: var(--lms-main); font-weight: 800; box-shadow: 0 2px 4px rgba(var(--lms-rgb), 0.1); transition: background 0.2s, color 0.4s ease; }
-
-            .custom-speed-box { border-top: 1px solid rgba(0,0,0,0.1); margin-top: 10px; padding-top: 10px; }
-            .custom-input-group { display: flex; align-items: stretch; gap: 8px; height: 36px; }
-            .custom-input-group input { flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 0 8px; font-size: 13px; text-align: center; outline: none; background: rgba(255,255,255,0.9); margin: 0; }
-            .custom-input-group button { padding: 0 14px; background: var(--lms-main); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; margin: 0; transition: background 0.4s ease; }
 
             /* 下载列表 */
             .lms-list-container { padding: 5px 0; overflow-y: auto; flex: 1; }
@@ -248,55 +214,24 @@
         async init() {
             // --- 关键：单例运行检测，防止iframe中重复按钮 ---
             if (window.self !== window.top) return;
-            if (document.getElementById('lms-speed-ball-cont')) return;
+            if (document.getElementById('lms-dl-ball-cont')) return;
 
             const { themeColor } = await loadConfig();
             injectStyles();
             updateThemeVariables(themeColor);
 
-            this.renderSpeedBall();
             this.renderDownloadBall();
             this.startMonitor();
         },
 
-        renderSpeedBall() {
-            const container = document.createElement('div');
-            container.id = 'lms-speed-ball-cont';
-            container.className = 'lms-ball-cont-fixed';
-            container.innerHTML = `
-                <div class="lms-circle-ball lms-ball-main" id="ball-speed">${Config.video.speed}x</div>
-                <div class="lms-speed-panel">
-                    ${[0.5, 0.75, 1, 2, 3, 5, 8, 16].map(s => `<div class="speed-item ${Config.video.speed == s ? 'active' : ''}">${s}x</div>`).join('')}
-                    <div class="custom-speed-box">
-                        <div class="custom-input-group">
-                            <input type="number" id="lms-v-inp" step="0.1" placeholder="倍速">
-                            <button id="lms-v-go">Go</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(container);
-            container.querySelectorAll('.speed-item').forEach(item => {
-                item.onclick = () => this.updateSpeed(parseFloat(item.innerText));
-            });
-            document.getElementById('lms-v-go').onclick = () => {
-                const val = parseFloat(document.getElementById('lms-v-inp').value);
-                if (!isNaN(val)) this.updateSpeed(Math.min(val, 16));
-            };
-        },
-        updateSpeed(s) {
-            Config.video.speed = s;
-            document.getElementById('ball-speed').innerText = `${s}x`;
-            persistSpeed();
-            document.querySelectorAll('.speed-item').forEach(i => i.classList.toggle('active', parseFloat(i.innerText) == s));
-        },
+        DL_ICON: '<svg width="24" height="24" viewBox="0 0 24 24" style="display:block"><path fill="currentColor" d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>',
 
         renderDownloadBall() {
             if (!location.pathname.includes('/course/')) return;
             const container = document.createElement('div');
             container.id = 'lms-dl-ball-cont';
             container.className = 'lms-ball-cont-fixed';
-            container.innerHTML = `<div class="lms-circle-ball lms-ball-green" id="ball-dl">📥</div>`;
+            container.innerHTML = `<div class="lms-circle-ball lms-ball-green" id="ball-dl">${this.DL_ICON}</div>`;
             container.onclick = () => this.fetchResources();
             document.body.appendChild(container);
         },
@@ -312,7 +247,7 @@
                 if (!files.length) return;
                 this.showDownloadModal(files);
             } catch (e) {}
-            b.innerText = '📥';
+            b.innerHTML = this.DL_ICON;
         },
         showDownloadModal(files) {
             toggleScrollLock(true);
@@ -389,10 +324,7 @@
         startMonitor() {
             setInterval(() => {
                 const v = document.querySelector('video');
-                if (v) {
-                    if (v.playbackRate !== Config.video.speed) v.playbackRate = Config.video.speed;
-                    if (Config.video.removeRestrictions) { v.controls = true; v.oncontextmenu = null; }
-                }
+                if (v && Config.video.removeRestrictions) { v.controls = true; v.oncontextmenu = null; }
             }, 2000);
         }
     };

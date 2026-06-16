@@ -1,332 +1,371 @@
+/* popup/style.css — Material Design 3 Motion System */
+
 * {
-    box-sizing: border-box; /* 强制所有元素包含边框和内边距在宽度内 */
+    box-sizing: border-box;
 }
 
-.main-panel {
-    padding: 0 12px 20px; /* 适当缩小外层边距 */
-    width: 100%;
-}
-
-.gpa-tile {
-    max-width: 100%;       /* 严禁超过父容器 */
-    overflow: hidden;      /* 裁切任何溢出 */
-}
-
-.tile-value {
-    font-size: 26px;       /* 稍微调小，避免在窄屏下撑开 */
-    font-variant-numeric: tabular-nums; /* 确保数字等宽，防止滚动抖动 */
-}
+/* ── MD3 Motion Tokens ─────────────────────────────────────────── */
 :root {
-    --bg-dark: #000000;
-    --tile-bg: #1c1c1e;
-    --tile-active: #32d74b; /* Android/iOS 风格绿色 */
-    --tile-inactive: #3a3a3c;
-    --text-primary: #ffffff;
-    --text-secondary: #8e8e93;
-    --nju-purple: #660874;
+    /* Easing */
+    --md-sys-motion-easing-emphasized:           cubic-bezier(0.2, 0, 0, 1);
+    --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+    --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+    --md-sys-motion-easing-standard:             cubic-bezier(0.2, 0, 0, 1);
+    --md-sys-motion-easing-standard-decelerate:  cubic-bezier(0, 0, 0, 1);
+    --md-sys-motion-spring:                      cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    /* Duration */
+    --md-sys-motion-duration-short3: 150ms;
+    --md-sys-motion-duration-short4: 200ms;
+    --md-sys-motion-duration-medium2: 300ms;
+    --md-sys-motion-duration-medium4: 400ms;
+    --md-sys-motion-duration-long2:   500ms;
+
+    /* Color Scheme (Material You defaults) */
+    --md-sys-color-primary:               #0ea5e9;
+    --md-sys-color-on-primary:            #FFFFFF;
+    --md-sys-color-primary-container:     #D0E8FF;
+    --md-sys-color-on-primary-container:  #001D36;
+    --md-sys-color-surface:               #F9FAFB;
+    --md-sys-color-on-surface:            #111827;
+    --md-sys-color-on-surface-variant:    #6B7280;
+    --md-sys-color-surface-container:     #FFFFFF;
+    --md-sys-color-surface-container-low: #F3F4F6;
+    --md-sys-color-surface-container-high:#EBEDF0;
+    --md-sys-color-outline-variant:       #E5E7EB;
+    --md-sys-color-outline:               #9CA3AF;
+
+    /* Legacy aliases */
+    --bg: var(--md-sys-color-surface);
+    --card: var(--md-sys-color-surface-container);
+    --border: var(--md-sys-color-outline-variant);
+    --primary: var(--md-sys-color-primary);
+    --text: var(--md-sys-color-on-surface);
+    --muted: var(--md-sys-color-on-surface-variant);
+    --radius: 12px;
 }
 
 body {
     width: 340px;
     margin: 0;
     padding: 0;
-    background: var(--bg-dark);
-    color: var(--text-primary);
-    font-family: -apple-system, sans-serif;
+    background: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* 头部样式 */
+/* ── Header ────────────────────────────────────────────────────── */
 .dashboard-header {
-    padding: 25px 20px;
+    padding: 20px 16px 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 #greeting-text {
-    font-size: 22px;
+    font-size: 20px;
     margin: 0;
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+    line-height: 1.2;
+    color: var(--md-sys-color-on-surface);
 }
 
 .date-text {
     font-size: 12px;
-    color: var(--text-secondary);
-    margin: 5px 0 0;
+    color: var(--md-sys-color-on-surface-variant);
+    margin: 6px 0 0;
+    font-weight: 500;
 }
 
 .settings-trigger {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-/* 磁贴通用样式 */
-.main-panel {
-    padding: 0 15px 20px;
-}
-
-.control-tile {
-    background: var(--tile-bg);
-    border-radius: 16px;
-    width: 100%;
-    padding: 16px;
-    margin-bottom: 12px;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    border: 1px solid transparent;
-    box-sizing: border-box;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* GPA 专用磁贴 */
-.gpa-tile {
-    cursor: pointer;
-}
-
-.tile-main {
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
-
-.tile-content {
-    flex: 1;
-    margin-left: 15px;
-}
-
-.tile-label {
-    font-size: 11px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-}
-
-.tile-value {
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--tile-active);
-}
-
-.tile-action {
-    background: var(--nju-purple);
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    cursor: pointer;
-}
-
-.tile-details {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #333;
-    font-size: 13px;
-    color: var(--text-secondary);
-    display: none;
-}
-
-.tile-details.show {
-    display: block;
-}
-
-/* 功能按钮样式 */
-.feature-btn {
-    flex-direction: row;
-    align-items: center;
-    background: var(--tile-inactive);
-    cursor: pointer;
-}
-
-.feature-btn.active {
-    background: var(--tile-bg);
-    border: 1px solid var(--tile-active);
-    box-shadow: 0 0 10px rgba(50, 215, 75, 0.2);
-}
-
-.feature-btn .tile-label {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-left: 15px;
-    flex: 1;
-}
-
-/* 状态指示灯 (类似 Android 面板图标颜色) */
-.status-indicator {
-    width: 10px;
-    height: 10px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: #666;
-    transition: 0.3s;
+    border: none;
+    background: transparent;
+    color: var(--md-sys-color-on-surface-variant);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0;
+    position: relative;
+    overflow: hidden;
+    transition:
+        background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+        transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-emphasized);
 }
 
-.active .status-indicator {
-    background: var(--tile-active);
-    box-shadow: 0 0 8px var(--tile-active);
+.settings-trigger:hover {
+    background: var(--md-sys-color-surface-container-high);
 }
 
+.settings-trigger:active {
+    transform: scale(0.9);
+}
+
+/* ── Main Panel ────────────────────────────────────────────────── */
+.main-panel {
+    padding: 0 12px 20px;
+    width: 100%;
+}
+
+/* ── Divider ───────────────────────────────────────────────────── */
 .divider {
     font-size: 11px;
-    color: var(--text-secondary);
-    margin: 20px 0 10px 5px;
+    color: var(--md-sys-color-on-surface-variant);
+    margin: 16px 6px 10px;
+    font-weight: 800;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-/* =========================================================
-   NJU-HUB Popup 新 UI 规范（浅灰底 / 纯白卡片 / iOS 开关）
-   ========================================================= */
-:root {
-    --bg: #f9fafb;
-    --card: #ffffff;
-    --border: #e5e7eb;
-    --primary: #0ea5e9; /* sky-500 */
-    --text: #111827;
-    --muted: #6b7280;
-    --radius: 8px; /* rounded-lg */
-}
-
-body {
-    background: var(--bg) !important;
-    color: var(--text) !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
-}
-
-.dashboard-header {
-    padding: 16px 14px 10px !important;
-}
-
-#greeting-text {
-    font-size: 20px !important;
-    font-weight: 800 !important;
-    letter-spacing: -0.2px !important;
-    line-height: 1.2 !important;
-}
-
-.date-text {
-    font-size: 12px !important;
-    color: var(--muted) !important;
-    margin: 6px 0 0 !important;
-}
-
-.settings-trigger {
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 10px !important;
-    border: 1px solid var(--border) !important;
-    background: var(--card) !important;
-    color: var(--text) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-    padding: 0 !important;
-    font-size: 0 !important; /* 禁用旧 emoji 字体占位 */
-}
-
-.main-panel {
-    padding: 0 12px 16px !important;
-}
-
+/* ── Card ──────────────────────────────────────────────────────── */
 .card {
-    background: var(--card) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: var(--radius) !important;
-    padding: 14px !important;
-    box-shadow: none !important; /* 避免旧规则残留阴影 */
+    background: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: 16px;
+    padding: 4px 0;
+    margin-bottom: 12px;
+    box-shadow: none;
+    /* Staggered entrance — slow & soothing */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: popupCardIn 600ms var(--md-sys-motion-easing-emphasized-decelerate) both;
+}
+
+.card:nth-child(1) { animation-delay: 80ms; }
+.card:nth-child(2) { animation-delay: 180ms; }
+.card:nth-child(3) { animation-delay: 280ms; }
+
+@keyframes popupCardIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Quick Actions ─────────────────────────────────────────────── */
+.quick-actions {
+    padding: 10px 14px;
 }
 
 .primary-btn {
-    width: 100% !important;
-    border: none !important;
-    background: var(--primary) !important;
-    color: #ffffff !important;
-    font-weight: 900 !important;
-    font-size: 13px !important;
-    border-radius: var(--radius) !important;
-    padding: 10px 12px !important;
-    cursor: pointer !important;
+    width: 100%;
+    border: none;
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 20px;
+    padding: 12px 16px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+        box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+        transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-emphasized),
+        filter var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
 
 .primary-btn:hover {
-    background: #0284c7 !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.12);
 }
 
-.divider {
-    font-size: 12px !important;
-    color: var(--muted) !important;
-    font-weight: 800 !important;
-    margin: 14px 6px 10px !important;
-    text-transform: none !important;
+.primary-btn:active {
+    transform: scale(0.97);
+    filter: brightness(0.92);
 }
 
+/* ── Feature Stack ─────────────────────────────────────────────── */
 .feature-stack {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0 !important;
-    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
 }
 
 .feature-row {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    padding: 12px 10px !important;
-    border-bottom: 1px solid var(--border) !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    transition: background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
 }
 
 .feature-row:last-child {
-    border-bottom: none !important;
+    border-bottom: none;
+}
+
+.feature-row:hover {
+    background: var(--md-sys-color-surface-container-low);
+}
+
+.feature-row:first-child {
+    border-radius: 16px 16px 0 0;
+}
+
+.feature-row:last-child {
+    border-radius: 0 0 16px 16px;
 }
 
 .feature-label {
-    font-size: 15px !important;
-    font-weight: 800 !important;
-    color: var(--text) !important;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface);
 }
 
+/* ── MD3 Switch (Popup) ────────────────────────────────────────── */
 .ios-switch {
-    position: relative !important;
-    width: 48px !important;
-    height: 28px !important;
-    flex-shrink: 0 !important;
+    position: relative;
+    width: 52px;
+    height: 32px;
+    flex-shrink: 0;
 }
 
 .ios-switch input {
-    opacity: 0 !important;
-    width: 0 !important;
-    height: 0 !important;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
 }
 
 .ios-switch .slider {
-    position: absolute !important;
-    inset: 0 !important;
-    background: #e5e7eb !important;
-    border: 1px solid #d1d5db !important;
-    border-radius: 9999px !important;
-    transition: background 0.15s ease, border-color 0.15s ease !important;
+    position: absolute;
+    inset: 0;
+    background: var(--md-sys-color-surface-container-high);
+    border: 2px solid var(--md-sys-color-outline);
+    border-radius: 9999px;
+    cursor: pointer;
+    transition:
+        background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+        border-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
 
 .ios-switch .slider::after {
-    content: '' !important;
-    position: absolute !important;
-    top: 3px !important;
-    left: 3px !important;
-    width: 20px !important;
-    height: 20px !important;
-    border-radius: 9999px !important;
-    background: #ffffff !important;
-    border: 1px solid #e5e7eb !important;
-    transition: transform 0.15s ease !important;
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 6px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--md-sys-color-outline);
+    transform: translateY(-50%);
+    transition:
+        transform var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized),
+        height var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized),
+        width var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized),
+        left var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized),
+        background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
 
+/* Switch — Hover */
+.ios-switch .slider:hover {
+    border-color: var(--md-sys-color-on-surface);
+}
+.ios-switch .slider:hover::after {
+    background: var(--md-sys-color-on-surface);
+}
+
+/* Switch — Focus */
+.ios-switch input:focus-visible + .slider {
+    box-shadow: 0 0 0 2px var(--md-sys-color-surface), 0 0 0 4px var(--md-sys-color-primary);
+}
+
+/* Switch — Pressed */
+.ios-switch input:active + .slider::after {
+    width: 28px;
+    height: 28px;
+    left: 2px;
+}
+
+/* Switch — Checked */
 .ios-switch input:checked + .slider {
-    background: var(--primary) !important;
-    border-color: var(--primary) !important;
+    background: var(--md-sys-color-primary);
+    border-color: var(--md-sys-color-primary);
 }
 
 .ios-switch input:checked + .slider::after {
-    transform: translateX(20px) !important;
+    transform: translateY(-50%) translateX(20px);
+    height: 24px;
+    width: 24px;
+    left: 2px;
+    background: var(--md-sys-color-on-primary);
+}
+
+/* Switch — Checked + Hover */
+.ios-switch input:checked + .slider:hover {
+    filter: brightness(1.08);
+}
+
+/* Switch — Checked + Pressed */
+.ios-switch input:checked:active + .slider::after {
+    width: 28px;
+    height: 28px;
+}
+
+/* ── Ripple Effect ─────────────────────────────────────────────── */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0;
+    transform: scale(0);
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+
+.ripple.animate {
+    animation: rippleExpand var(--md-sys-motion-duration-long2) var(--md-sys-motion-easing-standard) forwards;
+}
+
+@keyframes rippleExpand {
+    0% {
+        transform: scale(0);
+        opacity: 0.16;
+    }
+    80% {
+        opacity: 0.08;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* ── Popup Entrance ────────────────────────────────────────────── */
+@keyframes popupReveal {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.dashboard-header {
+    animation: popupReveal 500ms var(--md-sys-motion-easing-emphasized-decelerate) both;
+    animation-delay: 0ms;
+}
+
+/* ── Reduced Motion ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }

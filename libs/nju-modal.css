@@ -1,0 +1,308 @@
+/* libs/nju-modal.css — MD3 Modal & Outlined Input */
+
+/* ── Easing Tokens ─────────────────────────────────────────────── */
+:root {
+    --nju-ease-decelerate: cubic-bezier(0, 0, 0, 1);
+    --nju-ease-accelerate: cubic-bezier(0.3, 0, 1, 1);
+    --nju-ease-bounce:      cubic-bezier(0.18, 1.25, 0.4, 1);
+    --nju-ease-standard:    cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Modal */
+    --nju-modal-bg:      #E2E2E9;
+    --nju-modal-title:   #1A1B21;
+    --nju-modal-text:    #44474F;
+    --nju-modal-close-hover: #E8E8EF;
+
+    /* Input */
+    --nju-input-bg:      #ffffff;
+    --nju-input-text:    #1A1B21;
+    --nju-input-label:   #44474F;
+    --nju-input-border:  #74777F;
+    --nju-input-focus:   #4A90D9;
+    --nju-input-error:   #BA1A1A;
+    --nju-input-hover:   #1A1B21;
+}
+
+/* ── Modal Overlay ─────────────────────────────────────────────── */
+.nju-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    pointer-events: none;
+    padding: 20px;
+}
+.nju-modal-overlay.nju-active {
+    pointer-events: auto;
+}
+
+/* ── Modal Panel ───────────────────────────────────────────────── */
+.nju-modal {
+    background: var(--nju-modal-bg);
+    border-radius: 28px;
+    width: 560px;
+    max-width: 100%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow:
+        0 4px 8px rgba(0,0,0,0.04),
+        0 8px 24px rgba(0,0,0,0.08);
+    opacity: 0;
+    transform: scale(0.85) translateY(24px);
+    will-change: transform, opacity;
+    overflow: hidden;
+}
+
+/* ── Modal Header ──────────────────────────────────────────────── */
+.nju-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 24px 16px;
+    flex-shrink: 0;
+}
+
+.nju-modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--nju-modal-title);
+    margin: 0;
+}
+
+.nju-modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: none;
+    border: none;
+    color: var(--nju-modal-text);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition:
+        background-color 250ms var(--nju-ease-standard),
+        transform 120ms var(--nju-ease-bounce);
+}
+.nju-modal-close:hover {
+    background: var(--nju-modal-close-hover);
+    color: var(--nju-modal-title);
+}
+.nju-modal-close:active {
+    transform: scale(0.9);
+}
+
+/* ── Modal Body ────────────────────────────────────────────────── */
+.nju-modal-body {
+    padding: 0 24px 24px;
+    overflow-y: auto;
+    flex: 1;
+    color: var(--nju-modal-text);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* ── Modal Footer (used by confirm) ────────────────────────────── */
+.nju-modal-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    padding: 0 24px 24px;
+    flex-shrink: 0;
+}
+
+/* ── Modal Buttons ─────────────────────────────────────────────── */
+.nju-btn {
+    padding: 10px 24px;
+    border-radius: 20px;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition:
+        background-color 200ms var(--nju-ease-standard),
+        box-shadow 200ms var(--nju-ease-standard);
+}
+.nju-btn-secondary {
+    background: transparent;
+    color: var(--nju-modal-title);
+}
+.nju-btn-secondary:hover {
+    background: var(--nju-modal-close-hover);
+}
+.nju-btn-primary {
+    background: var(--nju-input-focus);
+    color: #ffffff;
+}
+.nju-btn-primary:hover {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.12);
+}
+.nju-btn-danger {
+    background: var(--nju-input-error);
+    color: #ffffff;
+}
+.nju-btn-danger:hover {
+    box-shadow: 0 1px 3px rgba(186,26,26,0.3), 0 4px 8px rgba(186,26,26,0.2);
+}
+
+/* ── Keyframe Fallbacks (for reduced-motion contexts) ──────────── */
+@keyframes nju-modal-overlay-in {
+    from { background: rgba(0,0,0,0); }
+    to   { background: rgba(0,0,0,0.32); }
+}
+@keyframes nju-modal-overlay-out {
+    from { background: rgba(0,0,0,0.32); }
+    to   { background: rgba(0,0,0,0); }
+}
+@keyframes nju-modal-panel-in {
+    from { opacity: 0; transform: scale(0.82) translateY(32px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes nju-modal-panel-out {
+    from { opacity: 1; transform: scale(1) translateY(0); }
+    to   { opacity: 0; transform: scale(0.92) translateY(12px); }
+}
+
+/* ── MD3 Outlined Input ────────────────────────────────────────── */
+.nju-input-group {
+    position: relative;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.nju-input-group .nju-input {
+    width: 100%;
+    height: 56px;
+    padding: 16px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 16px;
+    color: var(--nju-input-text);
+    outline: none;
+    caret-color: var(--nju-input-focus);
+    position: relative;
+    z-index: 1;
+    resize: none;
+    box-sizing: border-box;
+}
+
+.nju-input-group .nju-input:-webkit-autofill {
+    box-shadow: 0 0 0 1000px var(--nju-input-bg) inset;
+    -webkit-text-fill-color: var(--nju-input-text);
+    transition: background-color 9999s ease-out;
+}
+
+.nju-input-group .nju-border {
+    position: absolute;
+    top: -5px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid var(--nju-input-border);
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+    transition: border-color 200ms var(--nju-ease-standard);
+}
+
+.nju-input-group .nju-border legend {
+    display: block;
+    width: auto;
+    max-width: 0.01px;
+    padding: 0;
+    margin-left: 8px;
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    transition:
+        max-width 200ms var(--nju-ease-standard),
+        padding 200ms var(--nju-ease-standard);
+}
+.nju-input-group .nju-border legend span {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.nju-input-group .nju-label {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--nju-input-label);
+    pointer-events: none;
+    z-index: 3;
+    background: transparent;
+    padding: 0 4px 0 0;
+    line-height: 1.2;
+    white-space: nowrap;
+    transition:
+        top 200ms var(--nju-ease-standard),
+        font-size 200ms var(--nju-ease-standard),
+        color 200ms var(--nju-ease-standard);
+}
+
+/* ── Input States ──────────────────────────────────────────────── */
+
+/* Hover */
+.nju-input-group:hover .nju-border {
+    border-color: var(--nju-input-hover);
+}
+
+/* Focus / Filled: border → primary + bold, legend gap opens, label floats */
+.nju-input-group .nju-input:focus ~ .nju-border,
+.nju-input-group .nju-input:not(:placeholder-shown) ~ .nju-border {
+    border-color: var(--nju-input-focus);
+    border-width: 2px;
+}
+
+.nju-input-group .nju-input:focus ~ .nju-border legend,
+.nju-input-group .nju-input:not(:placeholder-shown) ~ .nju-border legend {
+    max-width: 1000px;
+    padding: 0 4px 0 0;
+}
+
+.nju-input-group .nju-input:focus ~ .nju-label,
+.nju-input-group .nju-input:not(:placeholder-shown) ~ .nju-label {
+    top: 0;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: var(--nju-input-focus);
+}
+
+/* Focus overrides hover */
+.nju-input-group .nju-input:focus ~ .nju-border {
+    border-color: var(--nju-input-focus);
+}
+
+/* Error */
+.nju-input-group.nju-error .nju-border { border-color: var(--nju-input-error) !important; }
+.nju-input-group.nju-error .nju-label  { color: var(--nju-input-error) !important; }
+
+/* textarea */
+.nju-input-group textarea.nju-input {
+    height: auto;
+    min-height: 56px;
+    padding-top: 20px;
+}
+
+/* ── Reduced Motion ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .nju-modal-overlay,
+    .nju-modal,
+    .nju-modal-close,
+    .nju-btn,
+    .nju-input-group .nju-border,
+    .nju-input-group .nju-label {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}

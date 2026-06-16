@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>隐私政策 — NJU Hub 南大智慧终端</title>
+    <style>
+        :root {
+            --primary: #660874;
+            --on-primary: #ffffff;
+            --surface: #fffbfe;
+            --on-surface: #1c1b1f;
+            --on-surface-variant: #49454f;
+            --outline: #79747e;
+            --bg: #f5f0f7;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #d7b6ff;
+                --on-primary: #3a0050;
+                --surface: #1c1b1f;
+                --on-surface: #e6e1e5;
+                --on-surface-variant: #cac4d0;
+                --outline: #938f99;
+                --bg: #141318;
+            }
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--on-surface);
+            line-height: 1.75;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #660874 0%, #8b1fa3 50%, #0ea5e9 100%);
+            padding: 48px 24px 40px;
+            text-align: center;
+            color: #fff;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+        .header .sub {
+            font-size: 0.95rem;
+            opacity: 0.85;
+        }
+        .header .ver {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 4px 14px;
+            border: 1px solid rgba(255,255,255,.35);
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .container {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 40px 24px 64px;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .card p {
+            margin-bottom: 12px;
+            color: var(--on-surface-variant);
+            font-size: 0.95rem;
+        }
+        .card p:last-child { margin-bottom: 0; }
+
+        .card code {
+            background: var(--bg);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.88em;
+            color: var(--primary);
+        }
+
+        .last-updated {
+            text-align: center;
+            color: var(--outline);
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>NJU Hub — 南大智慧终端</h1>
+        <p class="sub">隐私政策</p>
+        <span class="ver">v2.0.1</span>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>数据收集与使用</h2>
+            <p>本插件<strong>不收集、不存储、不上传</strong>任何用户个人数据至开发者服务器。</p>
+            <p>所有配置信息（包括学号、密码、API Key、课表数据、课程评价等）均<strong>仅存储于您本地浏览器的 Chrome Storage 中</strong>，开发者无法访问这些数据。插件不包含任何远程数据回传逻辑、埋点统计或用户行为追踪代码。</p>
+        </div>
+
+        <div class="card">
+            <h2>第三方 AI 服务</h2>
+            <p>当您使用自动登录（验证码识别）、选课助手等 AI 功能时，插件会将相关请求数据（如验证码图片、课程信息等）发送至<strong>您自行配置</strong>的第三方 AI 服务提供商（如 SiliconFlow、OpenAI、智谱 AI 等）。</p>
+            <p>这些请求<strong>直接由您的浏览器发送至对应 API 地址</strong>，不经过开发者服务器。请参阅对应服务提供商的隐私政策以了解其数据处理方式：</p>
+            <p>
+                SiliconFlow: <a href="https://siliconflow.cn/privacy">siliconflow.cn/privacy</a><br>
+                OpenAI: <a href="https://openai.com/policies/privacy-policy">openai.com/policies/privacy-policy</a><br>
+                智谱 AI: <a href="https://open.bigmodel.cn/privacy">open.bigmodel.cn/privacy</a>
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>权限使用说明</h2>
+            <p><code>storage</code> — 用于在本地保存您的配置信息、课表数据和课程评价。</p>
+            <p><code>activeTab / scripting</code> — 用于在当前标签页注入功能增强脚本（GPA 查询、课表抓取、自动评教等），仅在您主动触发的页面上执行。</p>
+            <p><code>host_permissions</code> — 用于访问南大相关系统（统一认证、教务系统、LMS、SEEC 等）以提供自动登录、课表同步、LMS 增强等核心功能，以及访问您配置的 AI API 地址以提供 AI 辅助功能。</p>
+        </div>
+
+        <div class="card">
+            <h2>您的权利</h2>
+            <p>您可以随时在插件设置页面查看、修改或清除所有存储的数据。卸载插件将自动清除所有本地存储数据。</p>
+            <p>如对隐私政策有任何疑问，欢迎联系开发者：</p>
+            <p>📧 Mail：251250226@smail.nju.edu.cn</p>
+        </div>
+
+        <div class="card">
+            <h2>政策更新</h2>
+            <p>本隐私政策可能随插件功能更新而调整，最新版本将在插件设置页面中同步更新。重大变更时，我们会在插件更新说明中予以提示。建议您定期查看本政策以了解最新信息。</p>
+        </div>
+
+        <p class="last-updated">最后更新日期：2026 年 6 月 16 日</p>
+    </div>
+</body>
+</html>

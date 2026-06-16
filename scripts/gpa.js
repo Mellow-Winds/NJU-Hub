@@ -90,7 +90,7 @@
             if (!loginDiv) {
                 card.innerHTML = `
                     <div class="not-logged-title">未登录</div>
-                    <div class="loading-sub">请先登录交换生系统</div>
+                    <div class="loading-sub">请先登录交换生系统，此处将自动展现GPA</div>
                 `;
                 return;
             }

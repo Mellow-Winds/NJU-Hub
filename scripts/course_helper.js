@@ -106,17 +106,23 @@
             btn.style.cssText = `position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; padding: 8px 20px; background: ${THEME.PURPLE}; color: white; border-radius: 20px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: 0.2s ${APPLE_EASE};`;
             btn.onclick = () => {
                 const rows = document.querySelectorAll('tr[id^="row"]');
-                if (rows.length === 0) { alert('表格未加载'); return; }
+                if (rows.length === 0) { alert('表格未加载，请刷新页面后重试。'); return; }
                 let data = [];
                 rows.forEach(row => {
                     const cells = row.querySelectorAll('td[role="gridcell"]');
                     if (cells.length > 6) {
-                        const t = cells[6].getAttribute('title') || cells[6].innerText;
-                        const n = cells[2].getAttribute('title') || cells[2].innerText;
+                        // jqxGrid 非固定列设 visibility:hidden，innerText 返回空；改用 textContent + span title
+                        const t = cells[6].querySelector('span')?.getAttribute('title') || cells[6].textContent.trim();
+                        const n = cells[2].querySelector('span')?.getAttribute('title') || cells[2].textContent.trim();
                         if (t && t.length > 2) data.push({ name: n.replace(/\d+班$/, '').trim(), timeStr: t });
                     }
                 });
-                if (data.length > 0) { GM_setValue('NJU_SCHEDULE', data); alert(`成功抓取 ${data.length} 门课程。请前往选课系统查看冲突。`); }
+                if (data.length > 0) {
+                    GM_setValue('NJU_SCHEDULE', data);
+                    alert(`成功抓取 ${data.length} 门课程。请前往选课系统查看冲突。`);
+                } else {
+                    alert('未能抓取到课程数据，请确认课表页面已完全加载。');
+                }
             };
             document.body.appendChild(btn);
         };
@@ -431,11 +437,11 @@
 
         root.innerHTML = `
             <div id="xk-island-main" class="xk-island ${isAddMode ? 'mode-add' : ''}">
-                <div class="status-wrapper"><div id="xk-dot" class="status-dot"></div><span class="status-text">Hub 智慧选课终端</span></div>
+                <div class="status-wrapper"><div id="xk-dot" class="status-dot"></div><span class="status-text">选课工具栏</span></div>
                 <div class="xk-panel">
                     <div class="ios-seg-ctrl seg-mode" id="ctrl-mode" data-idx="${tempConfig.mode}">
                         <div class="seg-slider"></div>
-                        <div class="seg-btn ${tempConfig.mode === 'PRE' ? 'active' : ''}" data-val="PRE">初选模式</div>
+                        <div class="seg-btn ${tempConfig.mode === 'PRE' ? 'active' : ''}" data-val="PRE">初选模式 (开发中)</div>
                         <div class="seg-btn ${tempConfig.mode === 'ADD' ? 'active' : ''}" data-val="ADD">补退选 (开发中)</div>
                     </div>
                     <div id="row-auto" style="display:flex; justify-content:space-between; align-items:center; ${autoRowStyle}">
