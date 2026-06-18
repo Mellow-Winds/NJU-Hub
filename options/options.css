@@ -458,7 +458,7 @@ html[data-theme="dark"] {
 /* ── Content Area ──────────────────────────────────────────────── */
 .content {
     flex: 1;
-    padding: 32px 48px;
+    padding: 32px 32px;
     overflow-y: auto;
     overflow-x: clip;
     scroll-behavior: smooth;
@@ -485,16 +485,30 @@ html[data-theme="dark"] {
     background: var(--md-sys-color-outline);
 }
 
-/* ── Settings Section (Fade Through Transition) ────────────────── */
+/* ── Settings Section (Fade Through + Dual-Column Grid) ─────────── */
 .settings-section {
     display: none;
-    max-width: 720px;
+    max-width: none;
     will-change: opacity;
 }
 
 .settings-section.active {
-    display: block;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: start;
     animation: sectionIn 500ms var(--md-sys-motion-easing-emphasized-decelerate) both;
+}
+
+/* 标题与描述跨满两栏 */
+.settings-section h2,
+.settings-section .section-desc {
+    grid-column: 1 / -1;
+}
+
+/* 某些卡片需要跨满两栏 */
+.settings-section .card-full {
+    grid-column: 1 / -1;
 }
 
 @keyframes sectionIn {
@@ -523,6 +537,16 @@ h2 {
     font-weight: 500;
     margin-bottom: 30px;
     line-height: 1.5;
+}
+
+/* ── Card Stack (right-column container) ─────────────────────────── */
+.card-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.card-stack .card {
+    margin-bottom: 0;
 }
 
 /* ── Card (Staggered Entrance) ─────────────────────────────────── */
@@ -764,14 +788,14 @@ html[data-theme="dark"] {
 
 /* ── Divider ───────────────────────────────────────────────────── */
 .divider {
-    font-size: 11px;
+    font-size: 15px;
     font-weight: 800;
-    color: var(--md-sys-color-on-surface-variant);
-    margin: 28px 0 16px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    border-top: 1px solid var(--md-sys-color-outline-variant);
-    padding-top: 14px;
+    color: var(--md-sys-color-on-surface);
+    margin: 20px 0 16px;
+    letter-spacing: 0.2px;
+    text-transform: none;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    padding-bottom: 10px;
 }
 
 /* ── MD3 Switch ────────────────────────────────────────────────── */

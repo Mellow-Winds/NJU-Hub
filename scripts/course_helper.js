@@ -28,7 +28,7 @@
 
     // ================== 1. 核心配置 ==================
     const THEME = {
-        PRE: '#34C759', ADD: '#007AFF', GOOD: '#1b5e20', BAD: '#c62828',
+        ADD: '#007AFF', GOOD: '#1b5e20', BAD: '#c62828',
         CONFLICT: '#FF3B30', CAMPUS: '#FF9500', PURPLE: '#660874',
         STAR_ON: '#FF9500', STAR_OFF: '#999999',
         P100: '#1b5e20', P80: '#4caf50', P60: '#fdd835', P40: '#ff9800', P20: '#f44336', P0: '#8e0000'
@@ -49,52 +49,7 @@
         };
     };
 
-    // --- 强化版红榜词库 (400+) ---
-    const RED_WORDS = [
-        '神仙', '神', 'yyds', '绝绝子', '宝藏', '满分', '很棒', '不错', '可以', '牛', '强推', '力荐', '推荐', '必选', '首选', '神中神', '五星好评', '良心课程', '满分推荐',
-        '好课', '好老师', '超级好', '特别好', '真的好', '挺好', '很好', '巨好', '超棒', '绝了', '爱死', '吹爆', '无敌', '完美', '顶', '赞', '非常推荐', '值得选',
-        '给分好', '给分高', '分高', '分好', '满绩', '高分', '90+', '95+', '90分', '95分', '98', '99', '不吝啬', '大方', '给分大方', '慷慨', '手松', '给分松',
-        '奶', '奶爸', '奶妈', '捞', '捞人', '海底捞', '调分', '向上调', '不挂人', '容易过', '好过', '及格万岁', '精准扶贫', '送分', '送分题', '不压分', '福利',
-        '稳', '稳过', '稳拿', '稳稳的', '不翻车', '不玄学', '不搞心态', '不恶意', '不卡线', '不为难人', '不卡人', '不搞事情', '人均高分', '人均90', '全班高分', '绩点友好', 'GPA友好', '对绩点友好', '对学生友好',
-        '分数感人', '给分感人', '分巨高', '分超高', '给分神仙', '给分良心', '分数漂亮', '好看', '高绩点', '保研', '刷分', '提分',
-        '事少', '事儿少', '作业少', '无作业', '没作业', '作业不多', '作业简单', '任务轻', '负担轻', '不点名', '无点名', '没点名', '签到少', '不签到', '偶尔点名',
-        '无pre', '没pre', '不考试', '无考试', '没考试', '无期中', '无期末', '开卷', '半开卷', '水课', '很水', '划水', '摸鱼', '轻松', '不累', '压力小', '自由',
-        '考试简单', '题目简单', '原题', '往年题', '题库', '重点准', '划重点', '给重点', '复习资料', '透题', '论文给分好',
-        '任务量小', '负担小', '不卷', '养老', '躺平', '适合摸鱼', '适合划水', '可以翘课', '可以不来', '随便听听', '不用听', '玩手机', '做自己的事', '写作业', '自习',
-        '人好', '人超好', '人nice', 'nice', '温柔', '和蔼', '亲切', '耐心', '负责', '认真', '细心', '可爱', '有趣', '风趣', '幽默',
-        '帅', '帅气', '美', '漂亮', '女神', '男神', '大佬', '大牛', '学术大牛', '干货', '收获', '学到东西', '涨知识', '清晰', '生动',
-        '菩萨', '活菩萨', '天使', '知性', '儒雅', '随和', '开明', '通情达理', '好说话', '理解学生', '尊重', '不为难', '氛围好', '互动好', '体验好',
-        '老师正常', '三观正', '有边界感', '不爹', '不PUA', '不阴阳', '不内涵', '不摆架子', '不装', '好沟通', '能商量', '会听意见', '尊重人', '真·老师', '真负责',
-        '听着舒服', '讲得明白', '条理清楚', '思路清晰', '不折腾', '不整活', '不搞花样', '正常人课程', '正常上课', '正常考', '正常给分', '不恶心', '不折磨人', '不浪费时间', '不拖后腿',
-        '善解人意', '体贴', '关心学生', '像朋友', '没架子', '平易近人', '讲课好', '讲得好', '水平高', '有水平', '不仅学到知识', '人生导师', '三观超正',
-        '闭眼选', '闭眼冲', '闭眼入', '冲', '快选', '选它', '爱了', '喜欢', '开心', '快乐', '享受', '幸福', '值得', '良心', '福音', '舒服', '感动', '感恩', '救星', '放心',
-        '爽', '舒服爆了', '一整个爱住', '狠狠推荐', '狠狠安利', '不选会后悔', '选了不亏', '真香', '属于是捡漏', '属于福利课', '白给', '纯赚', '血赚', '值回票价',
-        '选就完了', '选就对了', '不后悔', '无脑冲', '无脑选', '必修课', '一定要选', '千万别错过', '相见恨晚', '幸运', '走运', '快乐源泉'
-    ];
-
-    // --- 强化版黑榜词库 (400+) ---
-    const BLACK_WORDS = [
-        '快跑', '快逃', '别选', '别来', '千万别选', '慎选', '避雷', '大雷', '巨坑', '大坑', '天坑', '坑', '后悔', '恶心', '吐了', '垃圾', '烂', '烂课',
-        '依托答辩', '答辩', '史', '坐牢', '痛苦', '折磨', '煎熬', '浪费时间', '浪费生命', '劝退', '噩梦', '无语', '离谱', '狗都不选', '甚至', '不如自学',
-        '不好', '很差', '极差', '太差', '糟糕', '无聊透顶', '不知所云', '莫名其妙', '不可理喻', '令人发指', '毁三观', '有病', '神经病', 'sb', 'nt',
-        '给分差', '给分低', '分低', '压分', '低分', '杀手', '绩点杀手', 'GPA杀手', '卡绩', '卡人', '挂科', '挂人', '挂科率高', '不及格', '重修', '不捞', '不调分', '向下调',
-        '随机给分', '乱给分', '看脸', '玄学', '吝啬', '小气', '扣分', '扣分狠', '严', '严格', '给分严', '给分恶心', '分低到哭',
-        '不稳定', '看心情', '看老师脸色', '看助教', '看运气', '绩点炸裂', 'GPA噩梦', '血亏', '白忙', '做了也白做', '分数不透明', '没标准', '标准模糊', '随缘给分', '给分成谜', '分数离谱', '反向给分',
-        '给分迷', '给分魔幻', '给分看人', '没有优秀', '优秀率低', '卡89', '卡84', '卡59', '均分低', '没人性', '不当人',
-        '事多', '事儿多', '事儿逼', '作业多', '作业难', '作业繁琐', '任务重', '负担重', '累', '卷', '内卷', '很卷', '卷死', '压力大', '心累', '身心俱疲',
-        '点名', '签到', '每节课', '花式点名', '拍照', '定位', '通报', '查重', '严查', '不准请假', '强制', '拖堂', '占用', '还要',
-        'pre多', '很多pre', '每周pre', 'pre难', '论文多', '论文难', '考试难', '题目难', '闭卷', '默写', '背书', '死记硬背', '手写', '几千字', '没重点', '不划重点', '重点偏', '考细节', '超纲',
-        '折腾人', '恶意满满', '纯纯恶心', '没意义作业', '无效努力', '形式主义', '表演型学习', '为难学生', '故意卡', '故意刁难', '任务叠任务', '套娃作业', '一堆细则', '要求巨多', '标准随改', '临时加任务', '临时改规则',
-        '各种小测', '突击检查', '随堂考', '没完没了', '占用周末', '占用假期', '强制活动', '强制参与', '必须去', '不准不去', '扣平时分',
-        '讲得差', '讲课差', '讲得烂', '听不懂', '不知所云', '催眠', '无聊', '枯燥', '水', '念ppt', '读ppt', '照本宣科', '照念',
-        '水平低', '没水平', '混', '敷衍', '不负责', '不管', '态度差', '凶', '骂人', '阴阳怪气', '嘲讽', 'pua', '爹味', '说教', '装',
-        '傲慢', '自大', '歧视', '针对', '双标', '偏心', '更年期', '老登', '变态', '奇葩', '极品', '独角戏', '自嗨', '各种要求', '各种规矩',
-        '上课像受刑', '听了个寂寞', '浪费一学期', '纯念稿', '完全不讲', '自己都没准备', '逻辑混乱', '前后矛盾', '讲不清重点', '不知道考什么', '不知道学了啥', '内容过时', '老掉牙',
-        '情绪不稳定', '爱发脾气', '爱针对人', '阴晴不定', '双标严重', '偏心严重', '控制欲强', '爹味十足', 'PUA重灾区', '爱说教', '爱上价值', '爱道德绑架', '自我感动型', '自嗨型老师', '把学生当工具人',
-        '没师德', '不配当老师', '误人子弟', '毁人不倦', '自以为是', '高高在上', '看不起学生', '不尊重人', '随意更改', '出尔反尔', '说话不算话',
-        '心态爆炸', '人麻了', '被恶心到了', '想退课', '想跑路', '想转专业', '想重开', '一整个崩溃', '纯纯坐牢', '精神折磨', '生理不适',
-        '气死', '想骂人', '想打人', '想投诉', '举报', '真的无语', '大无语', '也是醉了', '服了', '绝望', '致郁', '怀疑人生', '避之不及', '谁选谁后悔'
-    ];
+    // 本地关键词评价系统已移除 — 准确率过低，全部依赖 AI 深度分析
 
     // ================== 2. 路由分发 (课表同步) ==================
     const currentURL = window.location.href;
@@ -134,10 +89,8 @@
 
     // ================== 3. 选课核心逻辑 ==================
     let config = {
-        mode: GM_getValue('NJU_MODE', 'PRE'),
         autoConfirm: GM_getValue('NJU_AUTO', false),
         conflictCheck: GM_getValue('NJU_CONFLICT', true),
-        enableRating: GM_getValue('NJU_RATING', true),
         myCampus: GM_getValue('NJU_CAMPUS', 'XL'),
         checkCampus: GM_getValue('NJU_CHECK_CAMPUS', true),
         pinFav: GM_getValue('NJU_PIN_FAV', true) // 置顶配置
@@ -205,16 +158,6 @@
         return false;
     };
 
-    const analyzeLocal = (comments) => {
-        let r = 0, b = 0, txt = comments.join(' ').toLowerCase();
-        RED_WORDS.forEach(w => { if (txt.includes(w)) r++; });
-        BLACK_WORDS.forEach(w => { if (txt.includes(w)) b++; });
-        if (/9\d|100/.test(txt)) r += 2;
-        if (r + b === 0) return null;
-        const ratio = (r / (r + b)) * 100;
-        return { color: ratio > 50 ? THEME.GOOD : THEME.BAD, label: ratio > 50 ? "偏向推荐" : "偏向劝退", comments };
-    };
-
     const calcProb = (text) => {
         const parts = text.split('/'); if (parts.length !== 2) return null;
         const enroll = parseInt(parts[0]), cap = parseInt(parts[1]);
@@ -240,14 +183,13 @@
                 transition: width 0.5s ${APPLE_EASE}, height 0.5s ${APPLE_EASE}, transform 0.5s ${APPLE_EASE};
                 box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             }
-            .xk-island.expanded { width: 420px; height: 580px; box-shadow: 0 25px 70px rgba(0,0,0,0.2); }
-            .xk-island.expanded.mode-add { height: 580px; }
-            .status-wrapper { width: 140px; height: 38px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; cursor: pointer; }
+            .xk-island.expanded { width: 340px; height: 180px; box-shadow: 0 25px 70px rgba(0,0,0,0.2); }
+            .xk-island.dragging { transition: none !important; user-select: none; }
+            .status-wrapper { width: 140px; height: 38px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; cursor: grab; }
             .status-text { font-weight: 800; font-size: 14px; color: #333; }
             .status-dot { width: 8px; height: 8px; border-radius: 50%; transition: 0.3s; }
             .xk-panel { opacity: 0; width: 100%; padding: 0 20px; display: flex; flex-direction: column; gap: 13px; pointer-events: none; transition: 0.2s; margin-top: 5px; box-sizing: border-box; }
             .xk-island.expanded .xk-panel { opacity: 1; pointer-events: auto; transition-delay: 0.1s; }
-            .hidden-row { display: none !important; }
             .help-icon { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: #eee; color: #666; font-size: 11px; font-weight: bold; cursor: default !important; margin-left: 6px; }
             
             /* 收藏高亮样式 */
@@ -256,7 +198,7 @@
             .nj-br { display: block; margin-top: 4px; content: ""; }
             .nj-badge {
                 display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; color: #fff;
-                margin: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: normal; line-height: 1.4; text-align: center; cursor: default !important; max-width: 160px; vertical-align: middle;
+                margin: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: normal; line-height: 1.4; text-align: center; cursor: default; max-width: 160px; vertical-align: middle;
             }
             
             .fav-toggle-btn { display: table; margin: 0 auto 4px auto; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; border: 1px solid #ddd; background: #f8f8f8; color: #666; white-space: nowrap; }
@@ -282,18 +224,6 @@
             .fav-detail { color: #888; font-size: 12px; }
 
             /* Controls */
-            .ios-seg-ctrl { position: relative; display: flex; background: #eee; border-radius: 9px; padding: 2px; width: 100%; height: 32px; box-sizing: border-box; }
-            .seg-slider { position: absolute; top: 2px; left: 2px; height: 28px; background: #fff; border-radius: 7px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.3s ${APPLE_EASE}; z-index: 1; }
-            .seg-btn { flex: 1; text-align: center; font-size: 12px; font-weight: 600; color: #666; z-index: 2; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.2s; }
-            .seg-btn.active { color: #000; font-weight: 700; }
-            .seg-campus .seg-slider { width: calc((100% - 4px) / 4); }
-            .seg-campus[data-idx="0"] .seg-slider { transform: translateX(0%); }
-            .seg-campus[data-idx="1"] .seg-slider { transform: translateX(100%); }
-            .seg-campus[data-idx="2"] .seg-slider { transform: translateX(200%); }
-            .seg-campus[data-idx="3"] .seg-slider { transform: translateX(300%); }
-            .seg-mode .seg-slider { width: calc((100% - 4px) / 2); }
-            .seg-mode[data-idx="PRE"] .seg-slider { transform: translateX(0%); }
-            .seg-mode[data-idx="ADD"] .seg-slider { transform: translateX(100%); }
             .ios-sw { position: relative; width: 44px; height: 26px; background: #e3e3e4; border-radius: 13px; cursor: pointer; transition: 0.3s; }
             .ios-sw.on { background: #34C759; }
             .ios-sw::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: #fff; border-radius: 50%; transition: 0.3s; }
@@ -397,7 +327,7 @@
         });
     };
 
-    const setAITagState = (tag, data) => {
+    const setAITagState = (tag, data, cacheKey) => {
         const score = parseFloat(data['综合评分']);
         let label = '一般'; let color = THEME.P60;
         if (score >= 8.5) { label = '力荐'; color = THEME.GOOD; }
@@ -407,9 +337,11 @@
 
         tag.innerText = `${label} (${score})`;
         tag.style.background = color; tag.style.color = '#fff';
-        tag.style.cursor = 'help';
+        tag.style.cursor = 'pointer';
+        if (cacheKey) tag.dataset.ckey = cacheKey;
 
         tag.onmouseenter = () => {
+            if (tag._showingComments) return; // 正在查看原文时悬停不覆盖
             clearTimeout(popoverTimer);
             const pop = document.getElementById('nj-popover');
             pop.innerHTML = `
@@ -419,12 +351,61 @@
                 <div style="font-size:12px; margin-bottom:4px; color:#444;"><b>签到:</b> ${data['签到']}</div>
                 <div style="font-size:12px; margin-top:8px; padding-top:8px; border-top:1px dashed #ccc; color:#1b5e20; font-weight:bold;">结论: ${data['总结']}</div>
             `;
+            pop.style.maxHeight = '400px';
             const r = tag.getBoundingClientRect();
-            pop.style.left = Math.min(r.left, window.innerWidth - 360) + 'px';
+            pop.style.left = Math.min(r.left, window.innerWidth - 380) + 'px';
             pop.style.top = (r.bottom + 8) + 'px';
             pop.classList.add('visible');
         };
-        tag.onmouseleave = () => popoverTimer = setTimeout(() => document.getElementById('nj-popover').classList.remove('visible'), 300);
+        tag.onmouseleave = () => {
+            if (tag._showingComments) return;
+            popoverTimer = setTimeout(() => document.getElementById('nj-popover').classList.remove('visible'), 300);
+        };
+
+        // 点击查看所有原始评价
+        tag.onclick = (e) => {
+            e.stopPropagation();
+            if (!cacheKey) return;
+            const db = GM_getValue('NJU_DB', {});
+            const rawComments = db[cacheKey];
+            if (!rawComments || !Array.isArray(rawComments) || rawComments.length === 0) return;
+
+            const pop = document.getElementById('nj-popover');
+            clearTimeout(popoverTimer);
+
+            // 切换：如果正在显示原文，点击关闭
+            if (tag._showingComments) {
+                pop.classList.remove('visible');
+                tag._showingComments = false;
+                return;
+            }
+
+            tag._showingComments = true;
+
+            // 构建原文列表
+            let html = `<div style="font-weight:800;color:${THEME.PURPLE};margin-bottom:8px;border-bottom:1px solid #eee;padding-bottom:5px;">📋 原始评价 (${rawComments.length}条) — 点击关闭</div>`;
+            rawComments.forEach((c, i) => {
+                const safe = String(c).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+                html += `<div style="font-size:12px;color:#333;margin-bottom:10px;padding:8px 10px;background:#f8f8f8;border-radius:8px;border-left:3px solid ${THEME.PURPLE};line-height:1.7;">${safe}</div>`;
+            });
+            pop.innerHTML = html;
+            pop.style.maxHeight = '520px';
+
+            const r = tag.getBoundingClientRect();
+            pop.style.left = Math.min(r.left, window.innerWidth - 380) + 'px';
+            pop.style.top = (r.bottom + 8) + 'px';
+            pop.classList.add('visible');
+
+            // 点击空白关闭
+            const close = (ev) => {
+                if (!pop.contains(ev.target) && ev.target !== tag) {
+                    pop.classList.remove('visible');
+                    tag._showingComments = false;
+                    document.removeEventListener('click', close);
+                }
+            };
+            setTimeout(() => document.addEventListener('click', close), 10);
+        };
     };
 
     const renderIsland = () => {
@@ -432,20 +413,13 @@
         const root = document.createElement('div');
         root.id = 'xk-island-root';
         let favorites = GM_getValue('NJU_FAVORITES', {});
-        const isAddMode = tempConfig.mode === 'ADD';
-        const autoRowStyle = isAddMode ? 'display: none !important;' : '';
 
         root.innerHTML = `
-            <div id="xk-island-main" class="xk-island ${isAddMode ? 'mode-add' : ''}">
+            <div id="xk-island-main" class="xk-island">
                 <div class="status-wrapper"><div id="xk-dot" class="status-dot"></div><span class="status-text">选课工具栏</span></div>
                 <div class="xk-panel">
-                    <div class="ios-seg-ctrl seg-mode" id="ctrl-mode" data-idx="${tempConfig.mode}">
-                        <div class="seg-slider"></div>
-                        <div class="seg-btn ${tempConfig.mode === 'PRE' ? 'active' : ''}" data-val="PRE">初选模式 (开发中)</div>
-                        <div class="seg-btn ${tempConfig.mode === 'ADD' ? 'active' : ''}" data-val="ADD">补退选 (开发中)</div>
-                    </div>
-                    <div id="row-auto" style="display:flex; justify-content:space-between; align-items:center; ${autoRowStyle}">
-                        <span style="font-size:13px; font-weight:700;">自动确认</span>
+                    <div id="row-auto" style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:13px; font-weight:700;">自动选择</span>
                         <div id="sw-auto" class="ios-sw ${tempConfig.autoConfirm ? 'on' : ''}"></div>
                     </div>
                     <div style="display:flex; gap:10px; width: 100%;">
@@ -455,37 +429,83 @@
             </div>
         `;
         document.body.appendChild(root);
-        injectModals(); // 注入模态框
+        injectModals();
 
         const island = document.getElementById('xk-island-main');
-        const autoRow = document.getElementById('row-auto');
-        if(tempConfig.mode === 'ADD') autoRow.classList.add('hidden-row');
 
-        island.onmouseenter = () => island.classList.add('expanded');
-        island.onmouseleave = () => island.classList.remove('expanded');
-        document.getElementById('xk-dot').style.backgroundColor = config.mode === 'PRE' ? THEME.PRE : THEME.ADD;
+        // ===== 拖拽功能 =====
+        let dragState = { isDragging: false, hasMoved: false, startX: 0, startY: 0, startLeft: 0, startTop: 0 };
+        let suppressHover = false;
 
-        const modeCtrl = document.getElementById('ctrl-mode');
-        modeCtrl.querySelectorAll('.seg-btn').forEach(b => b.onclick = (e) => {
-            modeCtrl.dataset.idx = e.target.dataset.val;
-            modeCtrl.querySelectorAll('.seg-btn').forEach(i=>i.classList.remove('active')); e.target.classList.add('active'); tempConfig.mode = e.target.dataset.val;
-            if(tempConfig.mode==='ADD') autoRow.classList.add('hidden-row'); else autoRow.classList.remove('hidden-row');
+        // 恢复持久化位置
+        const savedPos = GM_getValue('NJU_ISLAND_POS', null);
+        if (savedPos && savedPos.left && savedPos.top) {
+            root.style.left = savedPos.left;
+            root.style.top = savedPos.top;
+            root.style.transform = 'none';
+        }
+
+        const statusWrapper = island.querySelector('.status-wrapper');
+
+        statusWrapper.addEventListener('mousedown', (e) => {
+            dragState.isDragging = true;
+            dragState.hasMoved = false;
+            suppressHover = true;
+            dragState.startX = e.clientX;
+            dragState.startY = e.clientY;
+            const rect = root.getBoundingClientRect();
+            dragState.startLeft = rect.left;
+            dragState.startTop = rect.top;
+            statusWrapper.style.cursor = 'grabbing';
+            e.preventDefault();
         });
 
-        // 自动确认保留在浮窗中，其他配置已迁移到 Options 页面
+        document.addEventListener('mousemove', (e) => {
+            if (!dragState.isDragging) return;
+            const dx = e.clientX - dragState.startX;
+            const dy = e.clientY - dragState.startY;
+            if (!dragState.hasMoved && (Math.abs(dx) > 3 || Math.abs(dy) > 3)) {
+                dragState.hasMoved = true;
+                island.classList.add('dragging');
+                island.classList.remove('expanded');
+            }
+            if (dragState.hasMoved) {
+                root.style.left = (dragState.startLeft + dx) + 'px';
+                root.style.top = (dragState.startTop + dy) + 'px';
+                root.style.transform = 'none';
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (!dragState.isDragging) return;
+            island.classList.remove('dragging');
+            statusWrapper.style.cursor = '';
+            if (dragState.hasMoved) {
+                GM_setValue('NJU_ISLAND_POS', { left: root.style.left, top: root.style.top });
+            }
+            dragState.isDragging = false;
+            dragState.hasMoved = false;
+            setTimeout(() => { suppressHover = false; }, 150);
+        });
+
+        // ===== hover 展开 (拖拽感知) =====
+        island.onmouseenter = () => { if (!suppressHover) island.classList.add('expanded'); };
+        island.onmouseleave = () => { if (!suppressHover) island.classList.remove('expanded'); };
+
+        document.getElementById('xk-dot').style.backgroundColor = '#34C759';
+
+        // 自动选择开关
         document.getElementById('sw-auto').onclick = function() {
             tempConfig.autoConfirm = !tempConfig.autoConfirm;
             this.classList.toggle('on');
             GM_setValue('NJU_AUTO', tempConfig.autoConfirm);
         };
 
-        // 点击打开页面内的收藏夹 Modal
+        // 收藏夹 Modal
         document.getElementById('btn-open-fav').onclick = () => {
             updateFavList(GM_getValue('NJU_FAVORITES', {}));
             document.getElementById('fav-modal-wrapper').classList.add('open');
         };
-
-        // AI/评价/校区/冲突等配置已迁移到 Options 页面统一管理
     };
 
     const initPopover = () => {
@@ -554,7 +574,7 @@
 
             // 2. 双系统并存评价
             const jsmcCell = row.querySelector('.jsmc');
-            if (jsmcCell && config.enableRating && Object.keys(db).length) {
+            if (jsmcCell && Object.keys(db).length) {
                 const rowText = row.innerText.replace(/\s/g, '');
                 for(const k in db) {
                     const [c,t] = k.split('#');
@@ -564,32 +584,13 @@
                             let comms = db[k].comments || db[k];
                             if (!Array.isArray(comms) || comms.length === 0) break;
 
-                            const localEval = analyzeLocal(comms);
-                            const rawTag = document.createElement('span');
-                            rawTag.className = 'nj-badge';
-                            rawTag.style.background = localEval ? localEval.color : '#8e8e93';
-                            rawTag.innerText = `${comms.length}条评价`;
-                            rawTag.style.cursor='help';
-                            rawTag.onmouseenter = () => {
-                                clearTimeout(popoverTimer);
-                                const pop=document.getElementById('nj-popover');
-                                let h=`<div style="font-weight:800;color:${THEME.PURPLE};margin-bottom:8px;border-bottom:1px solid #eee;padding-bottom:5px;">原始评价库 (本地判定: ${localEval ? localEval.label : '未知'})</div>`;
-                                comms.forEach(x=>h+=`<div class="pop-item">● ${x}</div>`);
-                                pop.innerHTML=h;
-                                const r=rawTag.getBoundingClientRect();
-                                pop.style.left=Math.min(r.left,window.innerWidth-360)+'px'; pop.style.top=(r.bottom+8)+'px';
-                                pop.classList.add('visible');
-                            };
-                            rawTag.onmouseleave = () => popoverTimer=setTimeout(()=>document.getElementById('nj-popover').classList.remove('visible'),300);
-                            appendB(jsmcCell, rawTag);
-
                             const cacheKey = `${c}#${t}`;
                             const cached = aiCache[cacheKey];
 
                             if (cached) {
                                 const aiTag = document.createElement('span');
                                 aiTag.className = 'nj-badge';
-                                setAITagState(aiTag, cached);
+                                setAITagState(aiTag, cached, cacheKey);
                                 appendB(jsmcCell, aiTag);
                             } else {
                                 window.pendingAITasks.push({ course: c, teacher: t, comments: comms, cacheKey: cacheKey, cell: jsmcCell });

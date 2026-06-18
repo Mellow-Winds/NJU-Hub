@@ -355,8 +355,9 @@ document.addEventListener('DOMContentLoaded', () => {
         'common-name', 'student_id', 'login_pass',
         'login_autofill', 'login_autologin', 'login_api_url', 'login_api_key', 'login_model',
         'course_major', 'course_pref', 'course_api_url', 'course_api_key', 'course_model',
-        'NJU_CAMPUS', 'NJU_CONFLICT', 'NJU_RATING', 'NJU_PIN_FAV',
+        'NJU_CAMPUS', 'NJU_CONFLICT', 'NJU_PIN_FAV',
         'NJU_SCHEDULE',
+        'seatable_last_sync',
         'toggle-eval', 'eval_api_url', 'eval_api_key', 'eval_model',
         'toggle-lms',
         'lms_video_remove_restrict', 'lms_video_autojump',
@@ -417,8 +418,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setVal('course-my-campus', data.NJU_CAMPUS, 'XL');
         setCheckDefault('course-conflict-check', data.NJU_CONFLICT, true);
-        setCheckDefault('course-enable-rating', data.NJU_RATING, true);
         setCheckDefault('course-pin-fav', data.NJU_PIN_FAV, true);
+
 
         setCheckDefaultOn('toggle-eval', data['toggle-eval']);
         // eval AI 字段已移除，保留读取以兼容旧数据（字段可选）
@@ -466,7 +467,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'course_model': document.getElementById('course-model').value.trim(),
             'NJU_CAMPUS': NjuDropdown.getById('course-my-campus')?.getValue() || 'XL',
             'NJU_CONFLICT': document.getElementById('course-conflict-check').checked,
-            'NJU_RATING': document.getElementById('course-enable-rating').checked,
             'NJU_PIN_FAV': document.getElementById('course-pin-fav').checked,
             'toggle-eval': document.getElementById('toggle-eval').checked,
             'eval_api_url': document.getElementById('eval-api-url')?.value?.trim() || '',
@@ -510,6 +510,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const dmList = document.getElementById('dm-list');
 
+    // Data Manager 悬浮评价原文 tooltip
+    let dmTooltip = null;
+    function ensureDmTooltip() {
+        if (dmTooltip) return;
+        dmTooltip = document.createElement('div');
+        dmTooltip.id = 'dm-tooltip';
+        dmTooltip.style.cssText = 'position:fixed;z-index:99999;width:380px;max-height:420px;overflow-y:auto;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline-variant);border-radius:14px;padding:16px;box-shadow:0 8px 32px rgba(0,0,0,0.18);opacity:0;pointer-events:none;transform:translateY(4px);transition:opacity 0.18s,transform 0.18s;';
+        document.body.appendChild(dmTooltip);
+    }
+
+    function showDmTooltip(anchor, key, comments) {
+        ensureDmTooltip();
+        if (!comments || comments.length === 0) return;
+        let html = `<div style="font-weight:800;font-size:13px;color:var(--md-sys-color-primary);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--md-sys-color-outline-variant);">📋 ${key.replace('#',' - ')} (${comments.length}条评价)</div>`;
+        comments.forEach((c, i) => {
+            const safe = String(c).replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+            html += `<div style="font-size:12px;color:var(--md-sys-color-on-surface);margin-bottom:8px;padding:8px 10px;background:var(--md-sys-color-surface-container-low);border-radius:8px;border-left:3px solid var(--md-sys-color-primary);line-height:1.6;">${safe}</div>`;
+        });
+        dmTooltip.innerHTML = html;
+        const r = anchor.getBoundingClientRect();
+        dmTooltip.style.left = Math.min(r.right + 4, window.innerWidth - 400) + 'px';
+        dmTooltip.style.top = Math.min(r.top, window.innerHeight - 440) + 'px';
+        dmTooltip.style.opacity = '1';
+        dmTooltip.style.transform = 'translateY(0)';
+        dmTooltip.style.pointerEvents = 'auto';  // 可见时可交互、可滚动
+    }
+
+    function hideDmTooltip() {
+        if (!dmTooltip) return;
+        dmTooltip.style.opacity = '0';
+        dmTooltip.style.transform = 'translateY(4px)';
+        dmTooltip.style.pointerEvents = 'none';  // 隐藏时不拦截点击
+    }
+
+    // tooltip 自身悬停时保持可见（初始化一次）
+    ensureDmTooltip();
+    dmTooltip.addEventListener('mouseenter', () => { if (dmTooltip._timer) clearTimeout(dmTooltip._timer); });
+    dmTooltip.addEventListener('mouseleave', hideDmTooltip);
+
     function renderDataManager() {
         chrome.storage.local.get(['NJU_DB', 'NJU_AI_CACHE'], (data) => {
             const db = data.NJU_DB || {};
@@ -539,6 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const item = document.createElement('div');
                 item.className = 'dm-item';
                 item.style.animationDelay = (index * 30) + 'ms';
+                item.style.cursor = hasDb ? 'pointer' : 'default';
                 item.innerHTML = `
                     <label>
                         <input type="checkbox" class="dm-check" value="${key}">
@@ -549,6 +589,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${aiTag}
                     </div>
                 `;
+
+                if (hasDb) {
+                    item.addEventListener('mouseenter', () => {
+                        if (dmTooltip._timer) clearTimeout(dmTooltip._timer);
+                        showDmTooltip(item, key, db[key]);
+                    });
+                    item.addEventListener('mouseleave', () => {
+                        dmTooltip._timer = setTimeout(hideDmTooltip, 350);
+                    });
+                }
+
                 dmList.appendChild(item);
             });
         });
@@ -777,6 +828,200 @@ document.addEventListener('DOMContentLoaded', () => {
                     renderDataManager();
                 }
             });
+        };
+    }
+
+    // ============================================================
+    // 9.5. SeaTable 云端同步
+    // ============================================================
+
+    const seatableStatus = document.getElementById('seatable-status');
+
+    function setSeatableStatus(msg, isError = false) {
+        if (!seatableStatus) return;
+        seatableStatus.textContent = msg;
+        seatableStatus.style.color = isError ? '#c62828' : '';
+    }
+
+    // 通过 background.js 中转 SeaTable API 请求
+    function seatableFetch(url, token, method = 'GET', body = null) {
+        return new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage({
+                action: 'seatableRequest',
+                payload: {
+                    url,
+                    method,
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                        'Accept': 'application/json; charset=utf-8; indent=4',
+                        ...(body ? { 'Content-Type': 'application/json' } : {})
+                    },
+                    ...(body ? { body: JSON.stringify(body) } : {})
+                }
+            }, (resp) => {
+                if (chrome.runtime.lastError) {
+                    reject(new Error(chrome.runtime.lastError.message));
+                    return;
+                }
+                if (!resp || !resp.ok) {
+                    const errMsg = resp?.rawText || resp?.parseError || resp?.data?.error_msg || resp?.error || `HTTP ${resp?.status || '未知'}`;
+                    reject(new Error(errMsg));
+                    return;
+                }
+                if (resp.parseError) {
+                    reject(new Error(`JSON 解析失败: ${resp.parseError}\n原始响应: ${resp.rawText || '(空)'}`));
+                    return;
+                }
+                resolve(resp.data);
+            });
+        });
+    }
+
+    async function seatableGetBaseToken(apiToken, serverUrl) {
+        const url = `${serverUrl}/api/v2.1/dtable/app-access-token/`;
+        const data = await seatableFetch(url, apiToken);
+        if (!data.access_token) throw new Error('返回数据中缺少 access_token');
+        return {
+            accessToken: data.access_token,
+            dtableUuid: data.dtable_uuid,
+            dtableServer: data.dtable_server || serverUrl
+        };
+    }
+
+    async function seatableFetchRows(baseToken, dtableServer, dtableUuid, tableName) {
+        const url = `${dtableServer}api/v2/dtables/${dtableUuid}/rows/?table_name=${encodeURIComponent(tableName)}&limit=1000`;
+        const data = await seatableFetch(url, baseToken);
+        return data.rows || [];
+    }
+
+    async function seatableFetchColumns(baseToken, dtableServer, dtableUuid, tableName) {
+        const url = `${dtableServer}api/v2/dtables/${dtableUuid}/columns/?table_name=${encodeURIComponent(tableName)}`;
+        const data = await seatableFetch(url, baseToken);
+        if (!data.columns || data.columns.length === 0) throw new Error('未找到列定义');
+        // 构建 name → key 映射（中文名 → 内部key），key 在不同 Base 间可能变化
+        const nameToKey = {};
+        data.columns.forEach(col => { nameToKey[col.name] = col.key; });
+        return nameToKey;
+    }
+
+    function seatableConvertRows(rows, col) {
+        // col = { '课程名称': 'qvbZ', '授课教师': '93ZB', '评价': 'vhQA', ... }
+        // 通过中文名动态查找 key，无需硬编码内部代号
+        const keyCN = col['课程名称'] || col['课程名'] || col['课程'];
+        const keyTch = col['授课教师'] || col['教师'] || col['老师'];
+        const keyComment = col['评价'] || col['评论'] || col['评价内容'];
+        const keyDiff = col['课程难度'] || col['难度'];
+        const keyGrade = col['给分好坏'] || col['给分'] || col['给分情况'];
+        const keyHW = col['作业多少'] || col['作业'] || col['作业量'];
+        const keyExam = col['收获多少'] || col['考试'] || col['考试情况'];
+
+        if (!keyCN || !keyTch || !keyComment) {
+            console.warn('[SeaTable] 列映射不完整，可用列名:', Object.keys(col).join(', '));
+        }
+
+        const db = {};
+        rows.forEach(row => {
+            const courseName = (keyCN && row[keyCN]) || '';
+            const teacher = (keyTch && row[keyTch]) || '';
+            const comment = (keyComment && row[keyComment]) || '';
+
+            if (!courseName || !teacher) return;
+            if (!comment || !String(comment).trim()) return;
+
+            // 构建富文本评价：正文 + 维度的结构化标签
+            const parts = [String(comment).trim()];
+            const tags = [];
+            if (keyDiff && row[keyDiff]) tags.push(`难度:${row[keyDiff]}`);
+            if (keyGrade && row[keyGrade]) tags.push(`给分:${row[keyGrade]}`);
+            if (keyHW && row[keyHW]) tags.push(`作业:${row[keyHW]}`);
+            if (keyExam && row[keyExam]) tags.push(`考试:${row[keyExam]}`);
+            if (tags.length > 0) parts.push(`【${tags.join(' | ')}】`);
+
+            const fullComment = parts.join(' ');
+
+            const dbKey = `${courseName}#${teacher}`;
+            if (db[dbKey]) {
+                const existing = new Set(db[dbKey]);
+                existing.add(fullComment);
+                db[dbKey] = Array.from(existing);
+            } else {
+                db[dbKey] = [fullComment];
+            }
+        });
+        return db;
+    }
+
+    async function seatableSync(config) {
+        const { apiToken, serverUrl, tableName } = config;
+        if (!apiToken) throw new Error('API Token 未配置');
+        if (!tableName) throw new Error('表名未配置');
+
+        // 1. 获取 Base Token
+        setSeatableStatus('正在获取 Base Token...');
+        const { accessToken, dtableUuid, dtableServer } = await seatableGetBaseToken(apiToken, serverUrl);
+
+        // 2. 获取列映射（通过中文名动态解析 key，避免硬编码随 Base 重建变化）
+        setSeatableStatus('正在获取表结构...');
+        const colMap = await seatableFetchColumns(accessToken, dtableServer, dtableUuid, tableName);
+
+        // 3. 拉取行数据
+        setSeatableStatus('正在拉取云端数据...');
+        const rows = await seatableFetchRows(accessToken, dtableServer, dtableUuid, tableName);
+
+        if (rows.length === 0) throw new Error('表中没有数据，请检查表名是否正确');
+
+        // 4. 转换格式（传入列映射，用中文名定位数据列）
+        const newDB = seatableConvertRows(rows, colMap);
+        const courseCount = Object.keys(newDB).length;
+        if (courseCount === 0) throw new Error('未找到匹配的列（需要"课程名称"、"授课教师"和"评价"列）');
+
+        // 5. Merge 进 NJU_DB
+        return new Promise((resolve, reject) => {
+            chrome.storage.local.get(['NJU_DB'], (data) => {
+                const existingDB = data.NJU_DB || {};
+                let mergedCount = 0;
+                for (const [key, comms] of Object.entries(newDB)) {
+                    if (existingDB[key]) {
+                        const existing = new Set(existingDB[key]);
+                        const beforeSize = existing.size;
+                        comms.forEach(c => existing.add(c));
+                        if (existing.size > beforeSize) mergedCount++;
+                        existingDB[key] = Array.from(existing);
+                    } else {
+                        existingDB[key] = comms;
+                        mergedCount++;
+                    }
+                }
+                chrome.storage.local.set({ NJU_DB: existingDB, seatable_last_sync: Date.now() }, () => {
+                    resolve({ courseCount, mergedCount, totalCourses: Object.keys(existingDB).length });
+                });
+            });
+        });
+    }
+
+    // SeaTable 硬编码配置（只读 Token，学长维护的公共评价库）
+    const SEATABLE_TOKEN = '00f50a5653ad7f17f018fbc3a8a88d141ad33e23';
+    const SEATABLE_SERVER = 'https://table.nju.edu.cn';
+    const SEATABLE_TABLE = 'opendata_export';
+
+    // 测试连接按钮（已移除 UI，保留函数供调试）
+    // 立即同步按钮
+    const seatableSyncBtn = document.getElementById('course-seatable-sync');
+    if (seatableSyncBtn) {
+        seatableSyncBtn.onclick = async () => {
+            seatableSyncBtn.disabled = true;
+            seatableSyncBtn.textContent = '同步中...';
+            setSeatableStatus('');
+            try {
+                const result = await seatableSync({ apiToken: SEATABLE_TOKEN, serverUrl: SEATABLE_SERVER, tableName: SEATABLE_TABLE });
+                setSeatableStatus(`同步完成！合并 ${result.mergedCount} 门课程（共 ${result.totalCourses} 门），云端拉取 ${result.courseCount} 门`);
+                renderDataManager();
+            } catch (err) {
+                setSeatableStatus(`同步失败: ${err.message}`, true);
+            } finally {
+                seatableSyncBtn.disabled = false;
+                seatableSyncBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;margin-right:4px;"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>立即同步';
+            }
         };
     }
 

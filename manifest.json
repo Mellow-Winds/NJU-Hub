@@ -6,7 +6,8 @@
   "permissions": [
     "storage",
     "activeTab",
-    "scripting"
+    "scripting",
+    "declarativeNetRequest"
   ],
   "web_accessible_resources": [
     {
@@ -19,7 +20,8 @@
     "http://elite.nju.edu.cn/*",
     "https://api.siliconflow.cn/*",
     "https://api.openai.com/*",
-    "https://open.bigmodel.cn/*"
+    "https://open.bigmodel.cn/*",
+    "https://table.nju.edu.cn/*"
   ],
   "action": {
     "default_popup": "popup/index.html",

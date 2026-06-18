@@ -219,56 +219,60 @@
                 </div>
             </div>
 
-            <div class="card">
-                <div class="divider">个人信息设置</div>
-                <div class="form-group">
-                    <label for="course-my-campus">我的主校区</label>
-                    <div class="nju-dropdown" id="course-my-campus" data-name="course-my-campus">
-                        <div class="nju-dropdown-trigger" tabindex="0" role="combobox" aria-expanded="false">
-                            <span class="nju-dropdown-text">仙林</span>
-                            <svg class="nju-dropdown-arrow" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
-                        </div>
-                        <ul class="nju-dropdown-menu" role="listbox">
-                            <li data-value="XL" role="option" class="active">仙林</li>
-                            <li data-value="GL" role="option">鼓楼</li>
-                            <li data-value="PK" role="option">浦口</li>
-                            <li data-value="SZ" role="option">苏州</li>
-                        </ul>
+            <div class="card-stack">
+                <div class="card">
+                    <div class="divider">功能开关设置</div>
+                    <div class="toggle-group">
+                        <div class="toggle-info"><span class="label">冲突预警</span></div>
+                        <label class="switch">
+                            <input type="checkbox" id="course-conflict-check">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info"><span class="label">置顶收藏课程</span></div>
+                        <label class="switch">
+                            <input type="checkbox" id="course-pin-fav">
+                            <span class="slider round"></span>
+                        </label>
                     </div>
                 </div>
-                <div class="form-group">
-                    <button id="btn-view-schedule" class="btn-small" type="button">查看我的课表</button>
-                    <button id="btn-clear-schedule" class="btn-small btn-danger" type="button">清空课表</button>
-                    <div class="hint-text">如无记录，请先登录课表页面并同步到插件。</div>
+
+                <div class="card">
+                    <div class="divider">个人信息设置</div>
+                    <div class="form-group">
+                        <label for="course-my-campus">我的主校区</label>
+                        <div class="nju-dropdown" id="course-my-campus" data-name="course-my-campus">
+                            <div class="nju-dropdown-trigger" tabindex="0" role="combobox" aria-expanded="false">
+                                <span class="nju-dropdown-text">仙林</span>
+                                <svg class="nju-dropdown-arrow" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+                            </div>
+                            <ul class="nju-dropdown-menu" role="listbox">
+                                <li data-value="XL" role="option" class="active">仙林</li>
+                                <li data-value="GL" role="option">鼓楼</li>
+                                <li data-value="PK" role="option">浦口</li>
+                                <li data-value="SZ" role="option">苏州</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button id="btn-view-schedule" class="btn-small" type="button">查看我的课表</button>
+                        <button id="btn-clear-schedule" class="btn-small btn-danger" type="button">清空课表</button>
+                        <div class="hint-text">如无记录，请先登录课表页面并同步到插件。</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="divider">红黑榜云端同步</div>
+                    <p class="hint-text" style="margin-bottom:12px;">特别鸣谢：数据来自“鼓励你学哪门课榜”</p>
+                    <div class="form-group" style="display:flex; gap:8px; margin-bottom:0;">
+                        <button id="course-seatable-sync" class="btn-small btn-sync" type="button"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;margin-right:4px;"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>立即同步</button>
+                    </div>
+                    <p id="seatable-status" class="hint-text" style="margin-top:8px;"></p>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="divider">功能开关设置</div>
-                <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">冲突预警</span></div>
-                    <label class="switch">
-                        <input type="checkbox" id="course-conflict-check">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">本地评价系统</span></div>
-                    <label class="switch">
-                        <input type="checkbox" id="course-enable-rating">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">置顶收藏课程</span></div>
-                    <label class="switch">
-                        <input type="checkbox" id="course-pin-fav">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="card">
+            <div class="card card-full">
                 <div class="divider">评价管理</div>
                 <input type="file" id="course-db-file" accept=".xlsx,.xls" style="display:none">
                 <div class="data-manager-controls">
@@ -369,7 +373,7 @@
             <h2>关于插件</h2>
             <p class="section-desc">NJU Hub — 南大智慧终端 v2.0.1</p>
 
-            <div class="card">
+            <div class="card card-full">
                 <div class="divider">AI 配置教程</div>
                 <div class="about-tutorial">
                     <p class="tutorial-step"><strong>1. 获取 API Key</strong> — 前往大模型服务提供商的开放平台注册并获取 API Key。常用提供商包括 SiliconCloud、OpenAI、智谱 AI 等。注册后在控制台创建 API Key 并复制。</p>
