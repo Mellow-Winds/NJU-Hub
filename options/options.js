@@ -602,10 +602,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 dmList.appendChild(item);
             });
+
+            // 应用当前搜索过滤
+            filterDataManager();
+        });
+    }
+
+    // 搜索过滤：根据输入框内容实时筛选课程列表
+    function filterDataManager() {
+        const query = (document.getElementById('dm-search')?.value || '').trim().toLowerCase();
+        document.querySelectorAll('.dm-item').forEach(item => {
+            const text = (item.textContent || '').toLowerCase();
+            item.style.display = query === '' || text.includes(query) ? '' : 'none';
         });
     }
 
     renderDataManager();
+
+    // 搜索框实时过滤
+    const dmSearchInput = document.getElementById('dm-search');
+    if (dmSearchInput) {
+        dmSearchInput.addEventListener('input', filterDataManager);
+    }
 
     document.getElementById('dm-select-all').onclick = () => {
         document.querySelectorAll('.dm-check').forEach(cb => cb.checked = true);

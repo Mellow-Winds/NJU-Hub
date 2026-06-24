@@ -60,16 +60,32 @@
             btn.id = 'nju-sync-btn'; btn.innerHTML = '抓取课表至选课系统';
             btn.style.cssText = `position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; padding: 8px 20px; background: ${THEME.PURPLE}; color: white; border-radius: 20px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: 0.2s ${APPLE_EASE};`;
             btn.onclick = () => {
-                const rows = document.querySelectorAll('tr[id^="row"]');
+                // 限定选择器到主滚动区域的 grid body，避免冻结列重复行导致数据翻倍
+                let rows = document.querySelectorAll('.jqx-grid-content .jqx-grid-body tr[id^="row"]');
+                if (rows.length === 0) {
+                    // fallback：尝试无冻结列的简单 grid 结构
+                    rows = document.querySelectorAll('div[role="grid"] > div:last-child tr[id^="row"]');
+                }
+                if (rows.length === 0) {
+                    // 最终 fallback：回退到原始选择器
+                    rows = document.querySelectorAll('tr[id^="row"]');
+                }
                 if (rows.length === 0) { alert('表格未加载，请刷新页面后重试。'); return; }
                 let data = [];
+                const seen = new Set();
                 rows.forEach(row => {
                     const cells = row.querySelectorAll('td[role="gridcell"]');
                     if (cells.length > 6) {
                         // jqxGrid 非固定列设 visibility:hidden，innerText 返回空；改用 textContent + span title
                         const t = cells[6].querySelector('span')?.getAttribute('title') || cells[6].textContent.trim();
                         const n = cells[2].querySelector('span')?.getAttribute('title') || cells[2].textContent.trim();
-                        if (t && t.length > 2) data.push({ name: n.replace(/\d+班$/, '').trim(), timeStr: t });
+                        if (t && t.length > 2) {
+                            const key = `${n.replace(/\d+班$/, '').trim()}|${t}`;
+                            if (!seen.has(key)) {
+                                seen.add(key);
+                                data.push({ name: n.replace(/\d+班$/, '').trim(), timeStr: t });
+                            }
+                        }
                     }
                 });
                 if (data.length > 0) {

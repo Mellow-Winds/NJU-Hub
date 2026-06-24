@@ -79,46 +79,58 @@
                 let safeBaseUrl = cfg['login_api_url'] || "https://api.siliconflow.cn/v1";
                 safeBaseUrl = safeBaseUrl.replace(/\/chat\/completions\/?$/, '');
 
-                // 直接调用 AI API
-                const response = await fetch(`${safeBaseUrl}/chat/completions`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${cfg['login_api_key']}`
-                    },
-                    body: JSON.stringify({
-                        model: cfg['login_model'] || "Qwen/Qwen2-VL-7B-Instruct",
-                        messages: [{
-                            role: "user",
-                            content: [
-                                { type: "text", text: "Read the text. Output ONLY the alphanumeric characters. No markdown. No bounding box." },
-                                { type: "image_url", image_url: { url: base64 } }
-                            ]
-                        }],
-                        max_tokens: 10,
-                        temperature: 0.1
-                    })
-                });
+                // 带重试的验证码识别函数：约束模型返回恰好 4 位字符
+                async function recognizeCaptcha(b64, retry = 0) {
+                    const isRetry = retry > 0;
+                    const prompt = isRetry
+                        ? 'The image is a 4-character captcha code. Output the 4 characters ONLY. If you output anything else, the system will reject it. 4 characters. No more, no less.'
+                        : 'Read this captcha image. It contains exactly 4 alphanumeric characters. Output those 4 characters and nothing else. Do not add spaces, punctuation, newlines, or any other text. Just the 4 characters. Example output: 3AB9';
 
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
+                    const response = await fetch(`${safeBaseUrl}/chat/completions`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${cfg['login_api_key']}`
+                        },
+                        body: JSON.stringify({
+                            model: cfg['login_model'] || "Qwen/Qwen2-VL-7B-Instruct",
+                            messages: [{
+                                role: "user",
+                                content: [
+                                    { type: "text", text: prompt },
+                                    { type: "image_url", image_url: { url: b64 } }
+                                ]
+                            }],
+                            max_tokens: 5,
+                            temperature: isRetry ? 0.01 : 0.1
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    let text = data.choices[0].message.content.trim();
+                    console.log(`[NJU ToolBox] 原始回复${isRetry ? '(重试)' : ''}:`, text);
+
+                    // 清洗数据
+                    text = text.replace(/beginofbox.*?endofbox|<box>.*?<\/box>|box/gi, '').replace(/[^a-zA-Z0-9]/g, '');
+                    if (text.length > 4) {
+                        text = text.substring(text.length - 4);
+                    }
+
+                    if (text.length === 4) return text;           // 成功
+                    if (retry < 1) return recognizeCaptcha(b64, 1);  // 重试一次
+                    return null;                                   // 重试后仍失败
                 }
 
-                const data = await response.json();
-                let text = data.choices[0].message.content.trim();
-                console.log('[NJU ToolBox] 原始回复:', text);
-
-                // 清洗数据：参考 NJU-Commander 的逻辑
-                text = text.replace(/beginofbox.*?endofbox|<box>.*?<\/box>|box/gi, '').replace(/[^a-zA-Z0-9]/g, '');
-                if (text.length > 4) {
-                    text = text.substring(text.length - 4);
-                }
-
-                if (text.length === 4) {
-                    updateStatus(`识别成功: ${text}`, "#4cd964");
+                const code = await recognizeCaptcha(base64);
+                if (code) {
+                    updateStatus(`识别成功: ${code}`, "#4cd964");
                     const cInput = document.getElementById('captcha');
                     if (cInput) {
-                        cInput.value = text;
+                        cInput.value = code;
                         // 触发事件确保教务系统 React/Vue 框架感知输入
                         ['input', 'change', 'blur'].forEach(ev =>
                             cInput.dispatchEvent(new Event(ev, { bubbles: true }))
@@ -138,7 +150,7 @@
                         }
                     }
                 } else {
-                    updateStatus(`位数异常: ${text}`, '#ff4d4f');
+                    updateStatus('验证码识别失败，请手动输入', '#ff4d4f');
                 }
 
             } catch (err) {

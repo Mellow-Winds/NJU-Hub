@@ -1010,6 +1010,32 @@ html[data-theme="dark"] .color-picker {
     flex-wrap: wrap;
 }
 
+.data-manager-search {
+    margin-bottom: 12px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: 10px;
+    background: var(--md-sys-color-surface-container-lowest);
+    color: var(--md-sys-color-on-surface);
+    outline: none;
+    transition: border-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+    box-sizing: border-box;
+}
+
+.search-input:focus {
+    border-color: var(--md-sys-color-primary);
+}
+
+.search-input::placeholder {
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 13px;
+}
+
 .data-manager-list {
     max-height: 260px;
     overflow-y: auto;
