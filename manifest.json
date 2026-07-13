@@ -48,7 +48,13 @@
       ],
       "js": [
         "libs/xlsx.full.min.js",
-        "scripts/xk_course_assistant.js"
+        "scripts/xk/xk_storage.js",
+        "scripts/xk/xk_conflict.js",
+        "scripts/xk/xk_ai.js",
+        "scripts/xk/xk_ui.js",
+        "scripts/xk/xk_badges.js",
+        "scripts/xk/xk_schedule.js",
+        "scripts/xk/xk_main.js"
       ],
       "run_at": "document_end"
     },
