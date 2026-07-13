@@ -21,6 +21,21 @@
         STAR_ON: '#FF9500', STAR_OFF: '#999999'
     };
 
+    // 内联 SVG 图标 (16x16 viewBox, 18px 显示)
+    const I = {
+        school: '<svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px;margin-right:2px;"><path fill="#FF9500" d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>',
+        shield: '<svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px;margin-right:2px;"><path fill="#007AFF" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>',
+        pin: '<svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px;margin-right:2px;"><path fill="#FF9500" d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg>',
+        bolt: '<svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px;margin-right:2px;"><path fill="#FF9500" d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.59-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83zM11 15h2v-6h-2v6z"/></svg>',
+        star: '<svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px;margin-right:2px;"><path fill="#FF9500" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>',
+        calendar: '<svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px;margin-right:2px;"><path fill="#660874" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>',
+        gear: '<svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px;margin-right:2px;"><path fill="#660874" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>',
+        robot: '<svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px;margin-right:2px;"><path fill="#fff" d="M20 9V7c0-1.1-.9-2-2-2h-3c0-1.66-1.34-3-3-3S9 3.34 9 5H6c-1.1 0-2 .9-2 2v2c-1.66 0-3 1.34-3 3s1.34 3 3 3v4c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-4c1.66 0 3-1.34 3-3s-1.34-3-3-3zm-2 10H6V7h12v12zm-9-6c-.83 0-1.5-.67-1.5-1.5S8.17 10 9 10s1.5.67 1.5 1.5S9.83 13 9 13zm5.5 1.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5 1.5.67 1.5 1.5zM8 15h8v2H8v-2z"/></svg>',
+        save: '<svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px;margin-right:2px;"><path fill="#fff" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>',
+        trash: '<svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:-3px;margin-right:2px;"><path fill="#fff" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>',
+        clipboard: '<svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:-3px;margin-right:2px;"><path fill="#fff" d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>'
+    };
+
     const APPLE_EASE = 'cubic-bezier(0.19, 1, 0.22, 1)';
     const CAMPUS_MAP = { 'XL': '仙林', 'GL': '鼓楼', 'PK': '浦口', 'SZ': '苏州' };
     const CAMPUS_IDX = { 'XL': 0, 'GL': 1, 'PK': 2, 'SZ': 3 };
@@ -50,7 +65,7 @@
                 transition: width 0.5s ${APPLE_EASE}, height 0.5s ${APPLE_EASE};
                 box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             }
-            .xk-island.expanded { width: 380px; height: 540px; box-shadow: 0 25px 70px rgba(0,0,0,0.15); }
+            .xk-island.expanded { width: 380px; height: 420px; box-shadow: 0 25px 70px rgba(0,0,0,0.15); }
             .status-wrapper {
                 width: 160px; height: 40px; display: flex; align-items: center;
                 justify-content: center; gap: 8px; flex-shrink: 0;
@@ -247,7 +262,7 @@
         const btn = document.getElementById('btn-open-sched');
         if (!btn) return;
         const schedule = GM_getValue(STORAGE.SCHEDULE, []);
-        btn.innerText = `📅 课表 (${schedule.length})`;
+        btn.innerHTML = `${I.calendar} 课表 (${schedule.length})`;
     };
 
     /**
@@ -260,7 +275,7 @@
         div.className = 'xk-modal-overlay';
         div.innerHTML = `
             <div class="xk-modal">
-                <div class="xk-header"><span>⭐ 收藏夹管理</span><span class="xk-close" id="fav-close">✕</span></div>
+                <div class="xk-header"><span>${I.star} 收藏夹管理</span><span class="xk-close" id="fav-close">✕</span></div>
                 <div class="xk-body" id="fav-container"></div>
                 <div class="xk-footer">
                     <div style="display:flex; gap:5px;">
@@ -305,7 +320,7 @@
                 });
                 GM_setValue(STORAGE.FAVORITES, favs);
                 updateFavList(favs);
-                document.getElementById('btn-open-fav').innerText = `⭐ 收藏夹 (${Object.keys(favs).length})`;
+                document.getElementById('btn-open-fav').innerHTML = `${I.star} 收藏夹 (${Object.keys(favs).length})`;
                 if (window.__XK__.sortFavRows) window.__XK__.sortFavRows();
             }
         };
@@ -340,12 +355,12 @@
         schedDiv.className = 'xk-modal-overlay';
         schedDiv.innerHTML = `
             <div class="xk-modal">
-                <div class="xk-header"><span>📅 我的课表</span><span class="xk-close" id="sched-close">✕</span></div>
+                <div class="xk-header"><span>${I.calendar} 我的课表</span><span class="xk-close" id="sched-close">✕</span></div>
                 <div class="xk-body" id="sched-container"></div>
                 <div class="xk-footer">
-                    <button class="xk-btn" id="sched-clear" style="background:#FF3B30; color:white; padding:8px 16px; flex:none;">🗑️ 清空课表</button>
+                    <button class="xk-btn" id="sched-clear" style="background:#FF3B30; color:white; padding:8px 16px; flex:none;">${I.trash} 清空课表</button>
                     <div style="flex:1;"></div>
-                    <button class="xk-btn" id="sched-import" style="background:${THEME.PURPLE}; color:white; padding:8px 16px; flex:none;">📋 导入课表</button>
+                    <button class="xk-btn" id="sched-import" style="background:${THEME.PURPLE}; color:white; padding:8px 16px; flex:none;">${I.clipboard} 导入课表</button>
                 </div>
             </div>
         `;
@@ -397,7 +412,7 @@
                     <span class="status-text">NJU Hub</span>
                 </div>
                 <div class="xk-panel">
-                    <div style="font-size:12px; font-weight:700; color:#8e8e93;">🏫 我的主校区</div>
+                    <div style="font-size:12px; font-weight:700; color:#8e8e93;">${I.school} 我的主校区</div>
                     <div class="ios-seg-ctrl seg-campus" id="ctrl-campus" data-idx="${campusIdx}">
                         <div class="seg-slider"></div>
                         <div class="seg-btn ${tempConfig.myCampus === 'XL' ? 'active' : ''}" data-val="XL">仙林</div>
@@ -407,31 +422,31 @@
                     </div>
 
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:13px; font-weight:600; color:#1c1c1e;">🛡️ 冲突预警</span>
+                        <span style="font-size:13px; font-weight:600; color:#1c1c1e;">${I.shield} 冲突预警</span>
                         <div id="sw-conflict" class="ios-sw ${tempConfig.conflictCheck ? 'on' : ''}"></div>
                     </div>
 
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:13px; font-weight:600; color:#1c1c1e;">📌 置顶收藏</span>
+                        <span style="font-size:13px; font-weight:600; color:#1c1c1e;">${I.pin} 置顶收藏</span>
                         <div id="sw-pin" class="ios-sw ${tempConfig.pinFav ? 'on' : ''}"></div>
                     </div>
 
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:13px; font-weight:600; color:#1c1c1e;">⚡ 自动确认</span>
+                        <span style="font-size:13px; font-weight:600; color:#1c1c1e;">${I.bolt} 自动确认</span>
                         <div id="sw-auto" class="ios-sw ${tempConfig.autoConfirm ? 'on' : ''}"></div>
                     </div>
 
                     <div style="display:flex; gap:10px; width: 100%;">
-                        <button id="btn-open-fav" class="xk-btn" style="background:#f0f0f5; color:#333; border:1px solid #ddd;">⭐ 收藏夹 (${Object.keys(favorites).length})</button>
-                        <button id="btn-open-sched" class="xk-btn" style="background:#f0f0f5; color:#333; border:1px solid #ddd;">📅 课表 (${(GM_getValue(STORAGE.SCHEDULE, [])).length})</button>
+                        <button id="btn-open-fav" class="xk-btn" style="background:#f0f0f5; color:#333; border:1px solid #ddd;">${I.star} 收藏夹 (${Object.keys(favorites).length})</button>
+                        <button id="btn-open-sched" class="xk-btn" style="background:#f0f0f5; color:#333; border:1px solid #ddd;">${I.calendar} 课表 (${(GM_getValue(STORAGE.SCHEDULE, [])).length})</button>
                     </div>
 
                     <div style="display:flex; gap:10px; width: 100%;">
-                        <button id="btn-open-ai" class="xk-btn" style="background:#f3e8ff; color:${THEME.PURPLE}; border:1px solid #d8b4fe;">⚙️ 插件设置</button>
-                        <button id="btn-ai-analyze" class="xk-btn" style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; border:none;">🤖 一键AI分析</button>
+                        <button id="btn-open-ai" class="xk-btn" style="background:#f3e8ff; color:${THEME.PURPLE}; border:1px solid #d8b4fe;">${I.gear} 插件设置</button>
+                        <button id="btn-ai-analyze" class="xk-btn" style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; border:none;">${I.robot} 一键AI分析</button>
                     </div>
 
-                    <button id="btn-save" class="save-btn">💾 保存配置</button>
+                    <button id="btn-save" class="save-btn">${I.save} 保存配置</button>
                 </div>
             </div>
         `;
@@ -506,6 +521,7 @@
 
     Object.assign(window.__XK__, {
         THEME,
+        I,
         APPLE_EASE,
         CAMPUS_MAP,
         CAMPUS_IDX,

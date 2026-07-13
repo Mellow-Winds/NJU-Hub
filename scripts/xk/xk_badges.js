@@ -71,7 +71,7 @@
                         }
                         GM_setValue(STORAGE.FAVORITES, favs);
                         const b = document.getElementById('btn-open-fav');
-                        if (b) b.innerText = `⭐ 收藏夹 (${Object.keys(favs).length})`;
+                        if (b) b.innerHTML = `${window.__XK__.I.star} 收藏夹 (${Object.keys(favs).length})`;
                         sortFavRows();
                     };
                     kchCell.prepend(btn);

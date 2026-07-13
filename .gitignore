@@ -22,3 +22,19 @@ FYP
 
 #devlog
 devlog
+
+# Captcha trainer - model weights & training data
+scripts/captcha_trainer/samples/
+scripts/captcha_trainer/*.pt
+scripts/captcha_trainer/*.onnx
+scripts/captcha_trainer/labels.json*
+scripts/captcha_trainer/manual_review.txt
+
+# Captcha model files (keep code, ignore binaries)
+libs/*.onnx
+libs/charset_old.json
+
+# Temp images
+captcha_real.png
+captcha_sample.png
+captcha_sample2.png

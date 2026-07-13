@@ -12,8 +12,14 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["scripts/seec_xhr_bridge.js"],
-      "matches": ["*://p-nju.seec.seecoder.cn/*"]
+      "resources": [
+        "scripts/seec_xhr_bridge.js",
+        "libs/common_old.onnx",
+        "libs/charset_old.json",
+        "libs/ort-wasm/ort.wasm.min.js",
+        "libs/ort-wasm/ort-wasm-simd-threaded.wasm"
+      ],
+      "matches": ["*://*.nju.edu.cn/*"]
     }
   ],
   "host_permissions": [
@@ -38,7 +44,7 @@
   "content_scripts": [
     {
       "matches": ["https://authserver.nju.edu.cn/authserver/login*"],
-      "js": ["scripts/auth_auto_login.js"],
+      "js": ["libs/captcha_ocr.js", "scripts/auth_auto_login.js"],
       "run_at": "document_end"
     },
     {

@@ -1,0 +1,24 @@
+{
+  "name": "nju-hub",
+  "version": "1.0.0",
+  "description": "> 南京大学个人学术指挥中心：一站式浏览器扩展，覆盖 GPA 查询、自动登录、智能选课分析、LMS 增强、自动评教与 SEEC 门户优化。",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mellow-Winds/NJU-Hub.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Mellow-Winds/NJU-Hub/issues"
+  },
+  "homepage": "https://github.com/Mellow-Winds/NJU-Hub#readme",
+  "dependencies": {
+    "onnxruntime-web": "^1.27.0"
+  }
+}

@@ -90,12 +90,34 @@
 
                 updateStatus('正在识别验证码...', '#ffd700');
 
-                // 核心修复：自动清理末尾多余的 /chat/completions 确保拼接正确
-                let safeBaseUrl = cfg['login_api_url'] || "https://api.siliconflow.cn/v1";
-                safeBaseUrl = safeBaseUrl.replace(/\/chat\/completions\/?$/, '');
+                // === 优先通道：本地 ONNX 推理（ddddocr 模型） ===
+                let code = null;
+                if (typeof CaptchaOCR !== 'undefined') {
+                    try {
+                        updateStatus('本地模型识别中...', '#00f2fe');
+                        console.log('[NJU ToolBox] === 尝试本地 ONNX 推理 ===');
+                        code = await CaptchaOCR.recognize(img);
+                        if (code) {
+                            console.log('[NJU ToolBox] ONNX 本地识别成功:', code);
+                        } else {
+                            console.warn('[NJU ToolBox] ONNX 本地识别返回 null，降级到 LLM');
+                        }
+                    } catch (onnxErr) {
+                        console.warn('[NJU ToolBox] ONNX 本地识别异常，降级到 LLM:', onnxErr.message || onnxErr);
+                        console.warn('[NJU ToolBox] 异常堆栈:', onnxErr.stack);
+                    }
+                } else {
+                    console.warn('[NJU ToolBox] CaptchaOCR 模块未加载，直接使用 LLM 通道');
+                }
 
-                // 带重试的验证码识别函数：约束模型返回恰好 4 位字符
-                async function recognizeCaptcha(b64, retry = 0) {
+                // === 后备通道：LLM 视觉模型识别 ===
+                if (!code) {
+                    // 核心修复：自动清理末尾多余的 /chat/completions 确保拼接正确
+                    let safeBaseUrl = cfg['login_api_url'] || "https://api.siliconflow.cn/v1";
+                    safeBaseUrl = safeBaseUrl.replace(/\/chat\/completions\/?$/, '');
+
+                    // 带重试的验证码识别函数：约束模型返回恰好 4 位字符
+                    async function recognizeCaptcha(b64, retry = 0) {
                     const isRetry = retry > 0;
                     const prompt = isRetry
                         ? 'The image is a 4-character captcha code. Output the 4 characters ONLY. If you output anything else, the system will reject it. 4 characters. No more, no less.'
@@ -194,7 +216,13 @@
                     }
                 }
 
-                const code = await recognizeCaptcha(base64);
+                const llmCode = await recognizeCaptcha(base64);
+                    if (llmCode) {
+                        code = llmCode;
+                        updateStatus(`LLM识别成功: ${code}`, "#4cd964");
+                    }
+                }
+
                 if (code) {
                     updateStatus(`识别成功: ${code}`, "#4cd964");
                     const cInput = document.getElementById('captcha');
