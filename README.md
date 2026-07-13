@@ -137,17 +137,17 @@ NJU-Hub/
 │   ├── material-color-utils.js
 │   └── fonts/
 ├── scripts/               # 内容脚本（注入目标页面）
-│   ├── login.js           # 统一认证页自动登录
-│   ├── gpa.js             # 精英系统 GPA 查询
-│   ├── course_helper.js   # 选课系统增强
-│   ├── eval.js            # 自动评教
-│   ├── lms.js             # LMS 视频/下载增强
-│   ├── inject.js          # SEEC 注入脚本
-│   └── seec_workpanel_enhance_v22.js  # SEEC 作业面板
+│   ├── auth_auto_login.js      # 统一认证页自动登录
+│   ├── elite_gpa_viewer.js     # 精英系统 GPA 查询
+│   ├── xk_course_assistant.js  # 选课系统增强
+│   ├── auto_eval.js            # 自动评教
+│   ├── lms_enhance.js          # LMS 视频/下载增强
+│   ├── seec_xhr_bridge.js      # SEEC Main World 数据桥接
+│   └── seec_workpanel.js       # SEEC 作业面板
 ├── libs/                  # 第三方库
 │   ├── xlsx.full.min.js   # SheetJS — Excel 读写
 │   └── nju-modal.js       # 自定义弹窗组件
-└── options-ui/            # 新版设置页（Next.js 构建中）
+├── FYP/                   # 毕设项目 — 独立脚本与扩展
 ```
 
 ---

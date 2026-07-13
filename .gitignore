@@ -1,0 +1,21 @@
+# IDE
+.idea/
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+out/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+
+#FYP
+FYP
