@@ -448,11 +448,9 @@
             document.getElementById('fav-modal-wrapper').classList.add('open');
         };
 
-        // ===== 插件设置按钮 → 打开 options 页 =====
+        // ===== 插件设置按钮 → 通过 background 打开 options 页 =====
         document.getElementById('btn-open-ai').onclick = () => {
-            if (chrome.runtime && chrome.runtime.openOptionsPage) {
-                chrome.runtime.openOptionsPage();
-            }
+            chrome.runtime.sendMessage({ action: 'openOptions' });
         };
     };
 

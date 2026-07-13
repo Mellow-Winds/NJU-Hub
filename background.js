@@ -33,6 +33,11 @@ async function ensureSeatbleHeaderRules() {
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'openOptions') {
+        chrome.runtime.openOptionsPage();
+        return false;
+    }
+
     if (request.action === 'callAI') {
         // 解构 payload，提取基础信息和“剩余所有参数” (...rest)
         const { apiKey, baseUrl, model, messages, ...rest } = request.payload;
