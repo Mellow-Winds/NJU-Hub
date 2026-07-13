@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网址导航 - NJU Hub</title>
+    <link rel="stylesheet" href="webportal.css">
+</head>
+<body>
+<div class="portal-container akari-layout">
+    <!-- ===== 左侧一级导航 ===== -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">网址导航</div>
+            <div class="version">NJU Hub v2.0.1</div>
+        </div>
+        <ul class="nav-menu" id="first-level-nav">
+            <!-- JS 动态渲染 -->
+        </ul>
+    </nav>
+
+    <!-- ===== 右侧内容区 ===== -->
+    <main class="main-content akari-content akari-motion-reveal">
+        <!-- 顶部二级分类 Tab -->
+        <div class="top-tabs-bar">
+            <ul id="second-level-tabs" class="tabs-list">
+                <!-- JS 动态渲染 -->
+            </ul>
+        </div>
+
+        <!-- 卡片网格 -->
+        <div id="card-grid" class="card-grid">
+            <!-- JS 动态渲染 -->
+        </div>
+    </main>
+</div>
+
+<script src="data.js"></script>
+<script src="../options/material-color-utils.js"></script>
+<script src="webportal.js"></script>
+</body>
+</html>

@@ -1,0 +1,584 @@
+/* webportal.css — 网址导航 (MD3 Design System, aligned with options.css) */
+
+/* ===== Fonts ===== */
+@font-face {
+    font-family: "Google Sans Flex";
+    src: url("../options/fonts/GoogleSans-VariableFont_GRAD,opsz,wght.ttf") format("truetype");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "MiSans";
+    src: url("../options/fonts/MiSans-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "MiSans";
+    src: url("../options/fonts/MiSans-Semibold.woff2") format("woff2");
+    font-weight: 600 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ===== MD3 Motion Tokens ===== */
+:root {
+    --md-sys-motion-easing-emphasized:           cubic-bezier(0.2, 0, 0, 1);
+    --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+    --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+    --md-sys-motion-easing-standard:             cubic-bezier(0.2, 0, 0, 1);
+    --md-sys-motion-easing-standard-decelerate:  cubic-bezier(0, 0, 0, 1);
+    --md-sys-motion-easing-standard-accelerate:  cubic-bezier(0.3, 0, 1, 1);
+    --md-sys-motion-spring:                      cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    --md-sys-motion-duration-short1:   50ms;
+    --md-sys-motion-duration-short2:  100ms;
+    --md-sys-motion-duration-short3:  150ms;
+    --md-sys-motion-duration-short4:  200ms;
+    --md-sys-motion-duration-medium1: 250ms;
+    --md-sys-motion-duration-medium2: 300ms;
+    --md-sys-motion-duration-medium3: 350ms;
+    --md-sys-motion-duration-medium4: 400ms;
+    --md-sys-motion-duration-long1:   450ms;
+    --md-sys-motion-duration-long2:   500ms;
+}
+
+/* ===== MD3 Color Tokens (Light) ===== */
+:root {
+    color-scheme: light;
+
+    --md-sys-color-primary:               #0ea5e9;
+    --md-sys-color-on-primary:            #FFFFFF;
+    --md-sys-color-primary-container:     #D0E8FF;
+    --md-sys-color-on-primary-container:  #001D36;
+
+    --md-sys-color-secondary:             #535F70;
+    --md-sys-color-on-secondary:          #FFFFFF;
+    --md-sys-color-secondary-container:   #D7E3F7;
+    --md-sys-color-on-secondary-container:#101C2B;
+
+    --md-sys-color-tertiary:              #6B5778;
+    --md-sys-color-on-tertiary:           #FFFFFF;
+    --md-sys-color-tertiary-container:    #F2DAFF;
+    --md-sys-color-on-tertiary-container: #251431;
+
+    --md-sys-color-error:                 #BA1A1A;
+    --md-sys-color-on-error:              #FFFFFF;
+    --md-sys-color-error-container:       #FFDAD6;
+    --md-sys-color-on-error-container:    #410002;
+
+    --md-sys-color-background:            #F9FAFB;
+    --md-sys-color-on-background:         #111827;
+    --md-sys-color-surface:               #F9FAFB;
+    --md-sys-color-on-surface:            #111827;
+    --md-sys-color-surface-variant:       #E5E7EB;
+    --md-sys-color-on-surface-variant:    #6B7280;
+
+    --md-sys-color-outline:               #9CA3AF;
+    --md-sys-color-outline-variant:       #E5E7EB;
+
+    --md-sys-color-surface-container-lowest:  #FFFFFF;
+    --md-sys-color-surface-container-low:     #F3F4F6;
+    --md-sys-color-surface-container:         #F1F3F5;
+    --md-sys-color-surface-container-high:    #EBEDF0;
+    --md-sys-color-surface-container-highest: #E5E7EB;
+
+    --md-sys-color-inverse-surface:       #1F2937;
+    --md-sys-color-inverse-on-surface:    #F3F4F6;
+    --md-sys-color-inverse-primary:       #7DD3FC;
+
+    /* Nav pill tokens */
+    --nav-color-default: #44474F;
+    --nav-color-hover:   #1A1B21;
+    --nav-bg-hover:      #E8E8EF;
+    --nav-color-active:  #001C3B;
+    --nav-bg-active:     #D3E4FD;
+    --nav-shadow-active: 0 1px 2px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.06);
+    --nav-spring:        cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ===== MD3 Color Tokens (Dark) ===== */
+html[data-theme="dark"] {
+    color-scheme: dark;
+
+    --md-sys-color-primary:               #7DD3FC;
+    --md-sys-color-on-primary:            #003352;
+    --md-sys-color-primary-container:     #004A73;
+    --md-sys-color-on-primary-container:  #D0E8FF;
+
+    --md-sys-color-secondary:             #BBC7DB;
+    --md-sys-color-on-secondary:          #1D2B3E;
+    --md-sys-color-secondary-container:   #334155;
+    --md-sys-color-on-secondary-container:#D7E3F7;
+
+    --md-sys-color-tertiary:              #D7BDE5;
+    --md-sys-color-on-tertiary:           #3B2948;
+    --md-sys-color-tertiary-container:    #523F5F;
+    --md-sys-color-on-tertiary-container: #F2DAFF;
+
+    --md-sys-color-error:                 #FFB4AB;
+    --md-sys-color-on-error:              #690005;
+    --md-sys-color-error-container:       #93000A;
+    --md-sys-color-on-error-container:    #FFDAD6;
+
+    --md-sys-color-background:            #0B1220;
+    --md-sys-color-on-background:         #E5E7EB;
+    --md-sys-color-surface:               #0B1220;
+    --md-sys-color-on-surface:            #E5E7EB;
+    --md-sys-color-surface-variant:       #374151;
+    --md-sys-color-on-surface-variant:    #D1D5DB;
+
+    --md-sys-color-outline:               #6B7280;
+    --md-sys-color-outline-variant:       #374151;
+
+    --md-sys-color-surface-container-lowest:  #060D19;
+    --md-sys-color-surface-container-low:     #0F172A;
+    --md-sys-color-surface-container:         #131B2E;
+    --md-sys-color-surface-container-high:    #1B2438;
+    --md-sys-color-surface-container-highest: #243049;
+
+    --md-sys-color-inverse-surface:       #E5E7EB;
+    --md-sys-color-inverse-on-surface:    #1F2937;
+    --md-sys-color-inverse-primary:       #0ea5e9;
+
+    --nav-color-default: #9CA0AC;
+    --nav-color-hover:   #E2E4EB;
+    --nav-bg-hover:      #2E3038;
+    --nav-color-active:  #D0E2FF;
+    --nav-bg-active:     #1E3148;
+    --nav-shadow-active: 0 1px 2px rgba(0,0,0,0.2), 0 1px 3px rgba(0,0,0,0.25);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: "Google Sans Flex", "MiSans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14px;
+    color: var(--md-sys-color-on-surface);
+    background: var(--md-sys-color-background);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ===== Layout ===== */
+.portal-container {
+    display: flex;
+    height: 100vh;
+}
+
+.akari-layout {
+    padding: 14px;
+    gap: 12px;
+    background: var(--md-sys-color-background);
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+    width: 200px;
+    flex-shrink: 0;
+    background-color: var(--md-sys-color-surface-container-lowest);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: 20px;
+    transition: box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+}
+
+.sidebar-header {
+    padding: 30px 20px;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0;
+    color: var(--md-sys-color-on-surface);
+}
+
+.version {
+    font-size: 10px;
+    color: var(--md-sys-color-on-surface-variant);
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+/* ===== Nav Item (Pill Button) ===== */
+.nav-menu {
+    list-style: none;
+    padding: 20px 10px;
+    margin: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--nav-color-default);
+    background: transparent;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    transition:
+        background-color 250ms var(--md-sys-motion-easing-standard),
+        color 250ms var(--md-sys-motion-easing-standard),
+        box-shadow 250ms var(--md-sys-motion-easing-standard);
+}
+
+.nav-item:hover {
+    background: var(--nav-bg-hover);
+    color: var(--nav-color-hover);
+}
+
+.nav-item:active {
+    transform: scale(0.97);
+    transition:
+        background-color 250ms var(--md-sys-motion-easing-standard),
+        color 250ms var(--md-sys-motion-easing-standard),
+        box-shadow 250ms var(--md-sys-motion-easing-standard),
+        transform 120ms var(--nav-spring);
+}
+
+.nav-item.active {
+    background: var(--nav-bg-active);
+    color: var(--nav-color-active);
+    font-weight: 600;
+    box-shadow: var(--nav-shadow-active);
+}
+
+.nav-item.active:hover {
+    filter: brightness(1.04);
+}
+
+/* ===== Main Content ===== */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.akari-content {
+    background: var(--md-sys-color-surface-container-lowest);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: 24px;
+}
+
+/* ===== Top Tabs Bar ===== */
+.top-tabs-bar {
+    flex-shrink: 0;
+    padding: 16px 24px 0;
+    background: var(--md-sys-color-surface-container-lowest);
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: 24px 24px 0 0;
+}
+
+.tabs-list {
+    display: flex;
+    list-style: none;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+}
+
+.tab-item {
+    cursor: pointer;
+    padding: 10px 18px;
+    border-radius: 12px 12px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface-variant);
+    transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.tab-item:hover {
+    color: var(--md-sys-color-on-surface);
+    background: rgba(0, 0, 0, 0.04);
+}
+
+html[data-theme="dark"] .tab-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.tab-item:active {
+    transform: scale(0.96);
+    transition:
+        transform 120ms var(--nav-spring),
+        color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+        background var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+.tab-item.active {
+    color: var(--md-sys-color-on-primary-container);
+    background: var(--md-sys-color-primary-container);
+}
+
+/* ===== Card Grid ===== */
+.card-grid {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: clip;
+    scroll-behavior: smooth;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    align-content: start;
+    border-radius: 0 0 24px 24px;
+}
+
+/* Scrollbar */
+.card-grid::-webkit-scrollbar {
+    width: 6px;
+}
+.card-grid::-webkit-scrollbar-track {
+    background: transparent;
+}
+.card-grid::-webkit-scrollbar-thumb {
+    background: var(--md-sys-color-outline-variant);
+    border-radius: 3px;
+}
+.card-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--md-sys-color-outline);
+}
+
+/* ===== Portal Card (with staggered entrance) ===== */
+.portal-card {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    background: var(--md-sys-color-surface-container-lowest);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: 16px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    will-change: transform, opacity;
+    opacity: 0;
+    transform: translateY(32px);
+    transition:
+        transform var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized),
+        box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+        border-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+/* Card entrance animation — triggered by JS via .cards-revealed */
+.card-grid.cards-revealed .portal-card {
+    animation: cardEntrance 600ms var(--md-sys-motion-easing-emphasized-decelerate) both;
+}
+
+/* Staggered delays */
+.card-grid.cards-revealed .portal-card:nth-child(1)  { animation-delay: 0ms; }
+.card-grid.cards-revealed .portal-card:nth-child(2)  { animation-delay: 60ms; }
+.card-grid.cards-revealed .portal-card:nth-child(3)  { animation-delay: 120ms; }
+.card-grid.cards-revealed .portal-card:nth-child(4)  { animation-delay: 180ms; }
+.card-grid.cards-revealed .portal-card:nth-child(5)  { animation-delay: 240ms; }
+.card-grid.cards-revealed .portal-card:nth-child(6)  { animation-delay: 300ms; }
+.card-grid.cards-revealed .portal-card:nth-child(7)  { animation-delay: 360ms; }
+.card-grid.cards-revealed .portal-card:nth-child(8)  { animation-delay: 420ms; }
+.card-grid.cards-revealed .portal-card:nth-child(9)  { animation-delay: 480ms; }
+.card-grid.cards-revealed .portal-card:nth-child(10) { animation-delay: 540ms; }
+
+@keyframes cardEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(32px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Left accent bar on hover */
+.portal-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--md-sys-color-primary);
+    border-radius: 0 2px 2px 0;
+    transform: scaleY(0);
+    transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+}
+
+.portal-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border-color: var(--md-sys-color-outline);
+}
+
+html[data-theme="dark"] .portal-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.portal-card:hover::before {
+    transform: scaleY(1);
+}
+
+.portal-card:active {
+    transform: translateY(-2px) scale(0.98);
+    transition: transform 100ms var(--md-sys-motion-easing-standard);
+}
+
+.portal-card__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface);
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.portal-card__desc {
+    font-size: 13px;
+    color: var(--md-sys-color-on-surface-variant);
+    font-weight: 500;
+    line-height: 1.5;
+    flex: 1;
+    margin-bottom: 14px;
+}
+
+.portal-card__url {
+    font-size: 12px;
+    color: var(--md-sys-color-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 600;
+}
+
+/* ===== Empty State ===== */
+.empty-tip {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* ===== Ripple Effect (MD3) ===== */
+.ripple-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0;
+    transform: scale(0);
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+
+/* Default ripple — expands far out (cards, buttons) */
+.ripple.animate {
+    animation: rippleExpand 500ms var(--md-sys-motion-easing-standard) forwards;
+}
+
+@keyframes rippleExpand {
+    0% {
+        transform: scale(0);
+        opacity: 0.16;
+    }
+    80% {
+        opacity: 0.08;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Nav-item ripple — contained diffusion */
+.ripple.animate-nav {
+    animation: navRippleIn 500ms var(--md-sys-motion-easing-standard) forwards;
+}
+
+@keyframes navRippleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0.2;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
+/* ===== Reveal Animation (page load) ===== */
+@keyframes akariMotionReveal {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.akari-motion-reveal {
+    animation: akariMotionReveal 600ms var(--md-sys-motion-easing-emphasized-decelerate) both;
+}
+
+/* ===== Top Tabs Bar Entrance ===== */
+.top-tabs-bar {
+    opacity: 0;
+    transform: translateY(-8px);
+    animation: tabsBarIn 400ms var(--md-sys-motion-easing-emphasized-decelerate) 200ms both;
+}
+
+@keyframes tabsBarIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Reduced Motion ===== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

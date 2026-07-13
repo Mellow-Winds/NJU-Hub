@@ -100,4 +100,9 @@ function bindEvents() {
     document.getElementById('btn-gpa').onclick = () => {
         chrome.tabs.create({ url: 'http://elite.nju.edu.cn/exchangesystem/' });
     };
+
+    // Webportal quick access
+    document.getElementById('btn-webportal').onclick = () => {
+        chrome.tabs.create({ url: chrome.runtime.getURL('webportal/webportal.html') });
+    };
 }
