@@ -409,7 +409,7 @@
             <div id="xk-island-main" class="xk-island">
                 <div class="status-wrapper">
                     <div id="xk-dot" class="status-dot"></div>
-                    <span class="status-text">NJU Hub</span>
+                    <span class="status-text">NJU-Hub</span>
                 </div>
                 <div class="xk-panel">
                     <div style="font-size:12px; font-weight:700; color:#8e8e93;">${I.school} 我的主校区</div>

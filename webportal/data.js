@@ -1,4 +1,4 @@
-// webportal/data.js — NJU Hub 网址导航数据
+// webportal/data.js — NJU-Hub 网址导航数据
 // 三级树形结构：一级分类 → 二级分类 → 卡片链接
 
 const PORTAL_DATA = [

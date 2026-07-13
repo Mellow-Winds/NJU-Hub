@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NJU-Hub 设置</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+<body>
+<div class="container akari-layout">
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">NJU-Hub</div>
+            <div class="version">v2.0.1</div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" data-target="section-general">
+                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                <span>个人信息设置</span>
+            </li>
+            <li class="nav-item" data-target="section-personalize">
+                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4c.83 0 1.5.67 1.5 1.5S10.33 11 9.5 11 8 10.33 8 9.5 8.67 8 9.5 8zm5 0c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                <span>个性化</span>
+            </li>
+            <li class="nav-divider"></li>
+            <li class="nav-item" data-target="section-login">
+                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M11 7 9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"/></svg>
+                <span>自动登录设置</span>
+            </li>
+            <li class="nav-item" data-target="section-course">
+                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3 1 9l4 2.18v1.74L1 15l11 6 4-2.18v-2.19L20 15l-4-2.18v-1.74L20 9 12 3z"/></svg>
+                <span>选课助手设置</span>
+            </li>
+            <li class="nav-item" data-target="section-eval">
+                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/><path fill="currentColor" d="m12 15 1.57-3.43L17 10l-3.43-1.57L12 5l-1.57 3.43L7 10l3.43 1.57z"/></svg>
+                <span>自动评教设置</span>
+            </li>
+            <li class="nav-item" data-target="section-lms">
+                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7L8 5z"/></svg>
+                <span>智汇南雍增强设置</span>
+            </li>
+            <li class="nav-divider"></li>
+            <li class="nav-item" data-target="section-seec">
+                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                <span>显示增强</span>
+            </li>
+            <li class="nav-divider"></li>
+            <li class="nav-item" data-target="section-about">
+                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                <span>关于插件</span>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <button id="save-all-btn" class="btn-save" type="button">保存所有配置</button>
+            <a href="https://github.com/Mellow-Winds/NJU-Hub" target="_blank" rel="noopener" class="sidebar-github-link" title="GitHub 仓库">
+                <svg class="github-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                    <path fill="currentColor" d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+                <span>Github源码仓库</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="content akari-content akari-motion-reveal">
+        <!-- SECTIONS -->
+    </main>
+</div>
+<div id="schedule-modal" class="nju-modal-overlay" style="display:none">
+    <div class="nju-modal">
+        <div class="nju-modal-header">
+            <span class="nju-modal-title">我的课表</span>
+            <button id="schedule-close" class="nju-modal-close" type="button" aria-label="关闭">×</button>
+        </div>
+        <div class="nju-modal-body" id="schedule-body"></div>
+        <div class="nju-modal-footer">
+            <button id="schedule-open-ehall" class="btn-small" type="button">打开课表页面</button>
+        </div>
+    </div>
+</div>
+<script src="../libs/xlsx.full.min.js"></script>
+<script src="../libs/nju-modal.js"></script>
+<script src="material-color-utils.js"></script>
+<script src="options.js"></script>
+  <!-- MODULES -->
+</body>
+</html>
