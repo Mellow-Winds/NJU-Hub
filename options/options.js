@@ -354,6 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const KEYS = [
         'common-name', 'student_id', 'login_pass',
         'login_autofill', 'login_autologin', 'login_api_url', 'login_api_key', 'login_model',
+        'login_extract_api_url', 'login_extract_api_key', 'login_extract_model',
         'course_major', 'course_pref', 'course_api_url', 'course_api_key', 'course_model',
         'NJU_CAMPUS', 'NJU_CONFLICT', 'NJU_PIN_FAV',
         'NJU_SCHEDULE',
@@ -409,6 +410,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setVal('login-api-url', data.login_api_url);
         setVal('login-api-key', data.login_api_key);
         setVal('login-model', data.login_model);
+        setVal('login-extract-api-url', data.login_extract_api_url);
+        setVal('login-extract-api-key', data.login_extract_api_key);
+        setVal('login-extract-model', data.login_extract_model);
 
         setVal('course-major', data.course_major);
         setVal('course-pref', data.course_pref);
@@ -460,6 +464,9 @@ document.addEventListener('DOMContentLoaded', () => {
             'login_api_url': document.getElementById('login-api-url').value.trim(),
             'login_api_key': document.getElementById('login-api-key').value.trim(),
             'login_model': document.getElementById('login-model').value.trim(),
+            'login_extract_api_url': document.getElementById('login-extract-api-url').value.trim(),
+            'login_extract_api_key': document.getElementById('login-extract-api-key').value.trim(),
+            'login_extract_model': document.getElementById('login-extract-model').value.trim(),
             'course_major': document.getElementById('course-major').value.trim(),
             'course_pref': document.getElementById('course-pref').value.trim(),
             'course_api_url': document.getElementById('course-api-url').value.trim(),

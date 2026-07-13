@@ -37,5 +37,27 @@
                     <label for="login-model">Vision Model</label>
                     <input type="text" id="login-model" placeholder="">
                 </div>
+
+                <div class="divider">二次提取模型（可选）</div>
+                <p class="tutorial-step" style="margin-bottom:12px;">当验证码识别结果位数异常时，将原始回复交给此文本模型二次提取。留空则不启用。</p>
+                <div class="form-group">
+                    <label for="login-extract-api-url">提取 API Base URL</label>
+                    <input type="text" id="login-extract-api-url" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="login-extract-api-key">提取 API Key</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-extract-api-key" placeholder="">
+                        <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
+                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="login-extract-model">提取模型</label>
+                    <input type="text" id="login-extract-model" placeholder="">
+                </div>
             </div>
         </section>

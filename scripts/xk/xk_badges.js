@@ -25,8 +25,8 @@
     };
 
     /**
-     * 注入所有徽章：收藏按钮、概率、冲突、跨校区、AI 标签
-     */
+ * 注入所有徽章：收藏按钮、概率、冲突、跨校区、💬评价 + AI 标签
+ */
     const injectBadges = () => {
         const db = GM_getValue(STORAGE.DB, {});
         const aiCache = GM_getValue(STORAGE.AI_CACHE, {});
@@ -38,9 +38,9 @@
         document.querySelectorAll('tr.course-tr').forEach(row => {
             if (row.dataset.checkedHub) return;
 
-            const name = row.querySelector('.kcmc')?.innerText || '未知';
-            const teacher = row.querySelector('.jsmc')?.innerText || '未知';
-            const time = row.querySelector('.sjdd')?.innerText || '';
+            const name = row.querySelector('.kcmc')?.innerText?.trim() || '';
+            const teacher = row.querySelector('.jsmc')?.innerText?.trim() || '';
+            const time = row.querySelector('.sjdd')?.innerText?.trim() || '';
 
             // 0. 收藏按钮
             const kchCell = row.querySelector('.kch');
@@ -91,36 +91,84 @@
                 }
             }
 
-            // 2. AI 评价标签
+            // 2. 💬评价 + AI 标签（三级匹配：教师+课程名）
             const jsmcCell = row.querySelector('.jsmc');
             if (jsmcCell && Object.keys(db).length) {
                 const rowText = row.innerText.replace(/\s/g, '');
+                const nameClean = name.replace(/\s/g, '');
+
                 for (const k in db) {
                     const [c, t] = k.split('#');
-                    if (rowText.includes(c.replace(/\s/g, ''))) {
-                        const ts = t.split(/[\s,，、]+/);
-                        if (ts.some(n => n && rowText.includes(n))) {
-                            let comms = db[k].comments || db[k];
-                            if (!Array.isArray(comms) || comms.length === 0) break;
+                    const cClean = c.replace(/\s/g, '');
+                    const ts = t.split(/[\s,，、]+/);
 
-                            const cacheKey = `${c}#${t}`;
-                            const cached = aiCache[cacheKey];
-
-                            if (cached) {
-                                const aiTag = document.createElement('span');
-                                aiTag.className = 'nj-badge';
-                                setAITagState(aiTag, cached, cacheKey);
-                                appendB(jsmcCell, aiTag);
-                            } else {
-                                window.pendingAITasks = window.pendingAITasks || [];
-                                window.pendingAITasks.push({
-                                    course: c, teacher: t, comments: comms,
-                                    cacheKey: cacheKey, cell: jsmcCell
-                                });
-                            }
-                            break;
-                        }
+                    // === 三级回退匹配 ===
+                    let matched = false;
+                    // Level 1: 精确匹配
+                    if (name === c && teacher === t) {
+                        matched = true;
                     }
+                    // Level 2: 去空格精确匹配
+                    else if (nameClean === cClean && ts.some(n => n && teacher.includes(n))) {
+                        matched = true;
+                    }
+                    // Level 3: 包含匹配
+                    else if (rowText.includes(cClean) && ts.some(n => n && rowText.includes(n))) {
+                        matched = true;
+                    }
+
+                    if (!matched) continue;
+
+                    let comms = db[k].comments || db[k];
+                    if (!Array.isArray(comms) || comms.length === 0) break;
+
+                    // --- 💬 N条评价 徽章 ---
+                    const rawTag = document.createElement('span');
+                    rawTag.className = 'nj-badge';
+                    rawTag.style.background = '#8e8e93';
+                    rawTag.style.cursor = 'help';
+                    rawTag.innerText = `💬 ${comms.length}条评价`;
+                    rawTag.onmouseenter = () => {
+                        clearTimeout(window.__popoverTimer);
+                        const pop = document.getElementById('nj-popover');
+                        if (!pop) return;
+                        let h = `<div style="font-weight:800;color:${THEME.PURPLE};margin-bottom:8px;border-bottom:1px solid #eee;padding-bottom:5px;">📌 原始评价库 (${comms.length}条)</div>`;
+                        comms.forEach(x => {
+                            const safe = String(x).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                            h += `<div class="pop-item">● ${safe}</div>`;
+                        });
+                        pop.innerHTML = h;
+                        pop.style.maxHeight = '400px';
+                        const re = rawTag.getBoundingClientRect();
+                        pop.style.left = Math.min(re.left, window.innerWidth - 380) + 'px';
+                        pop.style.top = (re.bottom + 8) + 'px';
+                        pop.classList.add('visible');
+                    };
+                    rawTag.onmouseleave = () => {
+                        window.__popoverTimer = setTimeout(() => {
+                            const pop = document.getElementById('nj-popover');
+                            if (pop) pop.classList.remove('visible');
+                        }, 300);
+                    };
+                    appendB(jsmcCell, rawTag);
+
+                    // --- AI 标签 ---
+                    const cacheKey = `${c}#${t}`;
+                    const cached = aiCache[cacheKey];
+
+                    if (cached) {
+                        const aiTag = document.createElement('span');
+                        aiTag.className = 'nj-badge';
+                        setAITagState(aiTag, cached, cacheKey);
+                        appendB(jsmcCell, aiTag);
+                    } else {
+                        window.pendingAITasks = window.pendingAITasks || [];
+                        window.pendingAITasks.push({
+                            course: c, teacher: t, comments: comms,
+                            cacheKey: cacheKey, cell: jsmcCell
+                        });
+                    }
+                    break;
                 }
             }
 

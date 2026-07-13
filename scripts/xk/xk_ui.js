@@ -50,11 +50,10 @@
                 transition: width 0.5s ${APPLE_EASE}, height 0.5s ${APPLE_EASE};
                 box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             }
-            .xk-island.expanded { width: 380px; height: 390px; box-shadow: 0 25px 70px rgba(0,0,0,0.15); }
-            .xk-island.dragging { transition: none !important; user-select: none; }
+            .xk-island.expanded { width: 380px; height: 540px; box-shadow: 0 25px 70px rgba(0,0,0,0.15); }
             .status-wrapper {
                 width: 160px; height: 40px; display: flex; align-items: center;
-                justify-content: center; gap: 8px; flex-shrink: 0; cursor: grab;
+                justify-content: center; gap: 8px; flex-shrink: 0;
             }
             .status-text { font-weight: 700; font-size: 13px; color: #1c1c1e; letter-spacing: -0.2px; }
             .status-dot { width: 8px; height: 8px; border-radius: 50%; transition: 0.3s; }
@@ -176,6 +175,21 @@
             .fav-info { flex: 1; display: flex; flex-direction: column; }
             .fav-name { font-weight: 600; color: #333; font-size: 14px; margin-bottom: 3px; }
             .fav-detail { color: #888; font-size: 12px; }
+
+            /* 课表 Modal 行 */
+            .sched-row {
+                display: flex; align-items: flex-start; padding: 14px; background: #fff;
+                border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: 0.2s;
+            }
+            .sched-row:hover { transform: scale(1.01); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+            .sched-idx {
+                width: 28px; height: 28px; border-radius: 50%; background: ${THEME.PURPLE};
+                color: #fff; font-size: 12px; font-weight: 700; display: flex;
+                align-items: center; justify-content: center; flex-shrink: 0; margin-right: 12px;
+            }
+            .sched-info { flex: 1; display: flex; flex-direction: column; }
+            .sched-name { font-weight: 600; color: #333; font-size: 14px; margin-bottom: 3px; }
+            .sched-time { color: #888; font-size: 12px; }
         `;
         document.head.appendChild(style);
     };
@@ -201,7 +215,43 @@
     };
 
     /**
-     * 注入收藏夹管理 Modal
+     * 更新课表列表 UI
+     */
+    const updateSchedList = () => {
+        const container = document.getElementById('sched-container');
+        if (!container) return;
+        container.innerHTML = '';
+        const schedule = GM_getValue(STORAGE.SCHEDULE, []);
+        if (!schedule.length) {
+            container.innerHTML = '<div style="text-align:center;color:#999;margin-top:20px;padding:20px;">暂无课表<br><small>请先在 ehall 课表页面导入</small></div>';
+            return;
+        }
+        schedule.forEach((item, idx) => {
+            const row = document.createElement('div');
+            row.className = 'sched-row';
+            row.innerHTML = `
+                <div class="sched-idx">${idx + 1}</div>
+                <div class="sched-info">
+                    <div class="sched-name">${item.name || '(未命名)'}</div>
+                    <div class="sched-time">${item.teacher || ''} ${item.time || ''}</div>
+                </div>
+            `;
+            container.appendChild(row);
+        });
+    };
+
+    /**
+     * 更新课表按钮上的计数
+     */
+    const updateSchedCount = () => {
+        const btn = document.getElementById('btn-open-sched');
+        if (!btn) return;
+        const schedule = GM_getValue(STORAGE.SCHEDULE, []);
+        btn.innerText = `📅 课表 (${schedule.length})`;
+    };
+
+    /**
+     * 注入收藏夹管理 Modal + 课表查看 Modal
      */
     const injectModals = () => {
         if (document.getElementById('fav-modal-wrapper')) return;
@@ -256,7 +306,6 @@
                 GM_setValue(STORAGE.FAVORITES, favs);
                 updateFavList(favs);
                 document.getElementById('btn-open-fav').innerText = `⭐ 收藏夹 (${Object.keys(favs).length})`;
-                // 重新排序
                 if (window.__XK__.sortFavRows) window.__XK__.sortFavRows();
             }
         };
@@ -283,6 +332,41 @@
                 }
             };
             r.readAsText(e.target.files[0]);
+        };
+
+        // ===== 课表查看 Modal =====
+        const schedDiv = document.createElement('div');
+        schedDiv.id = 'sched-modal-wrapper';
+        schedDiv.className = 'xk-modal-overlay';
+        schedDiv.innerHTML = `
+            <div class="xk-modal">
+                <div class="xk-header"><span>📅 我的课表</span><span class="xk-close" id="sched-close">✕</span></div>
+                <div class="xk-body" id="sched-container"></div>
+                <div class="xk-footer">
+                    <button class="xk-btn" id="sched-clear" style="background:#FF3B30; color:white; padding:8px 16px; flex:none;">🗑️ 清空课表</button>
+                    <div style="flex:1;"></div>
+                    <button class="xk-btn" id="sched-import" style="background:${THEME.PURPLE}; color:white; padding:8px 16px; flex:none;">📋 导入课表</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(schedDiv);
+
+        const schedModal = schedDiv;
+        document.getElementById('sched-close').onclick = () => schedModal.classList.remove('open');
+        schedModal.onclick = (e) => { if (e.target === schedModal) schedModal.classList.remove('open'); };
+
+        document.getElementById('sched-import').onclick = () => {
+            chrome.tabs.create({ url: 'https://ehallapp.nju.edu.cn/jwapp/sys/wdkb/index.do' });
+        };
+
+        document.getElementById('sched-clear').onclick = () => {
+            const schedule = GM_getValue(STORAGE.SCHEDULE, []);
+            if (schedule.length === 0) return;
+            if (confirm(`确定清空全部 ${schedule.length} 门课表记录吗？`)) {
+                GM_setValue(STORAGE.SCHEDULE, []);
+                updateSchedList();
+                updateSchedCount();
+            }
         };
     };
 
@@ -339,7 +423,12 @@
 
                     <div style="display:flex; gap:10px; width: 100%;">
                         <button id="btn-open-fav" class="xk-btn" style="background:#f0f0f5; color:#333; border:1px solid #ddd;">⭐ 收藏夹 (${Object.keys(favorites).length})</button>
+                        <button id="btn-open-sched" class="xk-btn" style="background:#f0f0f5; color:#333; border:1px solid #ddd;">📅 课表 (${(GM_getValue(STORAGE.SCHEDULE, [])).length})</button>
+                    </div>
+
+                    <div style="display:flex; gap:10px; width: 100%;">
                         <button id="btn-open-ai" class="xk-btn" style="background:#f3e8ff; color:${THEME.PURPLE}; border:1px solid #d8b4fe;">⚙️ 插件设置</button>
+                        <button id="btn-ai-analyze" class="xk-btn" style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; border:none;">🤖 一键AI分析</button>
                     </div>
 
                     <button id="btn-save" class="save-btn">💾 保存配置</button>
@@ -351,63 +440,9 @@
 
         const island = document.getElementById('xk-island-main');
 
-        // ===== 拖拽 =====
-        let dragState = { isDragging: false, hasMoved: false, startX: 0, startY: 0, startLeft: 0, startTop: 0 };
-        let suppressHover = false;
-
-        const savedPos = GM_getValue(STORAGE.ISLAND_POS, null);
-        if (savedPos && savedPos.left && savedPos.top) {
-            root.style.left = savedPos.left;
-            root.style.top = savedPos.top;
-            root.style.transform = 'none';
-        }
-
-        const statusWrapper = island.querySelector('.status-wrapper');
-
-        statusWrapper.addEventListener('mousedown', (e) => {
-            dragState.isDragging = true;
-            dragState.hasMoved = false;
-            suppressHover = true;
-            dragState.startX = e.clientX;
-            dragState.startY = e.clientY;
-            const rect = root.getBoundingClientRect();
-            dragState.startLeft = rect.left;
-            dragState.startTop = rect.top;
-            statusWrapper.style.cursor = 'grabbing';
-            e.preventDefault();
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!dragState.isDragging) return;
-            const dx = e.clientX - dragState.startX;
-            const dy = e.clientY - dragState.startY;
-            if (!dragState.hasMoved && (Math.abs(dx) > 3 || Math.abs(dy) > 3)) {
-                dragState.hasMoved = true;
-                island.classList.add('dragging');
-                island.classList.remove('expanded');
-            }
-            if (dragState.hasMoved) {
-                root.style.left = (dragState.startLeft + dx) + 'px';
-                root.style.top = (dragState.startTop + dy) + 'px';
-                root.style.transform = 'none';
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            if (!dragState.isDragging) return;
-            island.classList.remove('dragging');
-            statusWrapper.style.cursor = '';
-            if (dragState.hasMoved) {
-                GM_setValue(STORAGE.ISLAND_POS, { left: root.style.left, top: root.style.top });
-            }
-            dragState.isDragging = false;
-            dragState.hasMoved = false;
-            setTimeout(() => { suppressHover = false; }, 150);
-        });
-
         // ===== hover 展开 =====
-        island.onmouseenter = () => { if (!suppressHover) island.classList.add('expanded'); };
-        island.onmouseleave = () => { if (!suppressHover) island.classList.remove('expanded'); };
+        island.onmouseenter = () => island.classList.add('expanded');
+        island.onmouseleave = () => island.classList.remove('expanded');
 
         document.getElementById('xk-dot').style.backgroundColor = '#34C759';
 
@@ -454,6 +489,19 @@
                 chrome.runtime.sendMessage({ action: 'openOptions' });
             });
         };
+
+        // ===== 课表按钮 =====
+        document.getElementById('btn-open-sched').onclick = () => {
+            updateSchedList();
+            document.getElementById('sched-modal-wrapper').classList.add('open');
+        };
+
+        // ===== 一键AI分析按钮 =====
+        document.getElementById('btn-ai-analyze').onclick = () => {
+            if (window.__XK__.analyzeAllPending) {
+                window.__XK__.analyzeAllPending();
+            }
+        };
     };
 
     Object.assign(window.__XK__, {
@@ -463,6 +511,8 @@
         CAMPUS_IDX,
         injectStyles,
         updateFavList,
+        updateSchedList,
+        updateSchedCount,
         injectModals,
         renderIsland
     });

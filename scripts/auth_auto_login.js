@@ -19,7 +19,8 @@
 
     const STORAGE_KEYS = [
         'toggle-login', 'login_user', 'login_pass', 'login_api_url',
-        'login_api_key', 'login_model', 'login_autofill', 'login_autologin'
+        'login_api_key', 'login_model', 'login_autofill', 'login_autologin',
+        'login_extract_api_url', 'login_extract_api_key', 'login_extract_model'
     ];
 
     chrome.storage.local.get(STORAGE_KEYS, (cfg) => {
@@ -115,7 +116,7 @@
                                     { type: "image_url", image_url: { url: b64 } }
                                 ]
                             }],
-                            max_tokens: 5,
+                            max_tokens: 20,
                             temperature: isRetry ? 0.01 : 0.1
                         })
                     });
@@ -125,18 +126,72 @@
                     }
 
                     const data = await response.json();
-                    let text = data.choices[0].message.content.trim();
-                    console.log(`[NJU ToolBox] 原始回复${isRetry ? '(重试)' : ''}:`, text);
+                    const rawText = data.choices[0].message.content.trim();
+                    console.log(`[NJU ToolBox] 原始回复${isRetry ? '(重试)' : ''}:`, rawText);
 
-                    // 清洗数据
-                    text = text.replace(/beginofbox.*?endofbox|<box>.*?<\/box>|box/gi, '').replace(/[^a-zA-Z0-9]/g, '');
-                    if (text.length > 4) {
-                        text = text.substring(text.length - 4);
+                    // 路线A：强化清洗 —— 先剥离所有标签块，再提取4位验证码
+                    let text = rawText;
+                    // 1. 剥离 <think>...</think>、<reasoning>...</reasoning>、<box>...</box> 等标签块（跨行匹配）
+                    text = text.replace(/<(think|reasoning|box|system|assistant)>[\s\S]*?<\/\1>/gi, '');
+                    // 2. 剥离自闭合或未闭合的残留标签
+                    text = text.replace(/<\/?(think|reasoning|box|system|assistant)>/gi, '');
+                    // 3. 优先匹配独立的4位字母数字片段（如 "The answer is A3B9" → A3B9）
+                    const m = text.match(/\b([A-Za-z0-9]{4})\b/);
+                    if (m) {
+                        text = m[1];
+                    } else {
+                        // 退化：去非字母数字后取前4位
+                        text = text.replace(/[^a-zA-Z0-9]/g, '');
+                        if (text.length >= 4) text = text.substring(0, 4);
                     }
 
-                    if (text.length === 4) return text;           // 成功
-                    if (retry < 1) return recognizeCaptcha(b64, 1);  // 重试一次
-                    return null;                                   // 重试后仍失败
+                    if (text.length === 4) return text;  // 路线A成功
+
+                    // 路线B：二次提取 —— 把原始回复交给文本模型提取4位验证码
+                    const extracted = await extractCaptcha(rawText);
+                    if (extracted) {
+                        console.log(`[NJU ToolBox] 二次提取成功: ${extracted}`);
+                        return extracted;
+                    }
+
+                    // 路线A+B均失败，触发重试
+                    if (retry < 1) return recognizeCaptcha(b64, retry + 1);
+                    return null;
+                }
+
+                // 二次提取函数：用文本模型从模型A的原始回复中提取4位验证码
+                async function extractCaptcha(rawText) {
+                    // 模型B未配置则跳过
+                    if (!cfg['login_extract_model'] || !cfg['login_extract_api_key']) return null;
+
+                    let extractBaseUrl = cfg['login_extract_api_url'] || cfg['login_api_url'] || "https://api.siliconflow.cn/v1";
+                    extractBaseUrl = extractBaseUrl.replace(/\/chat\/completions\/?$/, '');
+
+                    try {
+                        const response = await fetch(`${extractBaseUrl}/chat/completions`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${cfg['login_extract_api_key']}`
+                            },
+                            body: JSON.stringify({
+                                model: cfg['login_extract_model'],
+                                messages: [{ role: "user", content: '从以下文本中提取验证码。验证码恰好是4个字母或数字字符。只输出这4个字符，不要输出任何其他内容。\n\n文本：' + rawText }],
+                                max_tokens: 10,
+                                temperature: 0
+                            })
+                        });
+
+                        if (!response.ok) return null;
+
+                        const data = await response.json();
+                        let text = data.choices[0].message.content.trim();
+                        text = text.replace(/[^a-zA-Z0-9]/g, '');
+                        return text.length === 4 ? text : null;
+                    } catch (e) {
+                        console.warn('[NJU ToolBox] 二次提取失败:', e.message);
+                        return null;
+                    }
                 }
 
                 const code = await recognizeCaptcha(base64);

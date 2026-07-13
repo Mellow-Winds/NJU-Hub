@@ -72,5 +72,15 @@
     startAutoConfirm();
     startPolling();
 
+    // Tab 切换时清除匹配缓存，以便重新匹配
+    const tabLinks = document.querySelectorAll('#cvPageHeadTab a');
+    tabLinks.forEach(a => {
+        a.addEventListener('click', () => {
+            document.querySelectorAll('tr.course-tr').forEach(row => {
+                delete row.dataset.checkedHub;
+            });
+        });
+    });
+
     console.log('[NJU-Hub] 选课助手已启动');
 })();
