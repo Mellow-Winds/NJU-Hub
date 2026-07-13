@@ -4,7 +4,7 @@
 const PORTAL_DATA = [
   {
     id: "official",
-    name: "官方网站",
+    name: "南京大学官方网站",
     subs: [
       {
         id: "portal",
@@ -64,10 +64,14 @@ const PORTAL_DATA = [
       },
       {
         id: "unofficial",
-        name: "民间资料整理网站",
+        name: "非官方资料整理",
         links: [
           { id: "ad-astra", name: "鼓励你学哪门课榜", desc: "红黑榜的一个网站", url: "https://table.nju.edu.cn/apps/custom/ad-astra/?page_id=AeyG" },
-          { id: "nanna-helper", name: "南哪助手教学资料库", desc: "如题", url: "https://table.nju.edu.cn/apps/custom/nannadata/?page_id=kw9T" }
+          {id:"red-black-table",name:"红黑榜（25年及以前）",desc:"25年及以前的红黑榜原始数据",url:"https://table.nju.edu.cn/external-apps/7aded834-74a2-43cc-b515-fb8e01656ef2/?page_id=zI1D"},
+          {id:"red-black-table-search1",name:"红黑榜搜索平台：其一",desc:"这个网站可以搜索红黑榜的数据。",url:"https://xk.nju.at/"},
+          { id: "nanna-helper", name: "南哪助手教学资料库", desc: "如题", url: "https://table.nju.edu.cn/apps/custom/nannadata/?page_id=kw9T" },
+          {id:"yuque-newer",name:"语雀新生手册",desc:"由南哪助手整理的语雀文档，主要讲解的是一些常见的问题",url:"https://www.yuque.com/greatnju/q-a2.0"},
+          {id:"nanruanfojiao",name:"南软佛脚玩乐指南",desc:"一位软院学长的资料库。有很多实用的内容:)",url:"https://costg.gitbook.io/njuse"},
         ]
       }
     ]
@@ -77,13 +81,24 @@ const PORTAL_DATA = [
     name: "学习",
     subs: [
       {
-        id: "outside-res",
-        name: "校外学习平台",
+        id: "platform",
+        name: "学习平台",
         links: [
+          { id: "lms", name: "南京大学智汇南雍：LMS平台", desc: "部分课程会使用此平台", url: "https://lms.nju.edu.cn" },
+          { id: "spoc", name: "阅读 SPOC 官方网站", desc: "悦读课的专属学习平台", url: "https://study.nju.edu.cn" },
           { id: "icourse", name: "中国大学MOOC", desc: "MOOC网站，部分通识课、劳育课在这里开展。", url: "https://www.icourse163.org/" },
           {id:"zhihuishu", name:"智慧树教学平台",desc: "新生的数学零年级课程似乎是在这个平台开展。", url:"https://onlineweb.zhihuishu.com/"},
-          {id:"ketangpai", name:"课堂派",desc:"有的课程会在这个平台开展。比如zc老师的vjf。",url:"https://www.ketangpai.com/"},
-          {id:"chaoxing",name:"学习通",desc:"学习通，部分课程在这个平台开展。",url:"https://i.chaoxing.com"}
+          {id:"ketangpai", name:"课堂派",desc:"部分课程会在这个平台开展。比如zc老师的vjf。",url:"https://www.ketangpai.com/"},
+          {id:"chaoxing",name:"学习通",desc:"学习通，部分课程会在这个平台开展。",url:"https://i.chaoxing.com"},
+          {id:"WE Learn",name:"WE Learn学习平台",desc:"部分英语听说课的教学在这个平台开展。",url:"https://welearn.sflep.com/"},
+        ]
+      },
+      {
+        id: "official-other",
+        name: "其他常用网站",
+        links: [
+          {id:"zhiwang",name:"中国知网",desc:"知网。",url:"https://www.cnki.net/"},
+          {id:"xuexinwang",name:"学信网",desc:"在此处可以查看学籍信息等",url:"https://www.chsi.com.cn/"}
         ]
       },
       {
