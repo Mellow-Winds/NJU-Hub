@@ -14,7 +14,6 @@
             <div class="version">v2.0.1</div>
         </div>
         <ul class="nav-menu">
-            <!-- 分区 1：账号与外观 -->
             <li class="nav-item active" data-target="section-general">
                 <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                 <span>个人信息设置</span>
@@ -24,7 +23,6 @@
                 <span>个性化</span>
             </li>
             <li class="nav-divider"></li>
-            <!-- 分区 2：功能模块 -->
             <li class="nav-item" data-target="section-login">
                 <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M11 7 9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"/></svg>
                 <span>自动登录设置</span>
@@ -42,13 +40,11 @@
                 <span>智汇南雍增强设置</span>
             </li>
             <li class="nav-divider"></li>
-            <!-- 分区 3：显示 -->
             <li class="nav-item" data-target="section-seec">
                 <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                 <span>显示增强</span>
             </li>
             <li class="nav-divider"></li>
-            <!-- 分区 4：关于 -->
             <li class="nav-item" data-target="section-about">
                 <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                 <span>关于插件</span>
@@ -66,128 +62,44 @@
     </nav>
 
     <main class="content akari-content akari-motion-reveal">
-        <section id="section-general" class="settings-section active">
-            <h2>个人信息</h2>
-            <p class="section-desc">管理你的基础身份信息，用于自动登录。所有信息本地保存，不上传云端。</p>
+        
+<!-- ===== about ===== -->
+<section id="section-about" class="settings-section">
+            <h2>关于插件</h2>
+            <p class="section-desc">NJU Hub — 南大智慧终端 v2.0.1</p>
+
+            <div class="card card-full">
+                <div class="divider">AI 配置教程</div>
+                <div class="about-tutorial">
+                    <p class="tutorial-step"><strong>1. 获取 API Key</strong> — 前往大模型服务提供商的开放平台注册并获取 API Key。常用提供商包括 SiliconCloud、OpenAI、智谱 AI 等。注册后在控制台创建 API Key 并复制。</p>
+                    <p class="tutorial-step"><strong>2. 配置 API Base URL</strong> — 将提供商提供的 API 地址填入对应模块的「API Base URL」输入框。通常格式为 <code>https://api.xxx.com/v1</code>，具体以提供商文档为准。</p>
+                    <p class="tutorial-step"><strong>3. 填写 API Key</strong> — 将步骤 1 获取的 Key 粘贴到「API Key」输入框中，该 Key 仅保存在你本地浏览器的插件存储中。</p>
+                    <p class="tutorial-step"><strong>4. 选择模型</strong> — 在「Model」输入框中填写模型名称（如 <code>Qwen/Qwen3-8B</code>）。注意需要支持视觉识别的模型才能用于自动登录验证码识别。</p>
+                    <p class="tutorial-step"><strong>5. 多个模块独立配置</strong> — 自动登录、选课助手、自动评教三个模块的 AI 配置互相独立，你可以为不同模块使用不同的 API Key 和模型。</p>
+                </div>
+            </div>
+
             <div class="card">
-                <div class="form-group">
-                    <label for="common-name">昵称</label>
-                    <input type="text" id="common-name" placeholder="应该如何称呼您？">
-                </div>
-                <div class="form-group">
-                    <label for="common-id">学号</label>
-                    <input type="text" id="common-id" placeholder="此处填写用于自动登录的学号">
-                </div>
-                <div class="form-group">
-                    <label for="common-pwd">统一认证密码</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="common-pwd" placeholder="仅用于自动登录加密存储">
-                        <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
-                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-                                <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
-                            </svg>
-                        </span>
-                    </div>
-                </div>
+                <div class="divider">隐私政策</div>
+                <button id="btn-privacy-policy" class="btn-small" type="button" style="width:100%;">查看隐私政策</button>
+            </div>
+
+            <div class="card">
+                <div class="divider">问题反馈</div>
+                <p class="tutorial-step">如遇到问题或有功能建议，欢迎联系开发者：</p>
+                <p class="tutorial-step" style="font-size:15px;font-weight:700;">
+                     <a href="https://github.com/Mellow-Winds/NJU-Hub" target="_blank" rel="noopener" style="text-decoration:underline;">Github仓库</a>
+                    <span style="font-weight:400;font-size:0.9em;color:#1c1b1f;"> — 希望可以给我一个 Star 支持一下喵！⭐</span>
+                </p>
+                <p class="tutorial-step" style="font-size:15px;font-weight:700;color:var(--md-sys-color-primary);">QQ：2860339144</p>
+                <p class="tutorial-step" style="font-size:15px;font-weight:700;color:var(--md-sys-color-primary);">Mail：251250226@smail.nju.edu.cn</p>
             </div>
         </section>
 
-        <section id="section-personalize" class="settings-section">
-            <h2>个性化</h2>
-            <p class="section-desc">统一管理主题色与显示模式，作用于所有板块。</p>
-            <div class="card">
-                <div class="divider">主题色</div>
-                <div class="theme-color-row">
-                    <button type="button" class="color-chip" data-color="#660874" aria-label="南大紫">
-                        <span class="dot" style="background:#660874"></span>
-                        <span class="txt">南大紫</span>
-                    </button>
-                    <button type="button" class="color-chip" data-color="#0ea5e9" aria-label="天空蓝">
-                        <span class="dot" style="background:#0ea5e9"></span>
-                        <span class="txt">天空蓝</span>
-                    </button>
-                    <button type="button" class="color-chip" data-color="#06b6d4" aria-label="活力青">
-                        <span class="dot" style="background:#06b6d4"></span>
-                        <span class="txt">活力青</span>
-                    </button>
-                    <div class="color-picker">
-                        <input type="color" id="ui-theme-color" value="#0ea5e9" aria-label="自选主题色">
-                        <span class="txt">自选</span>
-                    </div>
-                </div>
-
-                <div class="divider">显示模式</div>
-                <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">暗夜模式</span></div>
-                    <label class="switch">
-                        <input type="checkbox" id="ui-dark-mode">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-
-                <div class="divider">字体</div>
-                <div class="form-group">
-                    <label for="ui-font-family">界面字体</label>
-                    <div class="nju-dropdown" id="ui-font-family" data-name="ui-font-family">
-                        <div class="nju-dropdown-trigger" tabindex="0" role="combobox" aria-expanded="false">
-                            <span class="nju-dropdown-text">Google Sans Flex + MiSans</span>
-                            <svg class="nju-dropdown-arrow" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
-                        </div>
-                        <ul class="nju-dropdown-menu" role="listbox">
-                            <li data-value="google-sans-flex" role="option" class="active">Google Sans Flex + MiSans</li>
-                            <li data-value="misans" role="option">MiSans</li>
-                            <li data-value="system" role="option">系统默认</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="section-login" class="settings-section">
-            <h2>自动登录设置</h2>
-            <p class="section-desc">配置自动识图与填充。</p>
-            <div class="card">
-                <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">自动填充 (Auto Fill)</span></div>
-                    <label class="switch">
-                        <input type="checkbox" id="login-autofill">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">自动登录 (Auto Login)</span></div>
-                    <label class="switch">
-                        <input type="checkbox" id="login-autologin">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-
-                <div class="divider">AI 配置</div>
-                <div class="form-group">
-                    <label for="login-api-url">API Base URL</label>
-                    <input type="text" id="login-api-url" placeholder="">
-                </div>
-                <div class="form-group">
-                    <label for="login-api-key">API Key</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="login-api-key" placeholder="">
-                        <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
-                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-                                <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
-                            </svg>
-                        </span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="login-model">Vision Model</label>
-                    <input type="text" id="login-model" placeholder="">
-                </div>
-            </div>
-        </section>
-
-        <section id="section-course" class="settings-section">
+<!-- ===== course ===== -->
+<section id="section-course" class="settings-section">
             <h2>选课助手</h2>
-            <p class="section-desc">基于专业背景提供“红黑榜”深度分析。</p>
+            <p class="section-desc">基于专业背景提供"红黑榜"深度分析。</p>
             <div class="card">
                 <div class="divider">AI 选课设置</div>
                 <div class="form-group">
@@ -264,7 +176,7 @@
 
                 <div class="card">
                     <div class="divider">红黑榜云端同步</div>
-                    <p class="hint-text" style="margin-bottom:12px;">特别鸣谢：数据来自“鼓励你学哪门课榜”</p>
+                    <p class="hint-text" style="margin-bottom:12px;">特别鸣谢：数据来自"鼓励你学哪门课榜"</p>
                     <div class="form-group" style="display:flex; gap:8px; margin-bottom:0;">
                         <button id="course-seatable-sync" class="btn-small btn-sync" type="button"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;margin-right:4px;"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>立即同步</button>
                     </div>
@@ -295,7 +207,8 @@
             </div>
         </section>
 
-        <section id="section-eval" class="settings-section">
+<!-- ===== eval ===== -->
+<section id="section-eval" class="settings-section">
             <h2>自动评教设置</h2>
             <p class="section-desc">状态机全自动评教：锁定"很好"，随机评语，自动处理弹窗，期末/助教自动流转。</p>
             <div class="card">
@@ -312,7 +225,35 @@
             </div>
         </section>
 
-        <section id="section-lms" class="settings-section">
+<!-- ===== general ===== -->
+<section id="section-general" class="settings-section active">
+            <h2>个人信息</h2>
+            <p class="section-desc">管理你的基础身份信息，用于自动登录。所有信息本地保存，不上传云端。</p>
+            <div class="card">
+                <div class="form-group">
+                    <label for="common-name">昵称</label>
+                    <input type="text" id="common-name" placeholder="应该如何称呼您？">
+                </div>
+                <div class="form-group">
+                    <label for="common-id">学号</label>
+                    <input type="text" id="common-id" placeholder="此处填写用于自动登录的学号">
+                </div>
+                <div class="form-group">
+                    <label for="common-pwd">统一认证密码</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="common-pwd" placeholder="仅用于自动登录加密存储">
+                        <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
+                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<!-- ===== lms ===== -->
+<section id="section-lms" class="settings-section">
             <h2>智汇南雍增强设置</h2>
             <p class="section-desc">视频限制解除与课件批量下载增强。</p>
             <div class="card">
@@ -358,7 +299,103 @@
             </div>
         </section>
 
-        <section id="section-seec" class="settings-section">
+<!-- ===== login ===== -->
+<section id="section-login" class="settings-section">
+            <h2>自动登录设置</h2>
+            <p class="section-desc">配置自动识图与填充。</p>
+            <div class="card">
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">自动填充 (Auto Fill)</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="login-autofill">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">自动登录 (Auto Login)</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="login-autologin">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="divider">AI 配置</div>
+                <div class="form-group">
+                    <label for="login-api-url">API Base URL</label>
+                    <input type="text" id="login-api-url" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="login-api-key">API Key</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-api-key" placeholder="">
+                        <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
+                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="login-model">Vision Model</label>
+                    <input type="text" id="login-model" placeholder="">
+                </div>
+            </div>
+        </section>
+
+<!-- ===== personalize ===== -->
+<section id="section-personalize" class="settings-section">
+            <h2>个性化</h2>
+            <p class="section-desc">统一管理主题色与显示模式，作用于所有板块。</p>
+            <div class="card">
+                <div class="divider">主题色</div>
+                <div class="theme-color-row">
+                    <button type="button" class="color-chip" data-color="#660874" aria-label="南大紫">
+                        <span class="dot" style="background:#660874"></span>
+                        <span class="txt">南大紫</span>
+                    </button>
+                    <button type="button" class="color-chip" data-color="#0ea5e9" aria-label="天空蓝">
+                        <span class="dot" style="background:#0ea5e9"></span>
+                        <span class="txt">天空蓝</span>
+                    </button>
+                    <button type="button" class="color-chip" data-color="#06b6d4" aria-label="活力青">
+                        <span class="dot" style="background:#06b6d4"></span>
+                        <span class="txt">活力青</span>
+                    </button>
+                    <div class="color-picker">
+                        <input type="color" id="ui-theme-color" value="#0ea5e9" aria-label="自选主题色">
+                        <span class="txt">自选</span>
+                    </div>
+                </div>
+
+                <div class="divider">显示模式</div>
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">暗夜模式</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="ui-dark-mode">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="divider">字体</div>
+                <div class="form-group">
+                    <label for="ui-font-family">界面字体</label>
+                    <div class="nju-dropdown" id="ui-font-family" data-name="ui-font-family">
+                        <div class="nju-dropdown-trigger" tabindex="0" role="combobox" aria-expanded="false">
+                            <span class="nju-dropdown-text">Google Sans Flex + MiSans</span>
+                            <svg class="nju-dropdown-arrow" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+                        </div>
+                        <ul class="nju-dropdown-menu" role="listbox">
+                            <li data-value="google-sans-flex" role="option" class="active">Google Sans Flex + MiSans</li>
+                            <li data-value="misans" role="option">MiSans</li>
+                            <li data-value="system" role="option">系统默认</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<!-- ===== seec ===== -->
+<section id="section-seec" class="settings-section">
             <h2>显示增强</h2>
             <p class="section-desc">此处管理显示增强功能。</p>
             <div class="card">
@@ -372,37 +409,6 @@
             </div>
         </section>
 
-        <section id="section-about" class="settings-section">
-            <h2>关于插件</h2>
-            <p class="section-desc">NJU Hub — 南大智慧终端 v2.0.1</p>
-
-            <div class="card card-full">
-                <div class="divider">AI 配置教程</div>
-                <div class="about-tutorial">
-                    <p class="tutorial-step"><strong>1. 获取 API Key</strong> — 前往大模型服务提供商的开放平台注册并获取 API Key。常用提供商包括 SiliconCloud、OpenAI、智谱 AI 等。注册后在控制台创建 API Key 并复制。</p>
-                    <p class="tutorial-step"><strong>2. 配置 API Base URL</strong> — 将提供商提供的 API 地址填入对应模块的「API Base URL」输入框。通常格式为 <code>https://api.xxx.com/v1</code>，具体以提供商文档为准。</p>
-                    <p class="tutorial-step"><strong>3. 填写 API Key</strong> — 将步骤 1 获取的 Key 粘贴到「API Key」输入框中，该 Key 仅保存在你本地浏览器的插件存储中。</p>
-                    <p class="tutorial-step"><strong>4. 选择模型</strong> — 在「Model」输入框中填写模型名称（如 <code>Qwen/Qwen3-8B</code>）。注意需要支持视觉识别的模型才能用于自动登录验证码识别。</p>
-                    <p class="tutorial-step"><strong>5. 多个模块独立配置</strong> — 自动登录、选课助手、自动评教三个模块的 AI 配置互相独立，你可以为不同模块使用不同的 API Key 和模型。</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="divider">隐私政策</div>
-                <button id="btn-privacy-policy" class="btn-small" type="button" style="width:100%;">查看隐私政策</button>
-            </div>
-
-            <div class="card">
-                <div class="divider">问题反馈</div>
-                <p class="tutorial-step">如遇到问题或有功能建议，欢迎联系开发者：</p>
-                <p class="tutorial-step" style="font-size:15px;font-weight:700;">
-                     <a href="https://github.com/Mellow-Winds/NJU-Hub" target="_blank" rel="noopener" style="text-decoration:underline;">Github仓库</a>
-                    <span style="font-weight:400;font-size:0.9em;color:#1c1b1f;"> — 希望可以给我一个 Star 支持一下喵！⭐</span>
-                </p>
-                <p class="tutorial-step" style="font-size:15px;font-weight:700;color:var(--md-sys-color-primary);">QQ：2860339144</p>
-                <p class="tutorial-step" style="font-size:15px;font-weight:700;color:var(--md-sys-color-primary);">Mail：251250226@smail.nju.edu.cn</p>
-            </div>
-        </section>
     </main>
 </div>
 <div id="schedule-modal" class="nju-modal-overlay" style="display:none">
@@ -421,5 +427,11 @@
 <script src="../libs/nju-modal.js"></script>
 <script src="material-color-utils.js"></script>
 <script src="options.js"></script>
+
+  <script src="modules/course.js"></script>
+  <script src="modules/eval.js"></script>
+  <script src="modules/lms.js"></script>
+  <script src="modules/login.js"></script>
+  <script src="modules/seec.js"></script>
 </body>
 </html>

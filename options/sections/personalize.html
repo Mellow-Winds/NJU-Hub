@@ -1,0 +1,50 @@
+<section id="section-personalize" class="settings-section">
+            <h2>个性化</h2>
+            <p class="section-desc">统一管理主题色与显示模式，作用于所有板块。</p>
+            <div class="card">
+                <div class="divider">主题色</div>
+                <div class="theme-color-row">
+                    <button type="button" class="color-chip" data-color="#660874" aria-label="南大紫">
+                        <span class="dot" style="background:#660874"></span>
+                        <span class="txt">南大紫</span>
+                    </button>
+                    <button type="button" class="color-chip" data-color="#0ea5e9" aria-label="天空蓝">
+                        <span class="dot" style="background:#0ea5e9"></span>
+                        <span class="txt">天空蓝</span>
+                    </button>
+                    <button type="button" class="color-chip" data-color="#06b6d4" aria-label="活力青">
+                        <span class="dot" style="background:#06b6d4"></span>
+                        <span class="txt">活力青</span>
+                    </button>
+                    <div class="color-picker">
+                        <input type="color" id="ui-theme-color" value="#0ea5e9" aria-label="自选主题色">
+                        <span class="txt">自选</span>
+                    </div>
+                </div>
+
+                <div class="divider">显示模式</div>
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">暗夜模式</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="ui-dark-mode">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="divider">字体</div>
+                <div class="form-group">
+                    <label for="ui-font-family">界面字体</label>
+                    <div class="nju-dropdown" id="ui-font-family" data-name="ui-font-family">
+                        <div class="nju-dropdown-trigger" tabindex="0" role="combobox" aria-expanded="false">
+                            <span class="nju-dropdown-text">Google Sans Flex + MiSans</span>
+                            <svg class="nju-dropdown-arrow" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+                        </div>
+                        <ul class="nju-dropdown-menu" role="listbox">
+                            <li data-value="google-sans-flex" role="option" class="active">Google Sans Flex + MiSans</li>
+                            <li data-value="misans" role="option">MiSans</li>
+                            <li data-value="system" role="option">系统默认</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>

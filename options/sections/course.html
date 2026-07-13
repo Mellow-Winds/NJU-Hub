@@ -1,0 +1,109 @@
+<section id="section-course" class="settings-section">
+            <h2>选课助手</h2>
+            <p class="section-desc">基于专业背景提供"红黑榜"深度分析。</p>
+            <div class="card">
+                <div class="divider">AI 选课设置</div>
+                <div class="form-group">
+                    <label for="course-major">专业背景</label>
+                    <input type="text" id="course-major" placeholder="此处填写您的专业">
+                </div>
+                <div class="form-group">
+                    <label for="course-pref">选课偏好 Prompt</label>
+                    <textarea id="course-pref" placeholder="告诉 AI 你的选课口味（水课？硬核？高绩点？）..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="course-api-url">API Base URL</label>
+                    <input type="text" id="course-api-url" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="course-api-key">API Key</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="course-api-key" placeholder="">
+                        <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
+                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="course-model">Model</label>
+                    <input type="text" id="course-model" placeholder="">
+                </div>
+            </div>
+
+            <div class="card-stack">
+                <div class="card">
+                    <div class="divider">功能开关设置</div>
+                    <div class="toggle-group">
+                        <div class="toggle-info"><span class="label">冲突预警</span></div>
+                        <label class="switch">
+                            <input type="checkbox" id="course-conflict-check">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info"><span class="label">置顶收藏课程</span></div>
+                        <label class="switch">
+                            <input type="checkbox" id="course-pin-fav">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="divider">个人信息设置</div>
+                    <div class="form-group">
+                        <label for="course-my-campus">我的主校区</label>
+                        <div class="nju-dropdown" id="course-my-campus" data-name="course-my-campus">
+                            <div class="nju-dropdown-trigger" tabindex="0" role="combobox" aria-expanded="false">
+                                <span class="nju-dropdown-text">仙林</span>
+                                <svg class="nju-dropdown-arrow" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+                            </div>
+                            <ul class="nju-dropdown-menu" role="listbox">
+                                <li data-value="XL" role="option" class="active">仙林</li>
+                                <li data-value="GL" role="option">鼓楼</li>
+                                <li data-value="PK" role="option">浦口</li>
+                                <li data-value="SZ" role="option">苏州</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button id="btn-view-schedule" class="btn-small" type="button">查看我的课表</button>
+                        <button id="btn-clear-schedule" class="btn-small btn-danger" type="button">清空课表</button>
+                        <div class="hint-text">如无记录，请先登录课表页面并同步到插件。</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="divider">红黑榜云端同步</div>
+                    <p class="hint-text" style="margin-bottom:12px;">特别鸣谢：数据来自"鼓励你学哪门课榜"</p>
+                    <div class="form-group" style="display:flex; gap:8px; margin-bottom:0;">
+                        <button id="course-seatable-sync" class="btn-small btn-sync" type="button"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;margin-right:4px;"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>立即同步</button>
+                    </div>
+                    <p id="seatable-status" class="hint-text" style="margin-top:8px;"></p>
+                </div>
+            </div>
+
+            <div class="card card-full">
+                <div class="divider">评价管理</div>
+                <input type="file" id="course-db-file" accept=".xlsx,.xls" style="display:none">
+                <div class="data-manager-controls">
+                    <button id="course-db-import" class="btn-small" type="button">导入评价</button>
+                    <button id="course-db-export" class="btn-small" type="button">导出评价</button>
+                    <button id="course-db-clear" class="btn-small btn-danger" type="button" style="margin-left:auto;">清空记录</button>
+                </div>
+
+                <div class="divider">评价详情</div>
+                <div class="data-manager-controls">
+                    <button id="dm-select-all" class="btn-small" type="button">全选</button>
+                    <button id="dm-invert" class="btn-small" type="button">反选</button>
+                    <button id="dm-delete" class="btn-small btn-danger" type="button">删除选中</button>
+                    <button id="dm-clear-all" class="btn-small btn-danger" type="button" style="margin-left:auto;">清空详情</button>
+                </div>
+                <div class="data-manager-search">
+                    <input type="text" id="dm-search" class="search-input" placeholder="搜索课程名或教师名...">
+                </div>
+                <div class="data-manager-list" id="dm-list"></div>
+            </div>
+        </section>

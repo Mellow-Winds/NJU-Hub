@@ -1,0 +1,41 @@
+<section id="section-login" class="settings-section">
+            <h2>自动登录设置</h2>
+            <p class="section-desc">配置自动识图与填充。</p>
+            <div class="card">
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">自动填充 (Auto Fill)</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="login-autofill">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">自动登录 (Auto Login)</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="login-autologin">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="divider">AI 配置</div>
+                <div class="form-group">
+                    <label for="login-api-url">API Base URL</label>
+                    <input type="text" id="login-api-url" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="login-api-key">API Key</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-api-key" placeholder="">
+                        <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
+                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="login-model">Vision Model</label>
+                    <input type="text" id="login-model" placeholder="">
+                </div>
+            </div>
+        </section>

@@ -450,7 +450,9 @@
 
         // ===== 插件设置按钮 → 通过 background 打开 options 页 =====
         document.getElementById('btn-open-ai').onclick = () => {
-            chrome.runtime.sendMessage({ action: 'openOptions' });
+            chrome.storage.local.set({ options_goto: 'section-course' }, () => {
+                chrome.runtime.sendMessage({ action: 'openOptions' });
+            });
         };
     };
 
