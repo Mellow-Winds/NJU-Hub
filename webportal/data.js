@@ -66,7 +66,7 @@ const PORTAL_DATA = [
         id: "unofficial",
         name: "非官方资料整理",
         links: [
-          { id: "ad-astra", name: "鼓励你学哪门课榜", desc: "红黑榜的一个网站", url: "https://table.nju.edu.cn/apps/custom/ad-astra/?page_id=AeyG" },
+          { id: "gulini", name: "鼓励你学哪门课榜", desc: "红黑榜的一个网站", url: "https://table.nju.edu.cn/apps/custom/ad-astra/?page_id=AeyG" },
           {id:"red-black-table",name:"红黑榜（25年及以前）",desc:"25年及以前的红黑榜原始数据",url:"https://table.nju.edu.cn/external-apps/7aded834-74a2-43cc-b515-fb8e01656ef2/?page_id=zI1D"},
           {id:"red-black-table-search1",name:"红黑榜搜索平台：其一",desc:"这个网站可以搜索红黑榜的数据。",url:"https://xk.nju.at/"},
           { id: "nanna-helper", name: "南哪助手教学资料库", desc: "如题", url: "https://table.nju.edu.cn/apps/custom/nannadata/?page_id=kw9T" },

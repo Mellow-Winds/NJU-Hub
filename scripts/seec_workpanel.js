@@ -21,13 +21,15 @@
     const TOGGLE_KEY = 'toggle-seec-workpanel';
     const IGNORE_KEY = 'gemini_ignored_tasks';
 
-    function getToggleStatus() {
-        const stored = localStorage.getItem(TOGGLE_KEY);
-        return stored !== 'false';
-    }
+    // 从 chrome.storage.local 读取开关（与 options/popup 的写入方式一致）
+    chrome.storage.local.get([TOGGLE_KEY], (result) => {
+        // 开关默认开启：仅在显式设为 false 时关闭
+        if (result[TOGGLE_KEY] === false) return;
 
-    if (!getToggleStatus()) return;
+        startEnhancement();
+    });
 
+    function startEnhancement() {
     let taskMap = {};
     let ignoredTasks = JSON.parse(localStorage.getItem(IGNORE_KEY) || '[]');
 
@@ -48,13 +50,6 @@
         
         (document.head || document.documentElement).appendChild(script);
     };
-
-    // 监听来自“主世界”的数据 (这段保持不变)
-    window.addEventListener('seec_data_leak', (e) => {
-        // ... 原来的 JSON.parse 处理逻辑
-    });
-
-    injectXHRSpy();
 
     // 监听来自“主世界”的数据
     window.addEventListener('seec_data_leak', (e) => {
@@ -279,5 +274,7 @@
     // 6. 报错清洗与初始唤醒
     new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1 && (n.innerText?.includes('SQL') || n.innerText?.includes('Duplicate'))) n.remove(); }))).observe(document.body, { childList: true, subtree: true });
     let clicked = false; const clickTimer = setInterval(() => { const tab = document.getElementById('tab-task'); if (tab && !clicked) { if(!tab.classList.contains('is-active')) tab.click(); clicked = true; clearInterval(clickTimer); } }, 100); setTimeout(() => clearInterval(clickTimer), 5000);
+
+    } // end startEnhancement
 
 })();
