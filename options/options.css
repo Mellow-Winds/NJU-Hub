@@ -184,23 +184,18 @@ body, html {
 
 /* ── Nav Item (Pill Button) ─────────────────────────────────────── */
 
-/* Nav color tokens */
+/* Nav color tokens — derive from MD3 theme so personalization takes effect */
 :root {
-    --nav-color-default: #44474F;
-    --nav-color-hover: #1A1B21;
-    --nav-bg-hover: #E8E8EF;
-    --nav-color-active: #001C3B;
-    --nav-bg-active: #D3E4FD;
+    --nav-color-default: var(--md-sys-color-on-surface-variant);
+    --nav-color-hover: var(--md-sys-color-on-surface);
+    --nav-bg-hover: var(--md-sys-color-surface-container-high);
+    --nav-color-active: var(--md-sys-color-on-primary-container);
+    --nav-bg-active: var(--md-sys-color-primary-container);
     --nav-shadow-active: 0 1px 2px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.06);
     --nav-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 html[data-theme="dark"] {
-    --nav-color-default: #9CA0AC;
-    --nav-color-hover: #E2E4EB;
-    --nav-bg-hover: #2E3038;
-    --nav-color-active: #D0E2FF;
-    --nav-bg-active: #1E3148;
     --nav-shadow-active: 0 1px 2px rgba(0,0,0,0.2), 0 1px 3px rgba(0,0,0,0.25);
 }
 
@@ -1220,12 +1215,13 @@ html[data-theme="dark"] .color-picker {
 .nju-modal {
     width: min(820px, 95vw);
     max-height: 85vh;
-    background: var(--md-sys-color-surface-container-lowest);
-    border: 1px solid var(--md-sys-color-outline-variant);
+    background: var(--md-sys-color-surface-container-lowest) !important;
+    border: none;
     border-radius: 28px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.08);
     /* Container Transform: scale up from trigger */
     transform: scale(0.85);
     opacity: 0;
@@ -1244,7 +1240,6 @@ html[data-theme="dark"] .color-picker {
     align-items: center;
     justify-content: space-between;
     padding: 20px 24px;
-    border-bottom: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .nju-modal-title {
@@ -1287,7 +1282,6 @@ html[data-theme="dark"] .color-picker {
 
 .nju-modal-footer {
     padding: 16px 24px;
-    border-top: 1px solid var(--md-sys-color-outline-variant);
     display: flex;
     justify-content: flex-end;
     gap: 8px;

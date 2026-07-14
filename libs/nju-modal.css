@@ -7,20 +7,20 @@
     --nju-ease-bounce:      cubic-bezier(0.18, 1.25, 0.4, 1);
     --nju-ease-standard:    cubic-bezier(0.4, 0, 0.2, 1);
 
-    /* Modal */
-    --nju-modal-bg:      #E2E2E9;
-    --nju-modal-title:   #1A1B21;
-    --nju-modal-text:    #44474F;
-    --nju-modal-close-hover: #E8E8EF;
+    /* Modal — prefer host theme tokens, fall back to static values */
+    --nju-modal-bg:      var(--md-sys-color-surface-container-lowest, #E2E2E9);
+    --nju-modal-title:   var(--md-sys-color-on-surface, #1A1B21);
+    --nju-modal-text:    var(--md-sys-color-on-surface-variant, #44474F);
+    --nju-modal-close-hover: var(--md-sys-color-surface-container-high, #E8E8EF);
 
-    /* Input */
-    --nju-input-bg:      #ffffff;
-    --nju-input-text:    #1A1B21;
-    --nju-input-label:   #44474F;
-    --nju-input-border:  #74777F;
-    --nju-input-focus:   #4A90D9;
-    --nju-input-error:   #BA1A1A;
-    --nju-input-hover:   #1A1B21;
+    /* Input — prefer host theme tokens, fall back to static values */
+    --nju-input-bg:      var(--md-sys-color-surface-container-lowest, #ffffff);
+    --nju-input-text:    var(--md-sys-color-on-surface, #1A1B21);
+    --nju-input-label:   var(--md-sys-color-on-surface-variant, #44474F);
+    --nju-input-border:  var(--md-sys-color-outline, #74777F);
+    --nju-input-focus:   var(--md-sys-color-primary, #4A90D9);
+    --nju-input-error:   var(--md-sys-color-error, #BA1A1A);
+    --nju-input-hover:   var(--md-sys-color-on-surface, #1A1B21);
 }
 
 /* ── Modal Overlay ─────────────────────────────────────────────── */

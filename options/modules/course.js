@@ -107,18 +107,6 @@ function initCourseModule() {
                 const hasAi = !!ai[key];
                 const displayTitle = key.replace('#', ' - ');
 
-                // 来源缩略
-                const rawData = db[key];
-                let srcText = '';
-                if (typeof rawData === 'object' && !Array.isArray(rawData)) {
-                    const activeSources = Object.entries(rawData).filter(([, revs]) => Array.isArray(revs) && revs.length > 0);
-                    if (activeSources.length === 1) {
-                        srcText = srcLabels[activeSources[0][0]] || activeSources[0][0];
-                    } else if (activeSources.length > 1) {
-                        srcText = `${activeSources.length}个来源`;
-                    }
-                }
-
                 const item = document.createElement('div');
                 item.className = 'dm-item';
                 item.style.animationDelay = (index * 30) + 'ms';
@@ -130,7 +118,6 @@ function initCourseModule() {
                     <div class="dm-item-right">
                         <span class="dm-tag db">${reviewCount}条评价</span>
                         ${hasAi ? `<span class="dm-tag ai">AI: ${ai[key]['综合评分'] || '?'}分</span>` : ''}
-                        ${srcText ? `<span class="dm-sources">${srcText}</span>` : ''}
                         <span class="dm-expand-hint">▼</span>
                     </div>
                 `;
