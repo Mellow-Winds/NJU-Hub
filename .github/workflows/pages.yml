@@ -29,23 +29,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Prepare site
-        run: |
-          mkdir -p _site
-          cp privacy.html _site/
-          cp .nojekyll _site/
-          # Copy icons so they resolve if referenced
-          mkdir -p _site/icons && cp icons/*.png _site/icons/ 2>/dev/null || true
-          # Copy landing page (docs/) to site root
-          cp -r docs/* _site/
-
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '_site'
+          path: 'docs'
 
       - name: Deploy to GitHub Pages
         id: deployment
