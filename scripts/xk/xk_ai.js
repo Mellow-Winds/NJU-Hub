@@ -83,7 +83,7 @@
         tag.onclick = (e) => {
             e.stopPropagation();
             if (!cacheKey) return;
-            const db = GM_getValue(STORAGE.DB, {});
+            const db = window.__ratingsDB__ || {};
             const srcData = db[cacheKey];
             if (!srcData || typeof srcData !== 'object') return;
 
@@ -344,32 +344,25 @@ ${task.comments.map((c, i) => `${i + 1}. ${c}`).join('\n')}
     };
 
     /**
-     * 三层加载评价库 DB：Local > GitHub Raw > Built-in
-     * 返回最终使用的 DB 对象
+     * 加载评价库 DB：先尝试 GitHub 获取最新，再回退内置
+     * 存入全局变量 window.__ratingsDB__（不存 chrome.storage，2MB 太大）
      */
     const loadDB = async () => {
-        // Layer 1: 本地缓存
-        let db = GM_getValue(STORAGE.DB, null);
-        if (db && Object.keys(db).length > 0) {
-            console.log('[NJU-Hub] 评价库: 使用本地缓存 (' + Object.keys(db).length + '条)');
-            return db;
-        }
-
-        // Layer 2: GitHub Raw
+        // 优先尝试 GitHub 获取最新评价库
         const lastFetch = GM_getValue(STORAGE.AI_LAST_FETCH, 0);
         const now = Date.now();
-        const githubUrl = 'https://raw.githubusercontent.com/nju-hub/nju-hub/main/data/merged_ratings.json';
 
         if (!lastFetch || (now - lastFetch) > 86400000) {
             try {
                 console.log('[NJU-Hub] 评价库: 尝试从 GitHub 拉取...');
+                const githubUrl = 'https://raw.githubusercontent.com/nju-hub/nju-hub/main/data/merged_ratings.json';
                 const resp = await fetch(githubUrl, { cache: 'no-cache' });
                 if (resp.ok) {
                     const remote = await resp.json();
                     if (remote && Object.keys(remote).length > 0) {
-                        GM_setValue(STORAGE.DB, remote);
+                        window.__ratingsDB__ = remote;
                         GM_setValue(STORAGE.AI_LAST_FETCH, now);
-                        console.log('[NJU-Hub] 评价库: GitHub 拉取成功 (' + Object.keys(remote).length + '条)');
+                        console.log('[NJU-Hub] 评价库: GitHub 拉取成功 (' + Object.keys(remote).length + '门)');
                         return remote;
                     }
                 }
@@ -378,7 +371,7 @@ ${task.comments.map((c, i) => `${i + 1}. ${c}`).join('\n')}
             }
         }
 
-        // Layer 3: 内置评价库
+        // 回退：加载内置评价库
         try {
             console.log('[NJU-Hub] 评价库: 加载内置...');
             const builtinUrl = chrome.runtime.getURL('data/merged_ratings.json');
@@ -386,8 +379,8 @@ ${task.comments.map((c, i) => `${i + 1}. ${c}`).join('\n')}
             if (resp.ok) {
                 const builtin = await resp.json();
                 if (builtin && Object.keys(builtin).length > 0) {
-                    GM_setValue(STORAGE.DB, builtin);
-                    console.log('[NJU-Hub] 评价库: 内置加载成功 (' + Object.keys(builtin).length + '条)');
+                    window.__ratingsDB__ = builtin;
+                    console.log('[NJU-Hub] 评价库: 内置加载成功 (' + Object.keys(builtin).length + '门)');
                     return builtin;
                 }
             }
@@ -395,6 +388,7 @@ ${task.comments.map((c, i) => `${i + 1}. ${c}`).join('\n')}
             console.warn('[NJU-Hub] 评价库: 内置加载失败', e);
         }
 
+        window.__ratingsDB__ = {};
         return {};
     };
 
