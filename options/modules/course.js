@@ -109,13 +109,14 @@ function initCourseModule() {
 
                 // 来源缩略
                 const rawData = db[key];
-                let srcIcons = '';
+                let srcText = '';
                 if (typeof rawData === 'object' && !Array.isArray(rawData)) {
                     const activeSources = Object.entries(rawData).filter(([, revs]) => Array.isArray(revs) && revs.length > 0);
-                    srcIcons = activeSources.map(([src]) => {
-                        const icon = src === 'nju_course_ratings' ? '📖' : '🏷️';
-                        return `<span title="${srcLabels[src] || src}">${icon}</span>`;
-                    }).join('');
+                    if (activeSources.length === 1) {
+                        srcText = srcLabels[activeSources[0][0]] || activeSources[0][0];
+                    } else if (activeSources.length > 1) {
+                        srcText = `${activeSources.length}个来源`;
+                    }
                 }
 
                 const item = document.createElement('div');
@@ -129,7 +130,7 @@ function initCourseModule() {
                     <div class="dm-item-right">
                         <span class="dm-tag db">${reviewCount}条评价</span>
                         ${hasAi ? `<span class="dm-tag ai">AI: ${ai[key]['综合评分'] || '?'}分</span>` : ''}
-                        ${srcIcons ? `<span class="dm-sources">${srcIcons}</span>` : ''}
+                        ${srcText ? `<span class="dm-sources">${srcText}</span>` : ''}
                         <span class="dm-expand-hint">▼</span>
                     </div>
                 `;

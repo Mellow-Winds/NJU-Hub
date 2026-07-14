@@ -1126,9 +1126,13 @@ html[data-theme="dark"] .color-picker {
 }
 
 .dm-sources {
-    display: flex;
-    gap: 2px;
-    font-size: 12px;
+    font-size: 11px;
+    color: var(--md-sys-color-on-surface-variant);
+    background: var(--md-sys-color-surface-container);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
 .dm-expand-hint {
