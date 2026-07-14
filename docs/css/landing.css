@@ -880,6 +880,9 @@ code {
     .group-info {
         align-items: center;
     }
+    .group-info .btn {
+        align-self: center;
+    }
 }
 
 /* ==================== Footer ==================== */
