@@ -443,7 +443,7 @@
 
                     <div style="display:flex; gap:10px; width: 100%;">
                         <button id="btn-open-ai" class="xk-btn" style="background:#f3e8ff; color:${THEME.PURPLE}; border:1px solid #d8b4fe;">${I.gear} 插件设置</button>
-                        <button id="btn-ai-analyze" class="xk-btn" style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; border:none;">${I.robot} 一键AI分析</button>
+                        <button id="btn-ai-analyze" class="xk-btn" style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; border:none;">${I.robot} 使用我的AI分析</button>
                     </div>
 
                     <button id="btn-save" class="save-btn">${I.save} 保存配置</button>

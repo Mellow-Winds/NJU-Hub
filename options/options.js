@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const KEYS = [
         'common-name', 'student_id', 'login_pass',
-        'login_autofill', 'login_autologin', 'login_api_url', 'login_api_key', 'login_model',
+        'login_autofill', 'login_autologin', 'login_ai_enable', 'login_api_url', 'login_api_key', 'login_model',
         'login_extract_api_url', 'login_extract_api_key', 'login_extract_model',
         'course_major', 'course_pref', 'course_api_url', 'course_api_key', 'course_model',
         'NJU_CAMPUS', 'NJU_CONFLICT', 'NJU_PIN_FAV',
@@ -407,6 +407,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setCheck('login-autofill', data.login_autofill);
         setCheck('login-autologin', data.login_autologin);
+        setCheck('login-ai-enable', data.login_ai_enable);
+        // AI 配置折叠
+        const aiToggle = document.getElementById('login-ai-enable');
+        const aiConfig = document.getElementById('login-ai-config');
+        const syncAiConfig = () => { aiConfig.style.display = aiToggle.checked ? '' : 'none'; };
+        syncAiConfig();
+        aiToggle.addEventListener('change', syncAiConfig);
         setVal('login-api-url', data.login_api_url);
         setVal('login-api-key', data.login_api_key);
         setVal('login-model', data.login_model);
@@ -423,6 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setVal('course-my-campus', data.NJU_CAMPUS, 'XL');
         setCheckDefault('course-conflict-check', data.NJU_CONFLICT, true);
         setCheckDefault('course-pin-fav', data.NJU_PIN_FAV, true);
+        setCheckDefault('course-use-own-ai', data.NJU_USE_OWN_AI, false);
 
 
         setCheckDefaultOn('toggle-eval', data['toggle-eval']);
@@ -461,6 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'login_pass': document.getElementById('common-pwd').value.trim(),
             'login_autofill': document.getElementById('login-autofill').checked,
             'login_autologin': document.getElementById('login-autologin').checked,
+            'login_ai_enable': document.getElementById('login-ai-enable').checked,
             'login_api_url': document.getElementById('login-api-url').value.trim(),
             'login_api_key': document.getElementById('login-api-key').value.trim(),
             'login_model': document.getElementById('login-model').value.trim(),
@@ -475,6 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'NJU_CAMPUS': NjuDropdown.getById('course-my-campus')?.getValue() || 'XL',
             'NJU_CONFLICT': document.getElementById('course-conflict-check').checked,
             'NJU_PIN_FAV': document.getElementById('course-pin-fav').checked,
+            'NJU_USE_OWN_AI': document.getElementById('course-use-own-ai').checked,
             'toggle-eval': document.getElementById('toggle-eval').checked,
             'eval_api_url': document.getElementById('eval-api-url')?.value?.trim() || '',
             'eval_api_key': document.getElementById('eval-api-key')?.value?.trim() || '',

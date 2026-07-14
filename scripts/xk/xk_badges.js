@@ -192,7 +192,7 @@
                         aiTag.className = 'nj-badge';
                         setAITagState(aiTag, cached, cacheKey);
                         appendB(jsmcCell, aiTag);
-                    } else {
+                    } else if (GM_getValue('NJU_USE_OWN_AI', false)) {
                         window.pendingAITasks = window.pendingAITasks || [];
                         window.pendingAITasks.push({
                             course: c, teacher: t, comments: comms,

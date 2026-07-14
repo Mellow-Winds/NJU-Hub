@@ -63,6 +63,7 @@
                 <div class="pop-item">● <b>任务:</b> ${data['事少']}</div>
                 <div class="pop-item">● <b>签到:</b> ${data['签到']}</div>
                 <div style="font-size:12px; margin-top:8px; padding-top:8px; border-top:1px dashed #ccc; color:#1b5e20; font-weight:bold;">结论: ${data['总结']}</div>
+                <div style="font-size:11px; margin-top:10px; padding-top:8px; border-top:1px solid #eee; color:#999; text-align:center;">⚠️ AI 生成可能有误，注意核实。如需核实请看原评价。</div>
             `;
             pop.style.maxHeight = '400px';
             const r = tag.getBoundingClientRect();
@@ -243,6 +244,12 @@
             return;
         }
 
+        const useOwnAI = GM_getValue('NJU_USE_OWN_AI', false);
+        if (!useOwnAI) {
+            alert('请在插件设置中开启"自用AI分析"开关后再使用此功能。');
+            return;
+        }
+
         const settings = getAISettings();
         if (!settings.key) {
             alert('请先在插件设置中配置 API Key。');
@@ -338,8 +345,8 @@ ${task.comments.map((c, i) => `${i + 1}. ${c}`).join('\n')}
 
         if (btn) {
             btn.disabled = false;
-            btn.innerText = `🤖 一键AI分析 ✓`;
-            setTimeout(() => { btn.innerText = '🤖 一键AI分析'; }, 2000);
+            btn.innerText = `🤖 使用我的AI分析 ✓`;
+            setTimeout(() => { btn.innerText = '🤖 使用我的AI分析'; }, 2000);
         }
     };
 
