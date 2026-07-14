@@ -56,7 +56,7 @@ function updateGreeting() {
     else timeGreeting = "晚上好";
 
     chrome.storage.local.get(['common-name', 'student_id'], (res) => {
-        const displayName = res['common-name'] || res['student_id'] || "指挥官";
+        const displayName = res['common-name'] || res['student_id'] || "NJUer";
         greetingText.innerText = `${timeGreeting}，${displayName}`;
     });
 
