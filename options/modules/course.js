@@ -265,7 +265,7 @@ function initCourseModule() {
     const openEhallBtn = document.getElementById('schedule-open-ehall');
     if (openEhallBtn) {
         openEhallBtn.onclick = () => {
-            chrome.tabs.create({ url: 'https://ehall.nju.edu.cn/ywtb-portal/official/index.html#/home/official_home' });
+            chrome.tabs.create({ url: 'https://ehallapp.nju.edu.cn/jwapp/sys/wdkb/*default/index.do#/xskcb' });
         };
     }
 

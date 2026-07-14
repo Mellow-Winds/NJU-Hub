@@ -137,6 +137,7 @@
                             const safe = String(x).replace(/</g, '&lt;').replace(/>/g, '&gt;');
                             h += `<div class="pop-item">● ${safe}</div>`;
                         });
+                        h += `<div style="margin-top:8px;padding-top:8px;border-top:1px dashed #ccc;text-align:center;font-size:11px;color:#888;">📝 贡献评价请访问 <a href="https://table.nju.edu.cn/apps/custom/ad-astra/?page_id=AeyG" target="_blank" style="color:#660874;font-weight:bold;">鼓励你学哪门课评价平台</a></div>`;
                         pop.innerHTML = h;
                         pop.style.maxHeight = '400px';
                         const re = rawTag.getBoundingClientRect();

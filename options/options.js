@@ -1,12 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Guard: provide safe fallbacks when chrome.storage is unavailable (e.g. file://)
-    if (typeof chrome === 'undefined' || !chrome.storage) {
-        const _noop = { get: () => Promise.resolve({}), set: () => Promise.resolve(), remove: () => Promise.resolve() };
-        self.chrome = self.chrome || {};
-        chrome.storage = { sync: _noop, local: _noop };
-    }
-
     // ============================================================
     // 0. MD3 Outlined Dropdown Component
     // ============================================================

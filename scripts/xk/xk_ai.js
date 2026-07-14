@@ -79,13 +79,13 @@
             }, 300);
         };
 
-        // 点击查看原始评价
+        // 点击查看原始评价（按来源分组）
         tag.onclick = (e) => {
             e.stopPropagation();
             if (!cacheKey) return;
             const db = GM_getValue(STORAGE.DB, {});
-            const rawComments = db[cacheKey];
-            if (!rawComments || !Array.isArray(rawComments) || rawComments.length === 0) return;
+            const srcData = db[cacheKey];
+            if (!srcData || typeof srcData !== 'object') return;
 
             const pop = document.getElementById('nj-popover');
             if (!pop) return;
@@ -98,11 +98,34 @@
             }
 
             tag._showingComments = true;
-            let html = `<div style="font-weight:800;color:${THEME.PURPLE};margin-bottom:8px;border-bottom:1px solid #eee;padding-bottom:5px;">📋 原始评价 (${rawComments.length}条) — 点击关闭</div>`;
-            rawComments.forEach(c => {
-                const safe = String(c).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
-                html += `<div class="pop-item">● ${safe}</div>`;
-            });
+
+            // 按来源分组展示
+            const SRC_LABELS = {
+                'nju_course_ratings': '📖 鼓励你学哪门课',
+                '2020': '🏷️ 2020 红黑榜', '2021': '🏷️ 2021 南小宝',
+                '2022': '🏷️ 2022 红黑榜', '2023': '🏷️ 2023 红黑榜',
+                '2024冬': '🏷️ 2024冬 红黑榜', '2024春': '🏷️ 2024春 红黑榜',
+                '2025春': '🏷️ 2025春 红黑榜'
+            };
+
+            let totalCount = 0;
+            let html = `<div style="font-weight:800;color:${THEME.PURPLE};margin-bottom:8px;border-bottom:1px solid #eee;padding-bottom:5px;">📋 原始评价 — 点击关闭</div>`;
+
+            for (const [src, label] of Object.entries(SRC_LABELS)) {
+                const reviews = srcData[src];
+                if (!reviews || !Array.isArray(reviews) || reviews.length === 0) continue;
+                totalCount += reviews.length;
+                html += `<div style="font-weight:700;color:#333;margin:10px 0 4px;font-size:13px;">${label} (${reviews.length}条)</div>`;
+                reviews.forEach(c => {
+                    const safe = String(c).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+                    html += `<div class="pop-item">● ${safe}</div>`;
+                });
+            }
+
+            if (totalCount === 0) {
+                html += `<div class="pop-item" style="color:#999;">暂无评价</div>`;
+            }
+
             pop.innerHTML = html;
             pop.style.maxHeight = '520px';
 
@@ -152,6 +175,62 @@
         pop.onmouseleave = () => {
             window.__popoverTimer = setTimeout(() => pop.classList.remove('visible'), 300);
         };
+    };
+
+    /**
+     * 三层加载 AI 缓存：Local > GitHub Raw > Built-in
+     * 返回最终使用的 aiCache 对象
+     */
+    const loadAICache = async () => {
+        // Layer 1: 本地缓存
+        let aiCache = GM_getValue(STORAGE.AI_CACHE, null);
+        if (aiCache && Object.keys(aiCache).length > 0) {
+            console.log('[NJU-Hub] AI 缓存: 使用本地缓存 (' + Object.keys(aiCache).length + '条)');
+            return aiCache;
+        }
+
+        // Layer 2: GitHub Raw 每日拉取
+        const lastFetch = GM_getValue(STORAGE.AI_LAST_FETCH, 0);
+        const now = Date.now();
+        const githubUrl = STORAGE.GITHUB_RAW;
+
+        if (!lastFetch || (now - lastFetch) > 86400000) {
+            try {
+                console.log('[NJU-Hub] AI 缓存: 尝试从 GitHub 拉取...');
+                const resp = await fetch(githubUrl, { cache: 'no-cache' });
+                if (resp.ok) {
+                    const remote = await resp.json();
+                    if (remote && Object.keys(remote).length > 0) {
+                        GM_setValue(STORAGE.AI_CACHE, remote);
+                        GM_setValue(STORAGE.AI_LAST_FETCH, now);
+                        console.log('[NJU-Hub] AI 缓存: GitHub 拉取成功 (' + Object.keys(remote).length + '条)');
+                        return remote;
+                    }
+                }
+            } catch (e) {
+                console.warn('[NJU-Hub] AI 缓存: GitHub 拉取失败, 回退到内置缓存', e);
+            }
+        }
+
+        // Layer 3: 内置缓存 (data/ai_cache.json)
+        try {
+            console.log('[NJU-Hub] AI 缓存: 加载内置缓存...');
+            const builtinUrl = chrome.runtime.getURL('data/ai_cache.json');
+            const resp = await fetch(builtinUrl);
+            if (resp.ok) {
+                const builtin = await resp.json();
+                if (builtin && Object.keys(builtin).length > 0) {
+                    GM_setValue(STORAGE.AI_CACHE, builtin);
+                    GM_setValue(STORAGE.AI_LAST_FETCH, now);
+                    console.log('[NJU-Hub] AI 缓存: 内置缓存加载成功 (' + Object.keys(builtin).length + '条)');
+                    return builtin;
+                }
+            }
+        } catch (e) {
+            console.warn('[NJU-Hub] AI 缓存: 内置缓存加载失败', e);
+        }
+
+        return {};
     };
 
     /**
@@ -264,10 +343,67 @@ ${task.comments.map((c, i) => `${i + 1}. ${c}`).join('\n')}
         }
     };
 
+    /**
+     * 三层加载评价库 DB：Local > GitHub Raw > Built-in
+     * 返回最终使用的 DB 对象
+     */
+    const loadDB = async () => {
+        // Layer 1: 本地缓存
+        let db = GM_getValue(STORAGE.DB, null);
+        if (db && Object.keys(db).length > 0) {
+            console.log('[NJU-Hub] 评价库: 使用本地缓存 (' + Object.keys(db).length + '条)');
+            return db;
+        }
+
+        // Layer 2: GitHub Raw
+        const lastFetch = GM_getValue(STORAGE.AI_LAST_FETCH, 0);
+        const now = Date.now();
+        const githubUrl = 'https://raw.githubusercontent.com/nju-hub/nju-hub/main/data/merged_ratings.json';
+
+        if (!lastFetch || (now - lastFetch) > 86400000) {
+            try {
+                console.log('[NJU-Hub] 评价库: 尝试从 GitHub 拉取...');
+                const resp = await fetch(githubUrl, { cache: 'no-cache' });
+                if (resp.ok) {
+                    const remote = await resp.json();
+                    if (remote && Object.keys(remote).length > 0) {
+                        GM_setValue(STORAGE.DB, remote);
+                        GM_setValue(STORAGE.AI_LAST_FETCH, now);
+                        console.log('[NJU-Hub] 评价库: GitHub 拉取成功 (' + Object.keys(remote).length + '条)');
+                        return remote;
+                    }
+                }
+            } catch (e) {
+                console.warn('[NJU-Hub] 评价库: GitHub 拉取失败, 回退到内置', e);
+            }
+        }
+
+        // Layer 3: 内置评价库
+        try {
+            console.log('[NJU-Hub] 评价库: 加载内置...');
+            const builtinUrl = chrome.runtime.getURL('data/merged_ratings.json');
+            const resp = await fetch(builtinUrl);
+            if (resp.ok) {
+                const builtin = await resp.json();
+                if (builtin && Object.keys(builtin).length > 0) {
+                    GM_setValue(STORAGE.DB, builtin);
+                    console.log('[NJU-Hub] 评价库: 内置加载成功 (' + Object.keys(builtin).length + '条)');
+                    return builtin;
+                }
+            }
+        } catch (e) {
+            console.warn('[NJU-Hub] 评价库: 内置加载失败', e);
+        }
+
+        return {};
+    };
+
     Object.assign(window.__XK__, {
         getAISettings,
         setAITagState,
         initPopover,
+        loadAICache,
+        loadDB,
         analyzeAllPending
     });
 })();

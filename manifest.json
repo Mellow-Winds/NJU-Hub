@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "NJU-Hub",
+  "name": "NJU Hub - 南大智慧终端",
   "version": "2.0.1",
   "default_locale": "zh_CN",
   "description": "NJU功能增强：GPA快速查询 | 课表抓取 | 自动登录 | LMS增强",
@@ -17,7 +17,9 @@
         "libs/common_old.onnx",
         "libs/charset_old.json",
         "libs/ort-wasm/ort.wasm.min.js",
-        "libs/ort-wasm/ort-wasm-simd-threaded.wasm"
+        "libs/ort-wasm/ort-wasm-simd-threaded.wasm",
+        "data/ai_cache.json",
+        "data/merged_ratings.json"
       ],
       "matches": ["*://*.nju.edu.cn/*"]
     }

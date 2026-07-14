@@ -43,7 +43,7 @@
         document.body.appendChild(statusBox);
 
         const updateStatus = (msg, color = "#00f2fe") => {
-            statusBox.innerHTML = `NJU-Hub: ${msg}`;
+            statusBox.innerHTML = `NJU ToolBox: ${msg}`;
             statusBox.style.color = color;
             statusBox.style.borderColor = color;
         };
@@ -95,19 +95,19 @@
                 if (typeof CaptchaOCR !== 'undefined') {
                     try {
                         updateStatus('本地模型识别中...', '#00f2fe');
-                        console.log('[NJU-Hub] === 尝试本地 ONNX 推理 ===');
+                        console.log('[NJU ToolBox] === 尝试本地 ONNX 推理 ===');
                         code = await CaptchaOCR.recognize(img);
                         if (code) {
-                            console.log('[NJU-Hub] ONNX 本地识别成功:', code);
+                            console.log('[NJU ToolBox] ONNX 本地识别成功:', code);
                         } else {
-                            console.warn('[NJU-Hub] ONNX 本地识别返回 null，降级到 LLM');
+                            console.warn('[NJU ToolBox] ONNX 本地识别返回 null，降级到 LLM');
                         }
                     } catch (onnxErr) {
-                        console.warn('[NJU-Hub] ONNX 本地识别异常，降级到 LLM:', onnxErr.message || onnxErr);
-                        console.warn('[NJU-Hub] 异常堆栈:', onnxErr.stack);
+                        console.warn('[NJU ToolBox] ONNX 本地识别异常，降级到 LLM:', onnxErr.message || onnxErr);
+                        console.warn('[NJU ToolBox] 异常堆栈:', onnxErr.stack);
                     }
                 } else {
-                    console.warn('[NJU-Hub] CaptchaOCR 模块未加载，直接使用 LLM 通道');
+                    console.warn('[NJU ToolBox] CaptchaOCR 模块未加载，直接使用 LLM 通道');
                 }
 
                 // === 后备通道：LLM 视觉模型识别 ===
@@ -149,7 +149,7 @@
 
                     const data = await response.json();
                     const rawText = data.choices[0].message.content.trim();
-                    console.log(`[NJU-Hub] 原始回复${isRetry ? '(重试)' : ''}:`, rawText);
+                    console.log(`[NJU ToolBox] 原始回复${isRetry ? '(重试)' : ''}:`, rawText);
 
                     // 路线A：强化清洗 —— 先剥离所有标签块，再提取4位验证码
                     let text = rawText;
@@ -172,7 +172,7 @@
                     // 路线B：二次提取 —— 把原始回复交给文本模型提取4位验证码
                     const extracted = await extractCaptcha(rawText);
                     if (extracted) {
-                        console.log(`[NJU-Hub] 二次提取成功: ${extracted}`);
+                        console.log(`[NJU ToolBox] 二次提取成功: ${extracted}`);
                         return extracted;
                     }
 
@@ -211,7 +211,7 @@
                         text = text.replace(/[^a-zA-Z0-9]/g, '');
                         return text.length === 4 ? text : null;
                     } catch (e) {
-                        console.warn('[NJU-Hub] 二次提取失败:', e.message);
+                        console.warn('[NJU ToolBox] 二次提取失败:', e.message);
                         return null;
                     }
                 }

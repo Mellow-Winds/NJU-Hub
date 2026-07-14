@@ -70,6 +70,16 @@
 
     // 启动
     startAutoConfirm();
+
+    // 预加载 AI 缓存（三层策略）
+    const { loadAICache, loadDB } = window.__XK__;
+    loadAICache().then(cache => {
+        console.log('[NJU-Hub] AI 缓存就绪: ' + Object.keys(cache).length + '条');
+    });
+    loadDB().then(db => {
+        console.log('[NJU-Hub] 评价库就绪: ' + Object.keys(db).length + '门课程');
+    });
+
     startPolling();
 
     // Tab 切换时清除匹配缓存，以便重新匹配
