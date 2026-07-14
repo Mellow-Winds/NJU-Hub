@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'privacy.html'
+      - 'docs/privacy.html'
       - '.nojekyll'
       - 'docs/**'
       - '.github/workflows/pages.yml'
