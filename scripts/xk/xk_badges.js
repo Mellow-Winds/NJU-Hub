@@ -197,7 +197,9 @@
                         aiTag.className = 'nj-badge';
                         setAITagState(aiTag, cached, cacheKey);
                         appendB(jsmcCell, aiTag);
-                    } else if (GM_getValue('NJU_USE_OWN_AI', false)) {
+                    }
+                    // 自用AI开启时：全部加入待分析（含已缓存的，可覆盖官方分析）
+                    if (GM_getValue('NJU_USE_OWN_AI', false)) {
                         window.pendingAITasks = window.pendingAITasks || [];
                         window.pendingAITasks.push({
                             course: c, teacher: t, comments: comms,

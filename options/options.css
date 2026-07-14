@@ -1063,14 +1063,15 @@ html[data-theme="dark"] .color-picker {
 .dm-item {
     display: flex;
     align-items: center;
-    padding: 12px 14px;
-    border-bottom: none;
+    justify-content: space-between;
+    padding: 10px 14px;
     background: var(--md-sys-color-surface-container-lowest);
     border: none;
     border-radius: 12px;
     margin-bottom: 8px;
+    cursor: pointer;
+    user-select: none;
     transition:
-        transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-emphasized),
         background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
 
@@ -1088,12 +1089,60 @@ html[data-theme="dark"] .color-picker {
     margin-bottom: 0;
 }
 
+.dm-item-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+    cursor: pointer;
+    margin: 0;
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface);
+}
+
+.dm-item-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dm-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    accent-color: var(--md-sys-color-primary);
+    border-radius: 4px;
+}
+
+.dm-item-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-left: 12px;
+}
+
+.dm-sources {
+    display: flex;
+    gap: 2px;
+    font-size: 12px;
+}
+
+.dm-expand-hint {
+    font-size: 10px;
+    color: var(--md-sys-color-on-surface-variant);
+    margin-left: 2px;
+}
+
 .dm-expand-panel {
     background: var(--md-sys-color-surface-container-low);
     border-radius: 0 0 12px 12px;
     padding: 0 14px 14px 14px;
     margin-bottom: 8px;
-    max-height: 360px;
+    max-height: 420px;
     overflow-y: auto;
     animation: dmExpandIn 200ms var(--md-sys-motion-easing-standard);
 }
@@ -1101,28 +1150,6 @@ html[data-theme="dark"] .color-picker {
 @keyframes dmExpandIn {
     from { opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; }
     to { opacity: 1; }
-}
-
-.dm-item label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-    cursor: pointer;
-    margin: 0;
-    color: var(--md-sys-color-on-surface);
-    font-weight: 600;
-    text-transform: none;
-    letter-spacing: 0;
-}
-
-.dm-item input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    margin: 0;
-    cursor: pointer;
-    accent-color: var(--md-sys-color-primary);
-    border-radius: 4px;
 }
 
 .dm-tags {

@@ -105,32 +105,37 @@ function initCourseModule() {
             keysToShow.sort().forEach((key, index) => {
                 const reviewCount = getReviewCount(db[key]);
                 const hasAi = !!ai[key];
-
-                const dbTag = `<span class="dm-tag db">评价: ${reviewCount}条</span>`;
-                let aiTag = '';
-                if (hasAi) {
-                    const score = ai[key]['综合评分'] || '?';
-                    aiTag = `<span class="dm-tag ai">AI: ${score}分</span>`;
-                }
-
                 const displayTitle = key.replace('#', ' - ');
+
+                // 来源缩略
+                const rawData = db[key];
+                let srcIcons = '';
+                if (typeof rawData === 'object' && !Array.isArray(rawData)) {
+                    const activeSources = Object.entries(rawData).filter(([, revs]) => Array.isArray(revs) && revs.length > 0);
+                    srcIcons = activeSources.map(([src]) => {
+                        const icon = src === 'nju_course_ratings' ? '📖' : '🏷️';
+                        return `<span title="${srcLabels[src] || src}">${icon}</span>`;
+                    }).join('');
+                }
 
                 const item = document.createElement('div');
                 item.className = 'dm-item';
                 item.style.animationDelay = (index * 30) + 'ms';
-                item.style.cursor = 'pointer';
                 item.innerHTML = `
-                    <label>
+                    <label class="dm-item-label">
                         <input type="checkbox" class="dm-check" value="${key}">
-                        <span>${displayTitle}</span>
+                        <span class="dm-item-title">${displayTitle}</span>
                     </label>
-                    <div class="dm-tags">
-                        ${dbTag}
-                        ${aiTag}
+                    <div class="dm-item-right">
+                        <span class="dm-tag db">${reviewCount}条评价</span>
+                        ${hasAi ? `<span class="dm-tag ai">AI: ${ai[key]['综合评分'] || '?'}分</span>` : ''}
+                        ${srcIcons ? `<span class="dm-sources">${srcIcons}</span>` : ''}
+                        <span class="dm-expand-hint">▼</span>
                     </div>
                 `;
 
                 // 点击展开评价（checkbox 不触发）
+                const expandHint = item.querySelector('.dm-expand-hint');
                 item.addEventListener('click', (e) => {
                     if (e.target.tagName === 'INPUT') return;
                     // 收起其他已展开的
@@ -138,6 +143,8 @@ function initCourseModule() {
                     allExpanded.forEach(el => {
                         if (el !== item) {
                             el.classList.remove('expanded');
+                            const h = el.querySelector('.dm-expand-hint');
+                            if (h) h.textContent = '▼';
                             const panel = el.nextElementSibling;
                             if (panel && panel.classList.contains('dm-expand-panel')) panel.remove();
                         }
@@ -145,13 +152,29 @@ function initCourseModule() {
                     // 切换当前
                     if (item.classList.contains('expanded')) {
                         item.classList.remove('expanded');
+                        if (expandHint) expandHint.textContent = '▼';
                         const panel = item.nextElementSibling;
                         if (panel && panel.classList.contains('dm-expand-panel')) panel.remove();
                     } else {
                         item.classList.add('expanded');
+                        if (expandHint) expandHint.textContent = '▲';
                         const panel = document.createElement('div');
                         panel.className = 'dm-expand-panel';
-                        panel.innerHTML = buildReviewHTML(key, db[key]);
+                        // 构建评价 + AI 分析
+                        let panelHTML = buildReviewHTML(key, db[key]);
+                        if (hasAi) {
+                            const a = ai[key];
+                            panelHTML += `
+                                <div style="margin-top:14px;padding-top:12px;border-top:2px solid var(--md-sys-color-outline-variant);">
+                                    <div style="font-weight:800;font-size:13px;color:#660874;margin-bottom:8px;">🤖 AI 深度解析</div>
+                                    <div style="font-size:12px;color:var(--md-sys-color-on-surface);margin-bottom:4px;">● <b>给分:</b> ${a['给分'] || '—'}</div>
+                                    <div style="font-size:12px;color:var(--md-sys-color-on-surface);margin-bottom:4px;">● <b>任务:</b> ${a['事少'] || '—'}</div>
+                                    <div style="font-size:12px;color:var(--md-sys-color-on-surface);margin-bottom:4px;">● <b>签到:</b> ${a['签到'] || '—'}</div>
+                                    <div style="font-size:12px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--md-sys-color-outline-variant);color:#1b5e20;font-weight:bold;">结论: ${a['总结'] || '—'}</div>
+                                    <div style="font-size:11px;margin-top:8px;padding-top:6px;border-top:1px solid var(--md-sys-color-outline-variant);color:var(--md-sys-color-on-surface-variant);text-align:center;">⚠️ AI 生成可能有误，注意核实。如需核实请看原评价。</div>
+                                </div>`;
+                        }
+                        panel.innerHTML = panelHTML;
                         item.after(panel);
                     }
                 });
@@ -526,66 +549,60 @@ function initCourseModule() {
             syncReviewsBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;margin-right:4px;"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>同步中...';
             setSyncStatus('');
 
-            let githubOk = false, seatableOk = false;
-            let githubCount = 0, seatableCount = 0;
-
-            // GitHub 拉取
-            try {
-                setSyncStatus('正在从 GitHub 拉取评价库...');
+            // 并行拉取 GitHub + SeaTable
+            const githubPromise = (async () => {
                 const resp = await fetch(GITHUB_REVIEWS_URL, { cache: 'no-cache' });
-                if (resp.ok) {
-                    const remote = await resp.json();
-                    if (remote && Object.keys(remote).length > 0) {
-                        const data = await chrome.storage.local.get(['NJU_DB']);
-                        const db = data.NJU_DB || {};
-                        let merged = 0;
-                        for (const [key, val] of Object.entries(remote)) {
-                            if (db[key]) {
-                                const existing = db[key];
-                                if (typeof existing === 'object' && !Array.isArray(existing) && typeof val === 'object' && !Array.isArray(val)) {
-                                    // Both object format — merge by source
-                                    for (const [src, revs] of Object.entries(val)) {
-                                        if (!Array.isArray(revs)) continue;
-                                        if (!existing[src]) { existing[src] = revs; merged++; }
-                                        else {
-                                            const set = new Set([...existing[src], ...revs]);
-                                            if (set.size > existing[src].length) { existing[src] = Array.from(set); merged++; }
-                                        }
-                                    }
-                                } else if (Array.isArray(existing) && Array.isArray(val)) {
-                                    // Both array format
-                                    const set = new Set([...existing, ...val]);
-                                    if (set.size > existing.length) { db[key] = Array.from(set); merged++; }
-                                } else {
-                                    db[key] = val; merged++;
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const remote = await resp.json();
+                if (!remote || Object.keys(remote).length === 0) throw new Error('远程数据为空');
+                const data = await chrome.storage.local.get(['NJU_DB']);
+                const db = data.NJU_DB || {};
+                let merged = 0;
+                for (const [key, val] of Object.entries(remote)) {
+                    if (db[key]) {
+                        const existing = db[key];
+                        if (typeof existing === 'object' && !Array.isArray(existing) && typeof val === 'object' && !Array.isArray(val)) {
+                            for (const [src, revs] of Object.entries(val)) {
+                                if (!Array.isArray(revs)) continue;
+                                if (!existing[src]) { existing[src] = revs; merged++; }
+                                else {
+                                    const set = new Set([...existing[src], ...revs]);
+                                    if (set.size > existing[src].length) { existing[src] = Array.from(set); merged++; }
                                 }
-                            } else {
-                                db[key] = val; merged++;
                             }
+                        } else if (Array.isArray(existing) && Array.isArray(val)) {
+                            const set = new Set([...existing, ...val]);
+                            if (set.size > existing.length) { db[key] = Array.from(set); merged++; }
+                        } else {
+                            db[key] = val; merged++;
                         }
-                        githubCount = merged;
-                        await chrome.storage.local.set({ NJU_DB: db });
-                        githubOk = true;
+                    } else {
+                        db[key] = val; merged++;
                     }
                 }
-            } catch (e) {
-                console.warn('[NJU-Hub] GitHub 评价库拉取失败:', e);
-            }
+                await chrome.storage.local.set({ NJU_DB: db });
+                return { merged, total: Object.keys(remote).length };
+            })();
 
-            // SeaTable 拉取
-            try {
-                setSyncStatus('正在从 SeaTable 同步...');
+            const seatablePromise = (async () => {
                 const result = await seatableSync({ apiToken: SEATABLE_TOKEN, serverUrl: SEATABLE_SERVER, tableName: SEATABLE_TABLE });
-                seatableCount = result.mergedCount || 0;
-                seatableOk = true;
-            } catch (e) {
-                console.warn('[NJU-Hub] SeaTable 同步失败:', e);
-            }
+                return { merged: result.mergedCount || 0, total: result.courseCount || 0 };
+            })();
+
+            const [githubResult, seatableResult] = await Promise.allSettled([githubPromise, seatablePromise]);
+
+            const githubOk = githubResult.status === 'fulfilled';
+            const seatableOk = seatableResult.status === 'fulfilled';
+            const githubInfo = githubOk ? githubResult.value : null;
+            const seatableInfo = seatableOk ? seatableResult.value : null;
+
+            if (!githubOk) console.warn('[NJU-Hub] GitHub 评价库拉取失败:', githubResult.reason);
+            if (!seatableOk) console.warn('[NJU-Hub] SeaTable 同步失败:', seatableResult.reason);
 
             if (githubOk || seatableOk) {
                 const parts = [];
-                if (githubOk) parts.push(`GitHub: ${githubCount} 门`);
-                if (seatableOk) parts.push(`SeaTable: ${seatableCount} 门`);
+                if (githubOk) parts.push(`GitHub: ${githubInfo.total} 门课程`);
+                if (seatableOk) parts.push(`SeaTable: 合并 ${seatableInfo.merged} 门`);
                 setSyncStatus(`同步完成！${parts.join('，')}`);
             } else {
                 setSyncStatus('同步失败：GitHub 和 SeaTable 均无法连接，请稍后重试', true);
