@@ -16,7 +16,8 @@
         "scripts/seec_xhr_bridge.js",
         "libs/common_old.onnx",
         "libs/charset_old.json",
-        "libs/ort-wasm/ort.wasm.min.js",
+        "libs/ort-wasm/ort.wasm.bundle.min.mjs",
+        "libs/ort-wasm/ort-wasm-simd-threaded.mjs",
         "libs/ort-wasm/ort-wasm-simd-threaded.wasm",
         "data/ai_cache.json",
         "data/merged_ratings.json"

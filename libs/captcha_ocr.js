@@ -22,8 +22,7 @@
     const MODEL_CONFIG = {
         modelPath: chrome.runtime.getURL('libs/common_old.onnx'),
         charsetPath: chrome.runtime.getURL('libs/charset_old.json'),
-        ortJsPath: chrome.runtime.getURL('libs/ort-wasm/ort.wasm.min.js'),
-        wasmBasePath: chrome.runtime.getURL('libs/ort-wasm/'),
+        ortJsPath: chrome.runtime.getURL('libs/ort-wasm/ort.wasm.bundle.min.mjs'),
         inputName: 'input1',
         targetHeight: 64,
         charsetSize: 8210
@@ -39,9 +38,15 @@
      * @returns {Promise<{session: Object, charset: string[]}>}
      */
     async function init() {
-        if (initError) throw initError;
+        // 如果已成功初始化，直接返回
         if (session && charset) return { session, charset };
+        // 如果有正在进行的初始化，等待它
         if (initPromise) return initPromise;
+        // 清除之前的失败状态，允许重试
+        if (initError) {
+            console.log('[CaptchaOCR] 重新尝试初始化（上次失败: %s）...', initError.message || initError);
+            initError = null;
+        }
 
         initPromise = (async () => {
             try {
@@ -49,40 +54,35 @@
                 console.log('[CaptchaOCR] 模型路径:', MODEL_CONFIG.modelPath);
                 console.log('[CaptchaOCR] 字符集路径:', MODEL_CONFIG.charsetPath);
                 console.log('[CaptchaOCR] ORT JS 路径:', MODEL_CONFIG.ortJsPath);
-                console.log('[CaptchaOCR] WASM 基路径:', MODEL_CONFIG.wasmBasePath);
 
                 // 1. 加载 ort 运行时
-                console.log('[CaptchaOCR] [1/4] 加载 onnxruntime-web...');
+                console.log('[CaptchaOCR] [1/3] 加载 onnxruntime-web...');
                 const ort = await import(MODEL_CONFIG.ortJsPath);
                 global.ort = ort;
-                console.log('[CaptchaOCR] [1/4] ort 加载成功, 版本:', ort.env.version || 'unknown');
+                console.log('[CaptchaOCR] [1/3] ort 加载成功, 版本:', ort.env?.version || 'unknown');
 
-                // 2. 配置WASM路径
-                console.log('[CaptchaOCR] [2/4] 配置 WASM 路径...');
-                ort.env.wasm.wasmPaths = MODEL_CONFIG.wasmBasePath;
-                console.log('[CaptchaOCR] [2/4] WASM 路径已设置:', ort.env.wasm.wasmPaths);
-
-                // 3. 加载字符集
-                console.log('[CaptchaOCR] [3/4] 加载字符集...');
+                // 2. 加载字符集
+                console.log('[CaptchaOCR] [2/3] 加载字符集...');
                 const charsetResp = await fetch(MODEL_CONFIG.charsetPath);
                 if (!charsetResp.ok) {
                     throw new Error(`字符集加载失败: HTTP ${charsetResp.status} - ${MODEL_CONFIG.charsetPath}`);
                 }
                 charset = await charsetResp.json();
-                console.log(`[CaptchaOCR] [3/4] 字符集加载完成: ${charset.length} 字符`);
+                console.log(`[CaptchaOCR] [2/3] 字符集加载完成: ${charset.length} 字符`);
 
-                // 4. 加载ONNX模型
-                console.log('[CaptchaOCR] [4/4] 加载 ONNX 模型 (可能需要几秒)...');
+                // 3. 加载ONNX模型
+                console.log('[CaptchaOCR] [3/3] 加载 ONNX 模型 (可能需要几秒)...');
                 session = await ort.InferenceSession.create(MODEL_CONFIG.modelPath, {
                     executionProviders: ['wasm'],
                     graphOptimizationLevel: 'all'
                 });
-                console.log('[CaptchaOCR] [4/4] 模型加载完成!');
+                console.log('[CaptchaOCR] [3/3] 模型加载完成!');
                 console.log('[CaptchaOCR]   输入节点:', session.inputNames);
                 console.log('[CaptchaOCR]   输出节点:', session.outputNames);
 
                 return { session, charset };
             } catch (e) {
+                initPromise = null;
                 initError = e;
                 console.error('[CaptchaOCR] 初始化失败:', e);
                 console.error('[CaptchaOCR] 错误详情:', e.message || e);

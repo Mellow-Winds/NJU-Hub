@@ -1,4 +1,4 @@
-c/* popup/style.css — Material Design 3 Motion System */
+/* popup/style.css — Material Design 3 Motion System */
 
 * {
     box-sizing: border-box;
@@ -49,6 +49,8 @@ body {
     width: 340px;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
     background: var(--md-sys-color-surface);
     color: var(--md-sys-color-on-surface);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
