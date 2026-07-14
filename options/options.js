@@ -431,6 +431,16 @@ document.addEventListener('DOMContentLoaded', () => {
         setCheckDefault('course-conflict-check', data.NJU_CONFLICT, true);
         setCheckDefault('course-pin-fav', data.NJU_PIN_FAV, true);
         setCheckDefault('course-use-own-ai', data.NJU_USE_OWN_AI, false);
+        // 自用AI配置折叠
+        (() => {
+            const ownAiToggle = document.getElementById('course-use-own-ai');
+            const ownAiConfig = document.getElementById('course-own-ai-config');
+            if (ownAiToggle && ownAiConfig) {
+                const syncOwnAi = () => { ownAiConfig.style.display = ownAiToggle.checked ? '' : 'none'; };
+                syncOwnAi();
+                ownAiToggle.addEventListener('change', syncOwnAi);
+            }
+        })();
 
 
         setCheckDefaultOn('toggle-eval', data['toggle-eval']);
