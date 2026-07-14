@@ -171,7 +171,12 @@
                         pop.innerHTML = h;
                         pop.style.maxHeight = '400px';
                         const re = rawTag.getBoundingClientRect();
-                        pop.style.left = Math.min(re.left, window.innerWidth - 380) + 'px';
+                        const popW3 = 360, margin3 = 12;
+                        if (window.innerWidth - re.right - margin3 >= popW3 + 8) {
+                            pop.style.left = (re.right + 4) + 'px';
+                        } else {
+                            pop.style.left = Math.max(margin3, re.left - popW3 - 4) + 'px';
+                        }
                         pop.style.top = (re.bottom + 8) + 'px';
                         pop.classList.add('visible');
                     };

@@ -67,7 +67,12 @@
             `;
             pop.style.maxHeight = '400px';
             const r = tag.getBoundingClientRect();
-            pop.style.left = Math.min(r.left, window.innerWidth - 380) + 'px';
+            const popW = 360, margin = 12;
+            if (window.innerWidth - r.right - margin >= popW + 8) {
+                pop.style.left = (r.right + 4) + 'px';
+            } else {
+                pop.style.left = Math.max(margin, r.left - popW - 4) + 'px';
+            }
             pop.style.top = (r.bottom + 8) + 'px';
             pop.classList.add('visible');
         };
@@ -131,7 +136,12 @@
             pop.style.maxHeight = '520px';
 
             const r = tag.getBoundingClientRect();
-            pop.style.left = Math.min(r.left, window.innerWidth - 380) + 'px';
+            const popW2 = 360, margin2 = 12;
+            if (window.innerWidth - r.right - margin2 >= popW2 + 8) {
+                pop.style.left = (r.right + 4) + 'px';
+            } else {
+                pop.style.left = Math.max(margin2, r.left - popW2 - 4) + 'px';
+            }
             pop.style.top = (r.bottom + 8) + 'px';
             pop.classList.add('visible');
 
