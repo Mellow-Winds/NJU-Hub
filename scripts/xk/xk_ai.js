@@ -372,7 +372,7 @@ ${task.comments.map((c, i) => `${i + 1}. ${c}`).join('\n')}
         if (!lastFetch || (now - lastFetch) > 86400000) {
             try {
                 console.log('[NJU-Hub] 评价库: 尝试从 GitHub 拉取...');
-                const githubUrl = 'https://raw.githubusercontent.com/nju-hub/nju-hub/main/data/merged_ratings.json';
+                const githubUrl = 'https://raw.githubusercontent.com/Mellow-Winds/NJU-Hub/main/data/merged_ratings.json';
                 const resp = await fetch(githubUrl, { cache: 'no-cache' });
                 if (resp.ok) {
                     const remote = await resp.json();

@@ -548,8 +548,8 @@ function initCourseModule() {
         });
     }
 
-    const GITHUB_REVIEWS_URL = 'https://raw.githubusercontent.com/nju-hub/nju-hub/main/data/merged_ratings.json';
-    const GITHUB_AI_URL = 'https://raw.githubusercontent.com/nju-hub/nju-hub/main/data/ai_cache.json';
+    const GITHUB_REVIEWS_URL = 'https://raw.githubusercontent.com/Mellow-Winds/NJU-Hub/main/data/merged_ratings.json';
+    const GITHUB_AI_URL = 'https://raw.githubusercontent.com/Mellow-Winds/NJU-Hub/main/data/ai_cache.json';
 
     // 同步评价库（并行：GitHub + SeaTable，并关系）
     const syncReviewsBtn = document.getElementById('course-sync-reviews');

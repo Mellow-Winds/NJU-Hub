@@ -37,7 +37,7 @@
         MAJOR: 'course_major',
         PREF: 'course_pref',
         AI_LAST_FETCH: 'NJU_AI_LAST_FETCH',
-        GITHUB_RAW: 'https://raw.githubusercontent.com/nju-hub/nju-hub/main/data/ai_cache.json'
+        GITHUB_RAW: 'https://raw.githubusercontent.com/Mellow-Winds/NJU-Hub/main/data/ai_cache.json'
     };
 
     // 全局缓存，保持与 chrome.storage 同步
