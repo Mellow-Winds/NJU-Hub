@@ -1,40 +1,6 @@
 <section id="section-course" class="settings-section">
             <h2>选课助手</h2>
             <p class="section-desc">基于专业背景提供"红黑榜"深度分析。</p>
-            <div class="card">
-                <div class="divider">AI 选课设置</div>
-                <div class="form-group">
-                    <label for="course-major">专业背景</label>
-                    <input type="text" id="course-major" placeholder="此处填写您的专业">
-                </div>
-                <div class="form-group">
-                    <label for="course-pref">选课偏好 Prompt</label>
-                    <textarea id="course-pref" placeholder="告诉 AI 你的选课口味（水课？硬核？高绩点？）..."></textarea>
-                </div>
-                <div id="course-own-ai-config" style="display:none;">
-                <div class="divider">自用AI API 配置</div>
-                <div class="form-group">
-                    <label for="course-api-url">API Base URL</label>
-                    <input type="text" id="course-api-url" placeholder="">
-                </div>
-                <div class="form-group">
-                    <label for="course-api-key">API Key</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="course-api-key" placeholder="">
-                        <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
-                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-                                <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
-                            </svg>
-                        </span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="course-model">Model</label>
-                    <input type="text" id="course-model" placeholder="">
-                </div>
-                </div>
-            </div>
-
             <div class="card-stack">
                 <div class="card">
                     <div class="divider">功能开关设置</div>
@@ -61,6 +27,37 @@
                             <input type="checkbox" id="course-use-own-ai">
                             <span class="slider round"></span>
                         </label>
+                    </div>
+                    <div id="course-own-ai-config" style="display:none;">
+                    <div class="divider" style="margin-top:16px;">自用AI设置</div>
+                    <div class="form-group">
+                        <label for="course-major">专业背景</label>
+                        <input type="text" id="course-major" placeholder="此处填写您的专业">
+                    </div>
+                    <div class="form-group">
+                        <label for="course-pref">选课偏好 Prompt</label>
+                        <textarea id="course-pref" placeholder="告诉 AI 你的选课口味（水课？硬核？高绩点？）..."></textarea>
+                    </div>
+                    <div class="divider">API 配置</div>
+                    <div class="form-group">
+                        <label for="course-api-url">API Base URL</label>
+                        <input type="text" id="course-api-url" placeholder="https://api.siliconflow.cn/v1">
+                    </div>
+                    <div class="form-group">
+                        <label for="course-api-key">API Key</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="course-api-key" placeholder="">
+                            <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
+                                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                    <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="course-model">Model</label>
+                        <input type="text" id="course-model" placeholder="Qwen/Qwen3-8B">
+                    </div>
                     </div>
                 </div>
 
