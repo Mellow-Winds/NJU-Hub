@@ -32,7 +32,7 @@ jobs:
       - name: Prepare site
         run: |
           mkdir -p _site
-          cp privacy.html _site/
+          cp docs/privacy.html _site/
           cp .nojekyll _site/
           # Copy icons so they resolve if referenced
           mkdir -p _site/icons && cp icons/*.png _site/icons/ 2>/dev/null || true
