@@ -66,7 +66,7 @@
 <!-- ===== about ===== -->
 <section id="section-about" class="settings-section">
             <h2>关于插件</h2>
-            <p class="section-desc">NJU-Hub v2.0.1</p>
+            <p class="section-desc">NJU Hub — 南大智慧终端 v2.0.1</p>
 
             <div class="card card-full">
                 <div class="divider">AI 配置教程</div>
@@ -148,6 +148,16 @@
                             <span class="slider round"></span>
                         </label>
                     </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <span class="label">自用AI分析</span>
+                            <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后将使用您自己的 API 进行 AI 评价分析。如果您认为官方 AI 分析库不准确，或希望自己的模型做出判断，可以启用此选项。</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="course-use-own-ai">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
                 </div>
 
                 <div class="card">
@@ -168,6 +178,7 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <button id="btn-import-schedule" class="btn-small" type="button">导入课表</button>
                         <button id="btn-view-schedule" class="btn-small" type="button">查看我的课表</button>
                         <button id="btn-clear-schedule" class="btn-small btn-danger" type="button">清空课表</button>
                         <div class="hint-text">如无记录，请先登录课表页面并同步到插件。</div>
@@ -175,22 +186,20 @@
                 </div>
 
                 <div class="card">
-                    <div class="divider">红黑榜云端同步</div>
-                    <p class="hint-text" style="margin-bottom:12px;">特别鸣谢：数据来自"鼓励你学哪门课榜"</p>
+                    <div class="divider">同步</div>
+                    <p class="hint-text" style="margin-bottom:12px;">评价数据来自"鼓励你学哪门课榜"及社区贡献</p>
                     <div class="form-group" style="display:flex; gap:8px; margin-bottom:0;">
-                        <button id="course-seatable-sync" class="btn-small btn-sync" type="button"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;margin-right:4px;"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>立即同步</button>
+                        <button id="course-sync-reviews" class="btn-small btn-sync" type="button"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;margin-right:4px;"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>同步评价库</button>
+                        <button id="course-sync-ai" class="btn-small" type="button"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;margin-right:4px;"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>同步AI评价库</button>
                     </div>
-                    <p id="seatable-status" class="hint-text" style="margin-top:8px;"></p>
+                    <p id="course-sync-status" class="hint-text" style="margin-top:8px;"></p>
                 </div>
             </div>
 
             <div class="card card-full">
                 <div class="divider">评价管理</div>
-                <input type="file" id="course-db-file" accept=".xlsx,.xls" style="display:none">
                 <div class="data-manager-controls">
-                    <button id="course-db-import" class="btn-small" type="button">导入评价</button>
                     <button id="course-db-export" class="btn-small" type="button">导出评价</button>
-                    <button id="course-db-clear" class="btn-small btn-danger" type="button" style="margin-left:auto;">清空记录</button>
                 </div>
 
                 <div class="divider">评价详情</div>
@@ -318,8 +327,16 @@
                         <span class="slider round"></span>
                     </label>
                 </div>
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">启用 AI 识别 (Enable AI)</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="login-ai-enable">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
 
-                <div class="divider">AI 配置（可选）</div>
+                <div id="login-ai-config">
+                <div class="divider">AI 配置</div>
                 <div class="form-group">
                     <label for="login-api-url">API Base URL</label>
                     <input type="text" id="login-api-url" placeholder="">
@@ -360,6 +377,7 @@
                 <div class="form-group">
                     <label for="login-extract-model">提取模型</label>
                     <input type="text" id="login-extract-model" placeholder="">
+                </div>
                 </div>
             </div>
         </section>

@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 
 # 1. 读取模板
-$template = Get-Content -Path "options\options.html" -Raw -Encoding UTF8
+$template = Get-Content -Path "options\template.html" -Raw -Encoding UTF8
 
 # 2. 拼接 sections/*.html
 $sectionsDir = "options\sections"
