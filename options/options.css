@@ -1082,6 +1082,27 @@ html[data-theme="dark"] .color-picker {
     background: var(--md-sys-color-surface-container-low);
 }
 
+.dm-item.expanded {
+    background: var(--md-sys-color-surface-container-low);
+    border-radius: 12px 12px 0 0;
+    margin-bottom: 0;
+}
+
+.dm-expand-panel {
+    background: var(--md-sys-color-surface-container-low);
+    border-radius: 0 0 12px 12px;
+    padding: 0 14px 14px 14px;
+    margin-bottom: 8px;
+    max-height: 360px;
+    overflow-y: auto;
+    animation: dmExpandIn 200ms var(--md-sys-motion-easing-standard);
+}
+
+@keyframes dmExpandIn {
+    from { opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; }
+    to { opacity: 1; }
+}
+
 .dm-item label {
     display: flex;
     align-items: center;

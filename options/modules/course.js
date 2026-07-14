@@ -9,16 +9,6 @@ function initCourseModule() {
 
     const dmList = document.getElementById('dm-list');
 
-    // Data Manager 悬浮评价原文 tooltip
-    let dmTooltip = null;
-    function ensureDmTooltip() {
-        if (dmTooltip) return;
-        dmTooltip = document.createElement('div');
-        dmTooltip.id = 'dm-tooltip';
-        dmTooltip.style.cssText = 'position:fixed;z-index:99999;width:380px;max-height:420px;overflow-y:auto;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline-variant);border-radius:14px;padding:16px;box-shadow:0 8px 32px rgba(0,0,0,0.18);opacity:0;pointer-events:none;transform:translateY(4px);transition:opacity 0.18s,transform 0.18s;';
-        document.body.appendChild(dmTooltip);
-    }
-
     function getReviewCount(data) {
         if (!data) return 0;
         if (Array.isArray(data)) return data.length;
@@ -32,76 +22,46 @@ function initCourseModule() {
         return 0;
     }
 
-    function showDmTooltip(anchor, key, comments) {
-        ensureDmTooltip();
-        if (!comments) return;
+    const srcLabels = {
+        'nju_course_ratings': '📖 鼓励你学哪门课',
+        '2020': '🏷️ 2020 红黑榜', '2021': '🏷️ 2021 南小宝',
+        '2022': '🏷️ 2022 红黑榜', '2023': '🏷️ 2023 红黑榜',
+        '2024冬': '🏷️ 2024冬 红黑榜', '2024春': '🏷️ 2024春 红黑榜',
+        '2025春': '🏷️ 2025春 红黑榜'
+    };
+
+    function buildReviewHTML(key, comments) {
+        if (!comments) return '';
         let html = '';
         let totalCount = 0;
-        const srcLabels = {
-            'nju_course_ratings': '📖 鼓励你学哪门课',
-            '2020': '🏷️ 2020 红黑榜', '2021': '🏷️ 2021 南小宝',
-            '2022': '🏷️ 2022 红黑榜', '2023': '🏷️ 2023 红黑榜',
-            '2024冬': '🏷️ 2024冬 红黑榜', '2024春': '🏷️ 2024春 红黑榜',
-            '2025春': '🏷️ 2025春 红黑榜'
-        };
 
         if (Array.isArray(comments)) {
-            if (comments.length === 0) return;
             totalCount = comments.length;
+            if (totalCount === 0) return '';
             html = `<div style="font-weight:800;font-size:13px;color:var(--md-sys-color-primary);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--md-sys-color-outline-variant);">📋 ${key.replace('#',' - ')} (${totalCount}条评价)</div>`;
             comments.forEach((c) => {
                 const safe = String(c).replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-                html += `<div style="font-size:12px;color:var(--md-sys-color-on-surface);margin-bottom:8px;padding:8px 10px;background:var(--md-sys-color-surface-container-low);border-radius:8px;border-left:3px solid var(--md-sys-color-primary);line-height:1.6;">${safe}</div>`;
+                html += `<div style="font-size:12px;color:var(--md-sys-color-on-surface);margin-bottom:6px;padding:6px 8px;background:var(--md-sys-color-surface-container-low);border-radius:6px;border-left:3px solid var(--md-sys-color-primary);line-height:1.6;">${safe}</div>`;
             });
         } else if (typeof comments === 'object') {
             for (const [src, revs] of Object.entries(comments)) {
                 if (!revs || !Array.isArray(revs) || revs.length === 0) continue;
                 totalCount += revs.length;
             }
-            if (totalCount === 0) return;
+            if (totalCount === 0) return '';
             html = `<div style="font-weight:800;font-size:13px;color:var(--md-sys-color-primary);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--md-sys-color-outline-variant);">📋 ${key.replace('#',' - ')} (${totalCount}条评价)</div>`;
             for (const [src, revs] of Object.entries(comments)) {
                 if (!revs || !Array.isArray(revs) || revs.length === 0) continue;
                 const label = srcLabels[src] || `📂 ${src}`;
-                html += `<div style="font-weight:700;color:#333;margin:10px 0 4px;font-size:13px;">${label} (${revs.length}条)</div>`;
+                html += `<div style="font-weight:700;color:var(--md-sys-color-on-surface-variant);margin:8px 0 4px;font-size:13px;">${label} (${revs.length}条)</div>`;
                 revs.forEach((c) => {
                     const safe = String(c).replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-                    html += `<div style="font-size:12px;color:var(--md-sys-color-on-surface);margin-bottom:8px;padding:8px 10px;background:var(--md-sys-color-surface-container-low);border-radius:8px;border-left:3px solid var(--md-sys-color-primary);line-height:1.6;">${safe}</div>`;
+                    html += `<div style="font-size:12px;color:var(--md-sys-color-on-surface);margin-bottom:6px;padding:6px 8px;background:var(--md-sys-color-surface-container-low);border-radius:6px;border-left:3px solid var(--md-sys-color-primary);line-height:1.6;">${safe}</div>`;
                 });
             }
-        } else {
-            return;
         }
-        dmTooltip.innerHTML = html;
-        const r = anchor.getBoundingClientRect();
-        // 智能翻转定位：右侧空间不够时放到条目左侧
-        const tooltipW = 380, margin = 12;
-        if (window.innerWidth - r.right - margin >= tooltipW + 8) {
-            dmTooltip.style.left = (r.right + 4) + 'px';
-        } else {
-            dmTooltip.style.left = Math.max(margin, r.left - tooltipW - 4) + 'px';
-        }
-        // 垂直方向：优先对齐元素顶部，底部不够则上移
-        if (r.top + 440 > window.innerHeight - margin) {
-            dmTooltip.style.top = Math.max(margin, window.innerHeight - 440 - margin) + 'px';
-        } else {
-            dmTooltip.style.top = r.top + 'px';
-        }
-        dmTooltip.style.opacity = '1';
-        dmTooltip.style.transform = 'translateY(0)';
-        dmTooltip.style.pointerEvents = 'auto';
+        return html || '';
     }
-
-    function hideDmTooltip() {
-        if (!dmTooltip) return;
-        dmTooltip.style.opacity = '0';
-        dmTooltip.style.transform = 'translateY(4px)';
-        dmTooltip.style.pointerEvents = 'none';
-    }
-
-    ensureDmTooltip();
-    dmTooltip.addEventListener('mouseenter', () => { if (dmTooltip._timer) clearTimeout(dmTooltip._timer); });
-    dmTooltip.addEventListener('mouseleave', hideDmTooltip);
 
     async function renderDataManager() {
         // 首次打开：若 NJU_DB 为空，从内置 merged_ratings.json 初始化
@@ -170,12 +130,30 @@ function initCourseModule() {
                     </div>
                 `;
 
-                item.addEventListener('mouseenter', () => {
-                    if (dmTooltip._timer) clearTimeout(dmTooltip._timer);
-                    showDmTooltip(item, key, db[key]);
-                });
-                item.addEventListener('mouseleave', () => {
-                    dmTooltip._timer = setTimeout(hideDmTooltip, 350);
+                // 点击展开评价（checkbox 不触发）
+                item.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'INPUT') return;
+                    // 收起其他已展开的
+                    const allExpanded = dmList.querySelectorAll('.dm-item.expanded');
+                    allExpanded.forEach(el => {
+                        if (el !== item) {
+                            el.classList.remove('expanded');
+                            const panel = el.nextElementSibling;
+                            if (panel && panel.classList.contains('dm-expand-panel')) panel.remove();
+                        }
+                    });
+                    // 切换当前
+                    if (item.classList.contains('expanded')) {
+                        item.classList.remove('expanded');
+                        const panel = item.nextElementSibling;
+                        if (panel && panel.classList.contains('dm-expand-panel')) panel.remove();
+                    } else {
+                        item.classList.add('expanded');
+                        const panel = document.createElement('div');
+                        panel.className = 'dm-expand-panel';
+                        panel.innerHTML = buildReviewHTML(key, db[key]);
+                        item.after(panel);
+                    }
                 });
 
                 dmList.appendChild(item);
