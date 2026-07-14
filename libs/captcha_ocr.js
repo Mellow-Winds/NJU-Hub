@@ -117,78 +117,16 @@
         const imageData = ctx.getImageData(0, 0, targetW, targetH);
         const pixels = imageData.data;
 
-        // === 1. 转灰度 ===
-        const gray = new Float32Array(targetH * targetW);
+        // === 1. 转灰度 + 归一化到 [0, 1] ===
+        // ddddocr 标准预处理：仅灰度 + 归一化，不做二值化
+        const float32 = new Float32Array(targetH * targetW);
         for (let i = 0; i < targetH * targetW; i++) {
             const idx = i * 4;
-            gray[i] = 0.299 * pixels[idx] + 0.587 * pixels[idx + 1] + 0.114 * pixels[idx + 2];
+            const grayVal = 0.299 * pixels[idx] + 0.587 * pixels[idx + 1] + 0.114 * pixels[idx + 2];
+            float32[i] = grayVal / 255.0;
         }
 
-        // === 2. 对比度拉伸（min-max 到 0-255）===
-        let minVal = 255, maxVal = 0;
-        for (let i = 0; i < gray.length; i++) {
-            if (gray[i] < minVal) minVal = gray[i];
-            if (gray[i] > maxVal) maxVal = gray[i];
-        }
-        const range = maxVal - minVal;
-        if (range > 0) {
-            for (let i = 0; i < gray.length; i++) {
-                gray[i] = ((gray[i] - minVal) / range) * 255;
-            }
-        }
-
-        // === 3. 中值滤波去噪（3x3 窗口，去除孤立噪点和干扰线）===
-        const denoised = new Float32Array(gray.length);
-        for (let y = 0; y < targetH; y++) {
-            for (let x = 0; x < targetW; x++) {
-                const neighbors = [];
-                for (let dy = -1; dy <= 1; dy++) {
-                    for (let dx = -1; dx <= 1; dx++) {
-                        const ny = y + dy, nx = x + dx;
-                        if (ny >= 0 && ny < targetH && nx >= 0 && nx < targetW) {
-                            neighbors.push(gray[ny * targetW + nx]);
-                        }
-                    }
-                }
-                neighbors.sort((a, b) => a - b);
-                denoised[y * targetW + x] = neighbors[Math.floor(neighbors.length / 2)];
-            }
-        }
-
-        // === 4. 自适应二值化（Otsu 方法）===
-        // 计算直方图
-        const hist = new Array(256).fill(0);
-        for (let i = 0; i < denoised.length; i++) {
-            hist[Math.round(denoised[i])]++;
-        }
-        // Otsu: 找使类间方差最大的阈值
-        const total = denoised.length;
-        let sumAll = 0;
-        for (let i = 0; i < 256; i++) sumAll += i * hist[i];
-        let sumBg = 0, wBg = 0, maxVar = 0, threshold = 128;
-        for (let t = 0; t < 256; t++) {
-            wBg += hist[t];
-            if (wBg === 0) continue;
-            const wFg = total - wBg;
-            if (wFg === 0) break;
-            sumBg += t * hist[t];
-            const meanBg = sumBg / wBg;
-            const meanFg = (sumAll - sumBg) / wFg;
-            const variance = wBg * wFg * (meanBg - meanFg) * (meanBg - meanFg);
-            if (variance > maxVar) {
-                maxVar = variance;
-                threshold = t;
-            }
-        }
-
-        // === 5. 二值化 + 归一化到 [0, 1] ===
-        // 南大验证码：深色文字(低灰度) = 前景 = 1.0，浅色背景(高灰度) = 0.0
-        const float32 = new Float32Array(targetH * targetW);
-        for (let i = 0; i < denoised.length; i++) {
-            float32[i] = denoised[i] < threshold ? 1.0 : 0.0;
-        }
-
-        console.log(`[CaptchaOCR] 预处理: ${srcW}x${srcH} → ${targetW}x${targetH}, Otsu阈值=${threshold}`);
+        console.log(`[CaptchaOCR] 预处理: ${srcW}x${srcH} → ${targetW}x${targetH} (灰度归一化)`);
 
         return { data: float32, width: targetW, height: targetH };
     }
