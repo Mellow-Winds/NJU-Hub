@@ -538,6 +538,16 @@ function initCourseModule() {
     const SEATABLE_SERVER = 'https://table.nju.edu.cn';
     const SEATABLE_TABLE = 'opendata_export';
 
+    function githubFetch(url) {
+        return new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage({ action: 'fetchJson', payload: { url } }, (resp) => {
+                if (chrome.runtime.lastError) { reject(new Error(chrome.runtime.lastError.message)); return; }
+                if (!resp || !resp.ok) { reject(new Error(resp?.error || resp?.rawText || `HTTP ${resp?.status}`)); return; }
+                resolve(resp.data);
+            });
+        });
+    }
+
     const GITHUB_REVIEWS_URL = 'https://raw.githubusercontent.com/nju-hub/nju-hub/main/data/merged_ratings.json';
     const GITHUB_AI_URL = 'https://raw.githubusercontent.com/nju-hub/nju-hub/main/data/ai_cache.json';
 
@@ -552,9 +562,7 @@ function initCourseModule() {
 
             // 并行拉取 GitHub + SeaTable
             const githubPromise = (async () => {
-                const resp = await fetch(GITHUB_REVIEWS_URL, { cache: 'no-cache' });
-                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-                const remote = await resp.json();
+                const remote = await githubFetch(GITHUB_REVIEWS_URL);
                 if (!remote || Object.keys(remote).length === 0) throw new Error('远程数据为空');
                 const data = await chrome.storage.local.get(['NJU_DB']);
                 const db = data.NJU_DB || {};
@@ -626,10 +634,8 @@ function initCourseModule() {
 
             try {
                 setSyncStatus('正在从 GitHub 拉取 AI 评价库...');
-                const resp = await fetch(GITHUB_AI_URL, { cache: 'no-cache' });
-                if (resp.ok) {
-                    const remote = await resp.json();
-                    if (remote && Object.keys(remote).length > 0) {
+                const remote = await githubFetch(GITHUB_AI_URL);
+                if (remote && Object.keys(remote).length > 0) {
                         const data = await chrome.storage.local.get(['NJU_AI_CACHE']);
                         const ai = data.NJU_AI_CACHE || {};
                         let merged = 0;
@@ -642,9 +648,6 @@ function initCourseModule() {
                     } else {
                         setSyncStatus('同步失败：远程数据为空', true);
                     }
-                } else {
-                    setSyncStatus(`同步失败：HTTP ${resp.status}`, true);
-                }
             } catch (e) {
                 console.warn('[NJU-Hub] AI 评价库拉取失败:', e);
                 setSyncStatus(`同步失败: ${e.message}`, true);
