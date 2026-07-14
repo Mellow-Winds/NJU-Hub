@@ -28,7 +28,7 @@
  * 注入所有徽章：收藏按钮、概率、冲突、跨校区、💬评价 + AI 标签
  */
     const injectBadges = () => {
-        const db = GM_getValue(STORAGE.DB, {});
+        const db = window.__ratingsDB__ || {};
         const aiCache = GM_getValue(STORAGE.AI_CACHE, {});
         const conflictCheck = GM_getValue(STORAGE.CONFLICT, true);
         const myCampus = GM_getValue(STORAGE.CAMPUS, 'XL');
@@ -119,8 +119,19 @@
 
                     if (!matched) continue;
 
-                    let comms = db[k].comments || db[k];
-                    if (!Array.isArray(comms) || comms.length === 0) break;
+                    let rawData = db[k];
+                    // 新格式：按来源分组 {"2020": [...], "2021": [...]}
+                    // 旧格式：直接数组 ["评价", ...]
+                    let comms;
+                    if (Array.isArray(rawData)) {
+                        comms = rawData;
+                    } else if (rawData && typeof rawData === 'object') {
+                        comms = [];
+                        for (const srcRevs of Object.values(rawData)) {
+                            if (Array.isArray(srcRevs)) comms.push(...srcRevs);
+                        }
+                    }
+                    if (!comms || comms.length === 0) break;
 
                     // --- 💬 N条评价 徽章 ---
                     const rawTag = document.createElement('span');
@@ -132,11 +143,30 @@
                         clearTimeout(window.__popoverTimer);
                         const pop = document.getElementById('nj-popover');
                         if (!pop) return;
+                        const SRC_LABELS = {
+                            'nju_course_ratings': '📖 鼓励你学哪门课',
+                            '2020': '🏷️ 2020 红黑榜', '2021': '🏷️ 2021 南小宝',
+                            '2022': '🏷️ 2022 红黑榜', '2023': '🏷️ 2023 红黑榜',
+                            '2024冬': '🏷️ 2024冬 红黑榜', '2024春': '🏷️ 2024春 红黑榜',
+                            '2025春': '🏷️ 2025春 红黑榜'
+                        };
                         let h = `<div style="font-weight:800;color:${THEME.PURPLE};margin-bottom:8px;border-bottom:1px solid #eee;padding-bottom:5px;">📌 原始评价库 (${comms.length}条)</div>`;
-                        comms.forEach(x => {
-                            const safe = String(x).replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                            h += `<div class="pop-item">● ${safe}</div>`;
-                        });
+                        if (rawData && typeof rawData === 'object' && !Array.isArray(rawData)) {
+                            for (const [src, label] of Object.entries(SRC_LABELS)) {
+                                const revs = rawData[src];
+                                if (!revs || !Array.isArray(revs) || revs.length === 0) continue;
+                                h += `<div style="font-weight:700;color:#333;margin:10px 0 4px;font-size:13px;">${label} (${revs.length}条)</div>`;
+                                revs.forEach(x => {
+                                    const safe = String(x).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                                    h += `<div class="pop-item">● ${safe}</div>`;
+                                });
+                            }
+                        } else {
+                            comms.forEach(x => {
+                                const safe = String(x).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                                h += `<div class="pop-item">● ${safe}</div>`;
+                            });
+                        }
                         h += `<div style="margin-top:8px;padding-top:8px;border-top:1px dashed #ccc;text-align:center;font-size:11px;color:#888;">📝 贡献评价请访问 <a href="https://table.nju.edu.cn/apps/custom/ad-astra/?page_id=AeyG" target="_blank" style="color:#660874;font-weight:bold;">鼓励你学哪门课评价平台</a></div>`;
                         pop.innerHTML = h;
                         pop.style.maxHeight = '400px';
