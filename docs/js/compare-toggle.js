@@ -18,7 +18,7 @@
             // 同步给 block，用于按钮样式切换
             block.classList.toggle('show-after', showAfter);
             if (toggleText) {
-                toggleText.textContent = showAfter ? '点击图片或此处切换 Before' : '点击图片或此处切换 After';
+                toggleText.textContent = showAfter ? '点击图片或此处观看使用插件前界面' : '点击图片或此处观看使用插件后效果';
             }
         }
 

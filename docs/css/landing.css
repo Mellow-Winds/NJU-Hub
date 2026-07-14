@@ -279,6 +279,17 @@ code {
     position: relative;
     z-index: 1;
     max-width: 840px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hero-icon {
+    width: 96px;
+    height: 96px;
+    margin-bottom: var(--space-6);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-3);
 }
 
 .hero-badge {
@@ -309,10 +320,25 @@ code {
     font-size: clamp(2.5rem, 6vw, 4.2rem);
     font-weight: 750;
     letter-spacing: -0.03em;
-    line-height: 1.1;
+    line-height: 1.2;
     margin-bottom: var(--space-6);
     color: var(--on-surface);
+    text-align: center;
 }
+
+/* NJU-Hub 品牌名：独立字体 + 紫色实心 */
+.hero-title-brand {
+    display: block;
+    margin-bottom: calc(var(--space-2) / 2);
+    font-family: 'Segoe UI', 'SF Pro Display', system-ui, sans-serif;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.02em;
+}
+:root[data-theme="dark"] .hero-title-brand {
+    color: #d7b6ff;
+}
+
 .hero-title-accent {
     background: linear-gradient(135deg, var(--primary) 0%, #b833d4 50%, #660874 100%);
     -webkit-background-clip: text;
@@ -611,7 +637,8 @@ code {
 .compare-toggle {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 9;
+    /* 图片原始分辨率 2550×1232，容器比例与之匹配，消除黑边 */
+    aspect-ratio: 2550 / 1232;
     border-radius: var(--radius-xl);
     overflow: hidden;
     box-shadow: var(--shadow-3);
@@ -795,7 +822,7 @@ code {
 }
 .install-guide-preview iframe {
     width: 100%;
-    height: 600px;
+    height: 1000px;
     border: none;
     display: block;
 }
