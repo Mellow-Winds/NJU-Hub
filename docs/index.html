@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NJU-Hub — 南大智慧终端</title>
+    <meta name="description" content="南京大学全场景增强插件：一站式浏览器扩展，覆盖 GPA 查询、智能自动登录、智能选课分析、LMS 课件保存、自动评教与部分网站显示增强。">
+    <link rel="icon" type="image/png" href="icons/icon128.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+
+<!-- ==================== NAV ==================== -->
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="#" class="nav-brand">
+            <img src="icons/icon128.png" alt="NJU-Hub" class="nav-logo">
+            <span>NJU-Hub</span>
+        </a>
+        <div class="nav-links">
+            <a href="#features">功能</a>
+            <a href="#compare">对比</a>
+            <a href="#install">安装</a>
+            <a href="https://github.com/Mellow-Winds/NJU-Hub" target="_blank" class="nav-gh">GitHub</a>
+            <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换主题">
+                <svg class="theme-icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <svg class="theme-icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">
+            <span class="hero-badge-dot"></span>
+            南京大学全场景增强插件
+        </div>
+        <h1 class="hero-title">
+            告别繁琐<br>
+            <span class="hero-title-accent">办中国最好的</span>NJUer's插件
+        </h1>
+        <p class="hero-sub">
+            一站式浏览器扩展，覆盖 GPA 查询、智能自动登录、智能选课分析、
+            LMS 课件保存、自动评教与部分网站显示增强。
+        </p>
+        <div class="hero-actions">
+            <a href="https://github.com/Mellow-Winds/NJU-Hub/archive/refs/heads/main.zip" target="_blank" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                下载安装
+            </a>
+            <a href="#compare" class="btn btn-secondary">
+                查看对比
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+            </a>
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <span class="hero-stat-num">6+</span>
+                <span class="hero-stat-label">功能模块</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-num">3</span>
+                <span class="hero-stat-label">校区支持</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-num">100%</span>
+                <span class="hero-stat-label">本地存储</span>
+            </div>
+        </div>
+    </div>
+    <div class="hero-scroll-hint">
+        <span>向下滚动探索</span>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+    </div>
+</section>
+
+<!-- ==================== FEATURES ==================== -->
+<section id="features" class="section">
+    <div class="section-header">
+        <h2 class="section-title">为什么需要 NJU-Hub</h2>
+        <p class="section-desc">六大核心模块，覆盖南大学习生活全场景</p>
+    </div>
+    <div class="feature-grid">
+        <div class="feature-card" data-feature>
+            <div class="feature-icon" style="--icon-bg:#e8d5f0;--icon-fg:#660874;">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <h3>智能自动登录</h3>
+            <p>本地 OCR 模型与云端 AI 双轨并行识别验证码，一键填充账号密码。本地模型离线可用，云端 AI 精度更高。</p>
+        </div>
+        <div class="feature-card" data-feature>
+            <div class="feature-icon" style="--icon-bg:#fce4ec;--icon-fg:#c2185b;">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <h3>智能选课分析</h3>
+            <p>AI 红黑榜标注课程评价，自动检测时间冲突，置顶收藏感兴趣课程，按校区筛选。</p>
+        </div>
+        <div class="feature-card" data-feature>
+            <div class="feature-icon" style="--icon-bg:#e3f2fd;--icon-fg:#1565c0;">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <h3>GPA 快速查询</h3>
+            <p>点击插件图标一键跳转至交换生网站查看 GPA，无需手动导航多级菜单。</p>
+        </div>
+        <div class="feature-card" data-feature>
+            <div class="feature-icon" style="--icon-bg:#e8f5e9;--icon-fg:#2e7d32;">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-6 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            </div>
+            <h3>自动评教</h3>
+            <p>全自动评教：锁定"很好"选项，随机生成合理评语，自动处理弹窗，全程自动完成。</p>
+        </div>
+        <div class="feature-card" data-feature>
+            <div class="feature-icon" style="--icon-bg:#fff3e0;--icon-fg:#e65100;">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            </div>
+            <h3>LMS 课件便捷保存</h3>
+            <p>智汇南雍 LMS 增强：突破下载限制，提供更方便的途径将课件保存到电脑上。</p>
+        </div>
+        <div class="feature-card" data-feature>
+            <div class="feature-icon" style="--icon-bg:#f3e5f5;--icon-fg:#7b1fa2;">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 16v-4M12 8h.01"/></svg>
+            </div>
+            <h3>部分网站显示增强</h3>
+            <p>增强了一些网站的显示效果：优化作业界面（待完成/已完成/已截止）与课件界面的展示。</p>
+        </div>
+        <div class="feature-card feature-card-more" data-feature>
+            <div class="feature-icon" style="--icon-bg:#f5f5f5;--icon-fg:#616161;">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            </div>
+            <h3>更多功能</h3>
+            <p>更多功能正在逐渐加入中…</p>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== BEFORE / AFTER COMPARE ==================== -->
+<section id="compare" class="section section-compare">
+    <div class="section-header">
+        <h2 class="section-title">场景体验对比</h2>
+        <p class="section-desc">点击图片，看看 NJU-Hub 加持下的无比便利</p>
+    </div>
+
+    <!-- 对比块 1: 自动登录 -->
+    <div class="compare-block" data-compare>
+        <div class="compare-info">
+            <span class="compare-tag">智能登录</span>
+            <h3 class="compare-title">从手动输验证码到双轨智能识别</h3>
+            <p class="compare-desc">每次登录统一认证系统都要手动输入验证码？NJU-Hub 支持本地 OCR 模型与云端 AI 双轨并行识别验证码，离线也能用，全程零手动操作。</p>
+        </div>
+        <div class="compare-toggle" data-toggle>
+            <div class="compare-toggle-img compare-state-before">
+                <img src="assets/before/login.png" alt="安装插件前" loading="lazy"
+                     onerror="this.parentElement.classList.add('placeholder')">
+                <span class="compare-label compare-label-before">Before</span>
+            </div>
+            <div class="compare-toggle-img compare-state-after">
+                <img src="assets/after/login.png" alt="安装插件后" loading="lazy"
+                     onerror="this.parentElement.classList.add('placeholder')">
+                <span class="compare-label compare-label-after">After</span>
+            </div>
+        </div>
+        <button class="compare-toggle-btn" type="button" data-toggle-btn>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9-9a9 9 0 0 0-9 9m9-9a9 9 0 0 1 9 9"/></svg>
+            <span class="toggle-text">点击图片或此处切换 After</span>
+        </button>
+    </div>
+
+    <!-- 对比块 2: 选课助手 -->
+    <div class="compare-block" data-compare>
+        <div class="compare-info">
+            <span class="compare-tag">选课助手</span>
+            <h3 class="compare-title">从杂乱无章的选课界面到高效率选课体验</h3>
+            <p class="compare-desc">选课界面杂乱无章？NJU-Hub 基于 AI 分析课程评价，自动标注红榜黑榜，检测时间冲突，置顶收藏感兴趣的课程。</p>
+        </div>
+        <div class="compare-toggle" data-toggle>
+            <div class="compare-toggle-img compare-state-before">
+                <img src="assets/before/xk.png" alt="安装插件前" loading="lazy"
+                     onerror="this.parentElement.classList.add('placeholder')">
+                <span class="compare-label compare-label-before">Before</span>
+            </div>
+            <div class="compare-toggle-img compare-state-after">
+                <img src="assets/after/xk.png" alt="安装插件后" loading="lazy"
+                     onerror="this.parentElement.classList.add('placeholder')">
+                <span class="compare-label compare-label-after">After</span>
+            </div>
+        </div>
+        <button class="compare-toggle-btn" type="button" data-toggle-btn>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9-9a9 9 0 0 0-9 9m9-9a9 9 0 0 1 9 9"/></svg>
+            <span class="toggle-text">点击图片或此处切换 After</span>
+        </button>
+    </div>
+
+    <!-- 对比块 3: GPA 查询 -->
+    <div class="compare-block" data-compare>
+        <div class="compare-info">
+            <span class="compare-tag">GPA 查询</span>
+            <h3 class="compare-title">从多级菜单到一键直达</h3>
+            <p class="compare-desc">查 GPA 要点好几层菜单？NJU-Hub 一键跳转至交换生网站 GPA 页面，省去繁琐导航。</p>
+        </div>
+        <div class="compare-toggle" data-toggle>
+            <div class="compare-toggle-img compare-state-before">
+                <img src="assets/before/gpa.png" alt="安装插件前" loading="lazy"
+                     onerror="this.parentElement.classList.add('placeholder')">
+                <span class="compare-label compare-label-before">Before</span>
+            </div>
+            <div class="compare-toggle-img compare-state-after">
+                <img src="assets/after/gpa.png" alt="安装插件后" loading="lazy"
+                     onerror="this.parentElement.classList.add('placeholder')">
+                <span class="compare-label compare-label-after">After</span>
+            </div>
+        </div>
+        <button class="compare-toggle-btn" type="button" data-toggle-btn>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9-9a9 9 0 0 0-9 9m9-9a9 9 0 0 1 9 9"/></svg>
+            <span class="toggle-text">点击图片或此处切换 After</span>
+        </button>
+    </div>
+
+    <!-- 对比块 4: 自动评教 -->
+    <div class="compare-block" data-compare>
+        <div class="compare-info">
+            <span class="compare-tag">自动评教</span>
+            <h3 class="compare-title">从逐项手动点到全自动完成</h3>
+            <p class="compare-desc">期末评教要逐门课逐项手动点选？NJU-Hub 全自动完成：锁定"很好"选项，随机生成合理评语，自动处理弹窗。</p>
+        </div>
+        <div class="compare-toggle" data-toggle>
+            <div class="compare-toggle-img compare-state-before">
+                <img src="assets/before/eval.png" alt="安装插件前" loading="lazy"
+                     onerror="this.parentElement.classList.add('placeholder')">
+                <span class="compare-label compare-label-before">Before</span>
+            </div>
+            <div class="compare-toggle-img compare-state-after">
+                <img src="assets/after/eval.png" alt="安装插件后" loading="lazy"
+                     onerror="this.parentElement.classList.add('placeholder')">
+                <span class="compare-label compare-label-after">After</span>
+            </div>
+        </div>
+        <button class="compare-toggle-btn" type="button" data-toggle-btn>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9-9a9 9 0 0 0-9 9m9-9a9 9 0 0 1 9 9"/></svg>
+            <span class="toggle-text">点击图片或此处切换 After</span>
+        </button>
+    </div>
+
+    <!-- 对比块 5: LMS 增强 -->
+    <div class="compare-block" data-compare>
+        <div class="compare-info">
+            <span class="compare-tag">LMS 保存</span>
+            <h3 class="compare-title">从受限下载到便捷保存</h3>
+            <p class="compare-desc">智汇南雍 LMS 课件下载受限？NJU-Hub 突破限制，提供更方便的途径将课件保存到电脑上。</p>
+        </div>
+        <div class="compare-toggle" data-toggle>
+            <div class="compare-toggle-img compare-state-before">
+                <img src="assets/before/lms.png" alt="安装插件前" loading="lazy"
+                     onerror="this.parentElement.classList.add('placeholder')">
+                <span class="compare-label compare-label-before">Before</span>
+            </div>
+            <div class="compare-toggle-img compare-state-after">
+                <img src="assets/after/lms.png" alt="安装插件后" loading="lazy"
+                     onerror="this.parentElement.classList.add('placeholder')">
+                <span class="compare-label compare-label-after">After</span>
+            </div>
+        </div>
+        <button class="compare-toggle-btn" type="button" data-toggle-btn>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9-9a9 9 0 0 0-9 9m9-9a9 9 0 0 1 9 9"/></svg>
+            <span class="toggle-text">点击图片或此处切换 After</span>
+        </button>
+    </div>
+
+    <!-- 对比块 6: 显示增强 -->
+    <div class="compare-block" data-compare>
+        <div class="compare-info">
+            <span class="compare-tag">显示增强</span>
+            <h3 class="compare-title">从杂乱课程平台到清晰高效界面</h3>
+            <p class="compare-desc">部分课程平台界面杂乱？NJU-Hub 显示增强功能可以大幅提升学习效率，优化作业界面与课件界面的展示。</p>
+        </div>
+        <div class="compare-toggle" data-toggle>
+            <div class="compare-toggle-img compare-state-before">
+                <img src="assets/before/display.png" alt="安装插件前" loading="lazy"
+                     onerror="this.parentElement.classList.add('placeholder')">
+                <span class="compare-label compare-label-before">Before</span>
+            </div>
+            <div class="compare-toggle-img compare-state-after">
+                <img src="assets/after/display.png" alt="安装插件后" loading="lazy"
+                     onerror="this.parentElement.classList.add('placeholder')">
+                <span class="compare-label compare-label-after">After</span>
+            </div>
+        </div>
+        <button class="compare-toggle-btn" type="button" data-toggle-btn>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9-9a9 9 0 0 0-9 9m9-9a9 9 0 0 1 9 9"/></svg>
+            <span class="toggle-text">点击图片或此处切换 After</span>
+        </button>
+    </div>
+</section>
+<!-- ==================== INSTALL ==================== -->
+<section id="install" class="section">
+    <div class="section-header">
+        <h2 class="section-title">三步安装</h2>
+        <p class="section-desc">开发者模式加载，1 分钟搞定</p>
+    </div>
+    <div class="install-steps">
+        <div class="install-step" data-step>
+            <div class="step-num">1</div>
+            <div class="step-body">
+                <h3>下载源码</h3>
+                <p>从 GitHub 下载 zip 并解压到本地文件夹。</p>
+                <a href="https://github.com/Mellow-Winds/NJU-Hub/archive/refs/heads/main.zip" target="_blank" class="step-link">
+                    前往下载 →
+                </a>
+            </div>
+        </div>
+        <div class="install-step" data-step>
+            <div class="step-num">2</div>
+            <div class="step-body">
+                <h3>打开扩展管理页</h3>
+                <p>在 Edge 地址栏输入 <code>edge://extensions/</code>，开启左下角"开发人员模式"。</p>
+            </div>
+        </div>
+        <div class="install-step" data-step>
+            <div class="step-num">3</div>
+            <div class="step-body">
+                <h3>加载扩展</h3>
+                <p>点击"加载已解压的扩展程序"，选择解压后的 NJU-Hub 文件夹，固定到工具栏即可。</p>
+            </div>
+        </div>
+    </div>
+    <div class="install-cta">
+        <a href="https://github.com/Mellow-Winds/NJU-Hub/archive/refs/heads/main.zip" target="_blank" class="btn btn-primary btn-lg">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+            立即下载
+        </a>
+    </div>
+    <div class="install-guide-preview" id="installGuidePreview">
+        <iframe src="install-guide.pdf" title="安装图文教程"></iframe>
+    </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <img src="icons/icon128.png" alt="NJU-Hub" class="footer-logo">
+            <span>NJU-Hub</span>
+        </div>
+        <p class="footer-desc">南京大学全场景增强插件 · 开源项目</p>
+        <div class="footer-links">
+            <a href="https://github.com/Mellow-Winds/NJU-Hub" target="_blank">GitHub</a>
+            <a href="https://github.com/Mellow-Winds/NJU-Hub/releases" target="_blank">Releases</a>
+            <a href="privacy.html">隐私政策</a>
+            <a href="https://github.com/Mellow-Winds/NJU-Hub#readme" target="_blank">文档</a>
+        </div>
+        <p class="footer-copy">MIT License · 2026 NJU-Hub</p>
+    </div>
+</footer>
+
+<script src="js/compare-toggle.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
