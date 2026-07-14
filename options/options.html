@@ -1,3 +1,406 @@
+<!--
+  ⚠️ 此文件由 build.ps1 自动生成，请勿手动编辑！
+
+  拼接过程：
+    1. 模板: options/template.html (本文件)
+    2. Section: options/sections/*.html → 替换 
+<!-- ===== about ===== -->
+<section id="section-about" class="settings-section">
+            <h2>关于插件</h2>
+            <p class="section-desc">NJU Hub — 南大智慧终端 v2.0.1</p>
+
+            <div class="card card-full">
+                <div class="divider">AI 配置教程</div>
+                <div class="about-tutorial">
+                    <p class="tutorial-step"><strong>1. 获取 API Key</strong> — 前往大模型服务提供商的开放平台注册并获取 API Key。常用提供商包括 SiliconCloud、OpenAI、智谱 AI 等。注册后在控制台创建 API Key 并复制。</p>
+                    <p class="tutorial-step"><strong>2. 配置 API Base URL</strong> — 将提供商提供的 API 地址填入对应模块的「API Base URL」输入框。通常格式为 <code>https://api.xxx.com/v1</code>，具体以提供商文档为准。</p>
+                    <p class="tutorial-step"><strong>3. 填写 API Key</strong> — 将步骤 1 获取的 Key 粘贴到「API Key」输入框中，该 Key 仅保存在你本地浏览器的插件存储中。</p>
+                    <p class="tutorial-step"><strong>4. 选择模型</strong> — 在「Model」输入框中填写模型名称（如 <code>Qwen/Qwen3-8B</code>）。注意需要支持视觉识别的模型才能用于自动登录验证码识别。</p>
+                    <p class="tutorial-step"><strong>5. 多个模块独立配置</strong> — 自动登录、选课助手、自动评教三个模块的 AI 配置互相独立，你可以为不同模块使用不同的 API Key 和模型。</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="divider">隐私政策</div>
+                <button id="btn-privacy-policy" class="btn-small" type="button" style="width:100%;">查看隐私政策</button>
+            </div>
+
+            <div class="card">
+                <div class="divider">问题反馈</div>
+                <p class="tutorial-step">如遇到问题或有功能建议，欢迎联系开发者：</p>
+                <p class="tutorial-step" style="font-size:15px;font-weight:700;">
+                     <a href="https://github.com/Mellow-Winds/NJU-Hub" target="_blank" rel="noopener" style="text-decoration:underline;">Github仓库</a>
+                    <span style="font-weight:400;font-size:0.9em;color:#1c1b1f;"> — 希望可以给我一个 Star 支持一下喵！⭐</span>
+                </p>
+                <p class="tutorial-step" style="font-size:15px;font-weight:700;color:var(--md-sys-color-primary);">QQ：2860339144</p>
+                <p class="tutorial-step" style="font-size:15px;font-weight:700;color:var(--md-sys-color-primary);">Mail：251250226@smail.nju.edu.cn</p>
+            </div>
+        </section>
+
+<!-- ===== course ===== -->
+<section id="section-course" class="settings-section">
+            <h2>选课助手</h2>
+            <p class="section-desc">基于专业背景提供"红黑榜"深度分析。</p>
+            <div class="card-stack">
+                <div class="card">
+                    <div class="divider">功能开关设置</div>
+                    <div class="toggle-group">
+                        <div class="toggle-info"><span class="label">冲突预警</span></div>
+                        <label class="switch">
+                            <input type="checkbox" id="course-conflict-check">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info"><span class="label">置顶收藏课程</span></div>
+                        <label class="switch">
+                            <input type="checkbox" id="course-pin-fav">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <span class="label">自用AI分析</span>
+                            <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后将使用您自己的 API 进行 AI 评价分析。如果您认为官方 AI 分析库不准确，或希望自己的模型做出判断，可以启用此选项。</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="course-use-own-ai">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div id="course-own-ai-config" style="display:none;">
+                    <div class="divider" style="margin-top:16px;">自用AI设置</div>
+                    <div class="form-group">
+                        <label for="course-major">专业背景</label>
+                        <input type="text" id="course-major" placeholder="此处填写您的专业">
+                    </div>
+                    <div class="form-group">
+                        <label for="course-pref">选课偏好 Prompt</label>
+                        <textarea id="course-pref" placeholder="告诉 AI 你的选课口味（水课？硬核？高绩点？）..."></textarea>
+                    </div>
+                    <div class="divider">API 配置</div>
+                    <div class="form-group">
+                        <label for="course-api-url">API Base URL</label>
+                        <input type="text" id="course-api-url" placeholder="https://api.siliconflow.cn/v1">
+                    </div>
+                    <div class="form-group">
+                        <label for="course-api-key">API Key</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="course-api-key" placeholder="">
+                            <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
+                                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                    <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="course-model">Model</label>
+                        <input type="text" id="course-model" placeholder="Qwen/Qwen3-8B">
+                    </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="divider">个人信息设置</div>
+                    <div class="form-group">
+                        <label for="course-my-campus">我的主校区</label>
+                        <div class="nju-dropdown" id="course-my-campus" data-name="course-my-campus">
+                            <div class="nju-dropdown-trigger" tabindex="0" role="combobox" aria-expanded="false">
+                                <span class="nju-dropdown-text">仙林</span>
+                                <svg class="nju-dropdown-arrow" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+                            </div>
+                            <ul class="nju-dropdown-menu" role="listbox">
+                                <li data-value="XL" role="option" class="active">仙林</li>
+                                <li data-value="GL" role="option">鼓楼</li>
+                                <li data-value="PK" role="option">浦口</li>
+                                <li data-value="SZ" role="option">苏州</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button id="btn-import-schedule" class="btn-small" type="button">导入课表</button>
+                        <button id="btn-view-schedule" class="btn-small" type="button">查看我的课表</button>
+                        <button id="btn-clear-schedule" class="btn-small btn-danger" type="button">清空课表</button>
+                        <div class="hint-text">如无记录，请先登录课表页面并同步到插件。</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="divider">同步</div>
+                    <p class="hint-text" style="margin-bottom:12px;">评价数据来自"鼓励你学哪门课榜"及社区贡献</p>
+                    <div class="form-group" style="display:flex; gap:8px; margin-bottom:0;">
+                        <button id="course-sync-reviews" class="btn-small btn-sync" type="button"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;margin-right:4px;"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>同步评价库</button>
+                        <button id="course-sync-ai" class="btn-small" type="button"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;margin-right:4px;"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>同步AI评价库</button>
+                    </div>
+                    <p id="course-sync-status" class="hint-text" style="margin-top:8px;"></p>
+                </div>
+            </div>
+
+            <div class="card card-full">
+                <div class="divider">评价管理</div>
+                <div class="data-manager-controls">
+                    <button id="course-db-export" class="btn-small" type="button">导出评价</button>
+                </div>
+
+                <div class="divider">评价详情</div>
+                <div class="data-manager-controls">
+                    <button id="dm-select-all" class="btn-small" type="button">全选</button>
+                    <button id="dm-invert" class="btn-small" type="button">反选</button>
+                    <button id="dm-delete" class="btn-small btn-danger" type="button">删除选中</button>
+                    <button id="dm-clear-all" class="btn-small btn-danger" type="button" style="margin-left:auto;">清空详情</button>
+                </div>
+                <div class="data-manager-search">
+                    <input type="text" id="dm-search" class="search-input" placeholder="搜索课程名或教师名...">
+                </div>
+                <div class="data-manager-list" id="dm-list"></div>
+            </div>
+        </section>
+
+<!-- ===== eval ===== -->
+<section id="section-eval" class="settings-section">
+            <h2>自动评教设置</h2>
+            <p class="section-desc">状态机全自动评教：锁定"很好"，随机评语，自动处理弹窗，期末/助教自动流转。</p>
+            <div class="card">
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">启用自动评教模块</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-eval">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <p class="hint-text" style="margin-top:12px; color:var(--md-sys-color-on-surface-variant); font-size:13px;">
+                    进入评教页面后，点击右下角浮动按钮即可启动全自动评教。评语由内置语料库随机生成，无需额外配置。
+                </p>
+            </div>
+        </section>
+
+<!-- ===== general ===== -->
+<section id="section-general" class="settings-section active">
+            <h2>个人信息</h2>
+            <p class="section-desc">管理你的基础身份信息，用于自动登录。所有信息本地保存，不上传云端。</p>
+            <div class="card">
+                <div class="form-group">
+                    <label for="common-name">昵称</label>
+                    <input type="text" id="common-name" placeholder="应该如何称呼您？">
+                </div>
+                <div class="form-group">
+                    <label for="common-id">学号</label>
+                    <input type="text" id="common-id" placeholder="此处填写用于自动登录的学号">
+                </div>
+                <div class="form-group">
+                    <label for="common-pwd">统一认证密码</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="common-pwd" placeholder="仅用于自动登录加密存储">
+                        <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
+                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<!-- ===== lms ===== -->
+<section id="section-lms" class="settings-section">
+            <h2>智汇南雍增强设置</h2>
+            <p class="section-desc">视频限制解除与课件批量下载增强。</p>
+            <div class="card">
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">启用 LMS 增强模块</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-lms">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="divider">视频</div>
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">解除视频限制</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="lms-video-remove-restrict">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">自动连播</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="lms-video-autojump">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="divider">下载</div>
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">下载列表默认全选</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="lms-dl-default-all">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">显示文件选择框</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="lms-dl-show-checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+<!-- ===== login ===== -->
+<section id="section-login" class="settings-section">
+            <h2>自动登录设置</h2>
+            <p class="section-desc">配置自动识图与填充。</p>
+            <div class="card">
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">自动填充 (Auto Fill)</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="login-autofill">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">自动登录 (Auto Login)</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="login-autologin">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">启用 AI 识别 (Enable AI)</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="login-ai-enable">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div id="login-ai-config">
+                <div class="divider">AI 配置</div>
+                <div class="form-group">
+                    <label for="login-api-url">API Base URL</label>
+                    <input type="text" id="login-api-url" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="login-api-key">API Key</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-api-key" placeholder="">
+                        <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
+                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="login-model">Vision Model</label>
+                    <input type="text" id="login-model" placeholder="">
+                </div>
+
+                <div class="divider">二次提取模型（可选）</div>
+                <p class="tutorial-step" style="margin-bottom:12px;">当验证码识别结果位数异常时，将原始回复交给此文本模型二次提取。留空则不启用。</p>
+                <div class="form-group">
+                    <label for="login-extract-api-url">提取 API Base URL</label>
+                    <input type="text" id="login-extract-api-url" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="login-extract-api-key">提取 API Key</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-extract-api-key" placeholder="">
+                        <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
+                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="login-extract-model">提取模型</label>
+                    <input type="text" id="login-extract-model" placeholder="">
+                </div>
+                </div>
+            </div>
+        </section>
+
+<!-- ===== personalize ===== -->
+<section id="section-personalize" class="settings-section">
+            <h2>个性化</h2>
+            <p class="section-desc">统一管理主题色与显示模式，作用于所有板块。</p>
+            <div class="card">
+                <div class="divider">主题色</div>
+                <div class="theme-color-row">
+                    <button type="button" class="color-chip" data-color="#660874" aria-label="南大紫">
+                        <span class="dot" style="background:#660874"></span>
+                        <span class="txt">南大紫</span>
+                    </button>
+                    <button type="button" class="color-chip" data-color="#0ea5e9" aria-label="天空蓝">
+                        <span class="dot" style="background:#0ea5e9"></span>
+                        <span class="txt">天空蓝</span>
+                    </button>
+                    <button type="button" class="color-chip" data-color="#06b6d4" aria-label="活力青">
+                        <span class="dot" style="background:#06b6d4"></span>
+                        <span class="txt">活力青</span>
+                    </button>
+                    <div class="color-picker">
+                        <input type="color" id="ui-theme-color" value="#0ea5e9" aria-label="自选主题色">
+                        <span class="txt">自选</span>
+                    </div>
+                </div>
+
+                <div class="divider">显示模式</div>
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">暗夜模式</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="ui-dark-mode">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="divider">字体</div>
+                <div class="form-group">
+                    <label for="ui-font-family">界面字体</label>
+                    <div class="nju-dropdown" id="ui-font-family" data-name="ui-font-family">
+                        <div class="nju-dropdown-trigger" tabindex="0" role="combobox" aria-expanded="false">
+                            <span class="nju-dropdown-text">Google Sans Flex + MiSans</span>
+                            <svg class="nju-dropdown-arrow" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+                        </div>
+                        <ul class="nju-dropdown-menu" role="listbox">
+                            <li data-value="google-sans-flex" role="option" class="active">Google Sans Flex + MiSans</li>
+                            <li data-value="misans" role="option">MiSans</li>
+                            <li data-value="system" role="option">系统默认</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<!-- ===== seec ===== -->
+<section id="section-seec" class="settings-section">
+            <h2>显示增强</h2>
+            <p class="section-desc">此处管理显示增强功能。</p>
+            <div class="card">
+                <div class="toggle-group">
+                    <div class="toggle-info"><span class="label">启用软件工程SEEC平台显示增强</span></div>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-seec-workpanel">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+    3. Module:  options/modules/*.js  → 替换 
+  <script src="modules/course.js"></script>
+  <script src="modules/eval.js"></script>
+  <script src="modules/lms.js"></script>
+  <script src="modules/login.js"></script>
+  <script src="modules/seec.js"></script> 为 <script> 标签
+
+  修改 Section HTML → 编辑 options/sections/xxx.html 后运行 build.ps1
+  修改 Module JS   → 编辑 options/modules/xxx.js 后运行 build.ps1
+  修改侧边栏等框架 → 编辑本文件 (template.html) 后运行 build.ps1
+-->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
