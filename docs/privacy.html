@@ -133,7 +133,7 @@
         <div class="card">
             <h2>权限使用说明</h2>
             <p><code>storage</code> — 用于在本地保存您的配置信息、课表数据和课程评价。</p>
-            <p><code>activeTab / scripting</code> — 用于在当前标签页注入功能增强脚本（GPA 查询、课表抓取、自动评教等），仅在您主动触发的页面上执行。</p>
+            <p><code>declarativeNetRequest</code> — 用于移除向 NJU 系统发起的请求中的 Origin/Referer 头部，避免 CORS 拦截，确保自动登录和课程评价同步等功能正常运作。</p>
             <p><code>host_permissions</code> — 用于访问南大相关系统（统一认证、教务系统、LMS、SEEC 等）以提供自动登录、课表同步、LMS 增强等核心功能，以及访问您配置的 AI API 地址以提供 AI 辅助功能。</p>
         </div>
 
