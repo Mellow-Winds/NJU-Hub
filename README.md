@@ -3,7 +3,7 @@
 南京大学校园浏览器扩展，一站式解决 GPA 查询、自动登录、选课分析、自动评教、LMS 增强等日常需求。
 
 [![Manifest Version](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/mv3/intro/)
-[![Version](https://img.shields.io/badge/version-26R4-%23660874)](https://github.com/Mellow-Winds/NJU-Hub)
+[![Version](https://img.shields.io/badge/version-26.1.4-%23660874)](https://github.com/Mellow-Winds/NJU-Hub)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ---
