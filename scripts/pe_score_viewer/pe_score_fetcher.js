@@ -19,12 +19,18 @@
 
     /**
      * fetch HTML 并解析为 Document
+     * 检测登录重定向：如果返回的页面是登录页，抛出错误
      */
     async function fetchDoc(url) {
         const res = await fetch(url, { credentials: 'same-origin' });
         if (!res.ok) throw new Error(`HTTP ${res.status}: ${url}`);
         const html = await res.text();
-        return new DOMParser().parseFromString(html, 'text/html');
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        // 检测登录重定向页面
+        if (doc.querySelector('form[action*="login"]') || doc.querySelector('input[name="username"]')) {
+            throw new Error('登录已过期，请重新登录');
+        }
+        return doc;
     }
 
     /**

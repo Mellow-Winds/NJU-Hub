@@ -1,11 +1,13 @@
 {
   "manifest_version": 3,
   "name": "NJU Hub - 南大智慧终端",
-  "version": "26.1.4",
+  "version": "2.0.1",
   "default_locale": "zh_CN",
   "description": "NJU功能增强：GPA快速查询 | 课表抓取 | 自动登录 | LMS增强",
   "permissions": [
     "storage",
+    "activeTab",
+    "scripting",
     "declarativeNetRequest"
   ],
   "web_accessible_resources": [

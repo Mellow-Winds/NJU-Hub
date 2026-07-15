@@ -5,6 +5,7 @@
 // 拒绝 chrome-extension:// 或非预期域名来源 → 剥离以伪装成无头请求
 const RULE_NAV = 1;   // 页面导航（window.open / chrome.tabs.create / <a> 跳转）
 const RULE_XHR = 2;   // XHR 请求（SeaTable API 等）
+const RULE_HTTPS_UPGRADE = 3;  // HTTP→HTTPS 升级（ggtypt 平台 Mixed Content 修复）
 
 async function ensureHeaderRules() {
     const rules = [
@@ -37,17 +38,31 @@ async function ensureHeaderRules() {
                 urlFilter: "https://table.nju.edu.cn/api-gateway/*",
                 resourceTypes: ["xmlhttprequest"]
             }
+        },
+        // ggtypt 平台服务器会将未登录请求 302 重定向到 http://ggtypt.nju.edu.cn/pft/login
+        // 在 HTTPS 页面中触发 Mixed Content 阻断。此规则将 HTTP 升级为 HTTPS。
+        {
+            id: RULE_HTTPS_UPGRADE,
+            priority: 2,
+            action: {
+                type: "redirect",
+                redirect: { transform: { scheme: "https" } }
+            },
+            condition: {
+                urlFilter: "http://ggtypt.nju.edu.cn/*",
+                resourceTypes: ["main_frame", "sub_frame", "xmlhttprequest", "other"]
+            }
         }
     ];
 
     // 先检查是否已注册
     try {
-        const existing = await chrome.declarativeNetRequest.getSessionRules({ ruleIds: [RULE_NAV, RULE_XHR] });
-        if (existing && existing.length === 2) return;
+        const existing = await chrome.declarativeNetRequest.getSessionRules({ ruleIds: [RULE_NAV, RULE_XHR, RULE_HTTPS_UPGRADE] });
+        if (existing && existing.length === 3) return;
     } catch (_) { /* getSessionRules 不可用则跳过，直接注册 */ }
 
     await chrome.declarativeNetRequest.updateSessionRules({
-        removeRuleIds: [RULE_NAV, RULE_XHR],
+        removeRuleIds: [RULE_NAV, RULE_XHR, RULE_HTTPS_UPGRADE],
         addRules: rules
     });
 }
