@@ -1,23 +1,42 @@
 <section id="section-login" class="settings-section">
-            <h2>自动登录设置</h2>
+            <h2>自动登录相关设置</h2>
             <p class="section-desc">配置自动识图与填充。</p>
             <div class="card">
                 <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">自动填充 (Auto Fill)</span></div>
+                    <div class="toggle-info">
+                        <span class="label">悦读平台自动跳转</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，访问悦读平台时自动跳转到登录入口，提升效率。</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-spoc-redirect">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <span class="label">自动填充</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，在统一认证页面自动填充学号密码、验证码，省去手动输入。</p>
+                    </div>
                     <label class="switch">
                         <input type="checkbox" id="login-autofill">
                         <span class="slider round"></span>
                     </label>
                 </div>
                 <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">自动登录 (Auto Login)</span></div>
+                    <div class="toggle-info">
+                        <span class="label">自动登录</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，在自动填充基础上自动提交登录，无需点击登录按钮。需先开启自动填充。</p>
+                    </div>
                     <label class="switch">
                         <input type="checkbox" id="login-autologin">
                         <span class="slider round"></span>
                     </label>
                 </div>
                 <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">启用 AI 识别 (Enable AI)</span></div>
+                    <div class="toggle-info">
+                        <span class="label">启用 AI 识别</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，将使用 AI 视觉模型自动识别验证码。需配置下方 API 信息。</p>
+                    </div>
                     <label class="switch">
                         <input type="checkbox" id="login-ai-enable">
                         <span class="slider round"></span>

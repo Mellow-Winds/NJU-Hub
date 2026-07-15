@@ -467,13 +467,9 @@ function initCourseModule() {
             const fullComment = parts.join(' ');
 
             const dbKey = `${courseName}#${teacher}`;
-            if (db[dbKey]) {
-                const existing = new Set(db[dbKey]);
-                existing.add(fullComment);
-                db[dbKey] = Array.from(existing);
-            } else {
-                db[dbKey] = [fullComment];
-            }
+            if (!db[dbKey]) db[dbKey] = { 'nju_course_ratings': [] };
+            const arr = db[dbKey]['nju_course_ratings'];
+            if (!arr.includes(fullComment)) arr.push(fullComment);
         });
         return db;
     }
@@ -502,15 +498,30 @@ function initCourseModule() {
             chrome.storage.local.get(['NJU_DB'], (data) => {
                 const existingDB = data.NJU_DB || {};
                 let mergedCount = 0;
-                for (const [key, comms] of Object.entries(newDB)) {
+                for (const [key, srcObj] of Object.entries(newDB)) {
+                    const newRevs = srcObj['nju_course_ratings'] || [];
                     if (existingDB[key]) {
-                        const existing = new Set(existingDB[key]);
-                        const beforeSize = existing.size;
-                        comms.forEach(c => existing.add(c));
-                        if (existing.size > beforeSize) mergedCount++;
-                        existingDB[key] = Array.from(existing);
+                        let existing = existingDB[key];
+                        // 兼容旧数组格式：转为对象格式
+                        let arr;
+                        if (Array.isArray(existing)) {
+                            arr = existing;
+                            existing = { 'nju_course_ratings': arr };
+                            existingDB[key] = existing;
+                        } else if (existing && typeof existing === 'object') {
+                            arr = existing['nju_course_ratings'] || (existing['nju_course_ratings'] = []);
+                        } else {
+                            arr = [];
+                            existing = { 'nju_course_ratings': arr };
+                            existingDB[key] = existing;
+                        }
+                        const beforeSize = arr.length;
+                        const set = new Set(arr);
+                        newRevs.forEach(c => set.add(c));
+                        existing['nju_course_ratings'] = Array.from(set);
+                        if (existing['nju_course_ratings'].length > beforeSize) mergedCount++;
                     } else {
-                        existingDB[key] = comms;
+                        existingDB[key] = srcObj;
                         mergedCount++;
                     }
                 }

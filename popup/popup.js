@@ -69,13 +69,14 @@ function updateGreeting() {
 function loadDashboardData() {
     const keys = [
         'toggle-login',
+        'toggle-spoc-redirect',
         'toggle-schedule',
         'toggle-eval',
         'toggle-lms',
         'toggle-seec-workpanel'
     ];
     chrome.storage.local.get(keys, (data) => {
-        ['toggle-login', 'toggle-schedule', 'toggle-eval', 'toggle-lms', 'toggle-seec-workpanel'].forEach((id) => {
+        ['toggle-login', 'toggle-spoc-redirect', 'toggle-schedule', 'toggle-eval', 'toggle-lms', 'toggle-seec-workpanel'].forEach((id) => {
             const el = document.getElementById(id);
             if (!el) return;
             el.checked = data[id] !== false;
@@ -99,6 +100,11 @@ function bindEvents() {
     // GPA quick access
     document.getElementById('btn-gpa').onclick = () => {
         chrome.tabs.create({ url: 'http://elite.nju.edu.cn/exchangesystem/' });
+    };
+
+    // PE score quick access
+    document.getElementById('btn-pe-score').onclick = () => {
+        chrome.tabs.create({ url: 'https://ggtypt.nju.edu.cn/ggtypt/home' });
     };
 
     // Webportal quick access

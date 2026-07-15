@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "NJU Hub - 南大智慧终端",
-  "version": "2.0.1",
+  "version": "26R4",
   "default_locale": "zh_CN",
   "description": "NJU功能增强：GPA快速查询 | 课表抓取 | 自动登录 | LMS增强",
   "permissions": [
@@ -28,6 +28,7 @@
   "host_permissions": [
     "*://*.nju.edu.cn/*",
     "http://elite.nju.edu.cn/*",
+    "https://ggtypt.nju.edu.cn/*",
     "https://api.siliconflow.cn/*",
     "https://api.openai.com/*",
     "https://open.bigmodel.cn/*",
@@ -85,6 +86,20 @@
     {
       "matches": ["*://p-nju.seec.seecoder.cn/*"],
       "js": ["scripts/seec_workpanel.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["*://study.nju.edu.cn/home/index.mooc*"],
+      "js": ["scripts/spoc_auto_redirect.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["*://ggtypt.nju.edu.cn/*"],
+      "js": [
+        "scripts/pe_score_viewer/pe_score_fetcher.js",
+        "scripts/pe_score_viewer/pe_score_ui.js",
+        "scripts/pe_score_viewer/pe_score_main.js"
+      ],
       "run_at": "document_end"
     }
   ]

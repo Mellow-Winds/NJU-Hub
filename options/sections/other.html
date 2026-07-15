@@ -1,0 +1,75 @@
+<section id="section-other" class="settings-section">
+            <h2>功能管理</h2>
+            <p class="section-desc">此处可以方便管理其他功能</p>
+
+            <div class="card">
+                <div class="divider">自动评教</div>
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <span class="label">启用自动评教模块</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">进入评教页面后，点击右下角浮动按钮即可启动全自动评教。评语由内置语料库随机生成，无需额外配置。</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-eval">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="divider">智汇南雍增强</div>
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <span class="label">启用 LMS 增强模块</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，在智汇南雍平台激活视频限制解除和下载增强功能。</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-lms">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div id="lms-sub-config" style="display:none;">
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <span class="label">解除视频限制</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，解除视频播放的速度和进度限制，可自由拖拽进度条。</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="lms-video-remove-restrict">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <span class="label">视频自动连播</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，当前视频播放结束自动播放下一集。</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="lms-video-autojump">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <span class="label">下载列表默认全选</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，打开下载页面时自动勾选所有文件。</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="lms-dl-default-all">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <span class="label">下载界面显示文件选择框</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，下载页面显示文件选择框，可手动选择需要下载的文件。</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="lms-dl-show-checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                </div>
+            </div>
+        </section>

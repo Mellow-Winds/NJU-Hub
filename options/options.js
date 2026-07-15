@@ -360,6 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'NJU_SCHEDULE',
         'seatable_last_sync',
         'toggle-eval', 'eval_api_url', 'eval_api_key', 'eval_model',
+        'toggle-spoc-redirect',
         'toggle-lms',
         'lms_video_remove_restrict', 'lms_video_autojump',
         'lms_dl_default_all', 'lms_dl_show_checkbox',
@@ -444,12 +445,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         setCheckDefaultOn('toggle-eval', data['toggle-eval']);
+        setCheckDefaultOn('toggle-spoc-redirect', data['toggle-spoc-redirect']);
         // eval AI 字段已移除，保留读取以兼容旧数据（字段可选）
         setVal('eval-api-url', data.eval_api_url);
         setVal('eval-api-key', data.eval_api_key);
         setVal('eval-model', data.eval_model);
 
         setCheckDefaultOn('toggle-lms', data['toggle-lms']);
+        // LMS 子配置折叠
+        (() => {
+            const lmsToggle = document.getElementById('toggle-lms');
+            const lmsSubConfig = document.getElementById('lms-sub-config');
+            if (lmsToggle && lmsSubConfig) {
+                const syncLms = () => { lmsSubConfig.style.display = lmsToggle.checked ? '' : 'none'; };
+                syncLms();
+                lmsToggle.addEventListener('change', syncLms);
+            }
+        })();
 
         setCheckDefault('lms-video-remove-restrict', data.lms_video_remove_restrict, true);
         setCheckDefault('lms-video-autojump', data.lms_video_autojump, false);
@@ -496,6 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'NJU_PIN_FAV': document.getElementById('course-pin-fav').checked,
             'NJU_USE_OWN_AI': document.getElementById('course-use-own-ai').checked,
             'toggle-eval': document.getElementById('toggle-eval').checked,
+            'toggle-spoc-redirect': document.getElementById('toggle-spoc-redirect').checked,
             'eval_api_url': document.getElementById('eval-api-url')?.value?.trim() || '',
             'eval_api_key': document.getElementById('eval-api-key')?.value?.trim() || '',
             'eval_model': document.getElementById('eval-model')?.value?.trim() || '',

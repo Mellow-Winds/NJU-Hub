@@ -157,6 +157,9 @@ body {
 /* ── Quick Actions ─────────────────────────────────────────────── */
 .quick-actions {
     padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .primary-btn {

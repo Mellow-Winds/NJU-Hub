@@ -1,5 +1,5 @@
 <!--
-  此文件由 build.ps1 自动生成.
+  ⚠️ 此文件由 build.ps1 自动生成，请勿手动编辑！
 
   拼接过程：
     1. 模板: options/template.html
@@ -23,40 +23,38 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <div class="logo">NJU-Hub</div>
-            <div class="version">v2.0.1</div>
+            <div class="version">v26R4</div>
         </div>
         <ul class="nav-menu">
+            <li class="nav-group-header">个人</li>
             <li class="nav-item active" data-target="section-general">
                 <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                <span>个人信息设置</span>
+                <span>编辑个人信息</span>
             </li>
+
+            <li class="nav-group-header">功能</li>
+            <li class="nav-item" data-target="section-login">
+                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M11 7 9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"/></svg>
+                <span>自动登录相关设置</span>
+            </li>
+            <li class="nav-item" data-target="section-course">
+                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3 1 9l4 2.18v1.74L1 15l11 6 4-2.18v-2.19L20 15l-4-2.18v-1.74L20 9 12 3z"/></svg>
+                <span>选课助手相关设置</span>
+            </li>
+            <li class="nav-item" data-target="section-other">
+                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94 0 .31.04.64.09.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.21.08-.47-.12-.61l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6 0-1.98 1.62-3.6 3.6-3.6 1.98 0 3.6 1.62 3.6 3.6 0 1.98-1.62 3.6-3.6 3.6z"/></svg>
+                <span>其他功能</span>
+            </li>
+            <li class="nav-item" data-target="section-display">
+                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                <span>显示增强</span>
+            </li>
+
+            <li class="nav-group-header">其他</li>
             <li class="nav-item" data-target="section-personalize">
                 <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4c.83 0 1.5.67 1.5 1.5S10.33 11 9.5 11 8 10.33 8 9.5 8.67 8 9.5 8zm5 0c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
                 <span>个性化</span>
             </li>
-            <li class="nav-divider"></li>
-            <li class="nav-item" data-target="section-login">
-                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M11 7 9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"/></svg>
-                <span>自动登录设置</span>
-            </li>
-            <li class="nav-item" data-target="section-course">
-                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3 1 9l4 2.18v1.74L1 15l11 6 4-2.18v-2.19L20 15l-4-2.18v-1.74L20 9 12 3z"/></svg>
-                <span>选课助手设置</span>
-            </li>
-            <li class="nav-item" data-target="section-eval">
-                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/><path fill="currentColor" d="m12 15 1.57-3.43L17 10l-3.43-1.57L12 5l-1.57 3.43L7 10l3.43 1.57z"/></svg>
-                <span>自动评教设置</span>
-            </li>
-            <li class="nav-item" data-target="section-lms">
-                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7L8 5z"/></svg>
-                <span>智汇南雍增强设置</span>
-            </li>
-            <li class="nav-divider"></li>
-            <li class="nav-item" data-target="section-seec">
-                <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-                <span>显示增强</span>
-            </li>
-            <li class="nav-divider"></li>
             <li class="nav-item" data-target="section-about">
                 <svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                 <span>关于插件</span>
@@ -78,7 +76,7 @@
 <!-- ===== about ===== -->
 <section id="section-about" class="settings-section">
             <h2>关于插件</h2>
-            <p class="section-desc">NJU Hub — 南大智慧终端 v2.0.1</p>
+            <p class="section-desc">NJU Hub — 南大智慧终端 v26R4</p>
 
             <div class="card card-full">
                 <div class="divider">AI 配置教程</div>
@@ -110,20 +108,26 @@
 
 <!-- ===== course ===== -->
 <section id="section-course" class="settings-section">
-            <h2>选课助手</h2>
-            <p class="section-desc">基于专业背景提供"红黑榜"深度分析。</p>
+            <h2>选课助手相关设置</h2>
+            <p class="section-desc">体验NJU-Hub加持下强大的选课功能</p>
             <div class="card-stack">
                 <div class="card">
                     <div class="divider">功能开关设置</div>
                     <div class="toggle-group">
-                        <div class="toggle-info"><span class="label">冲突预警</span></div>
+                        <div class="toggle-info">
+                            <span class="label">冲突预警</span>
+                            <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，选课时自动检测时间冲突，避免选到时间重叠的课程。</p>
+                        </div>
                         <label class="switch">
                             <input type="checkbox" id="course-conflict-check">
                             <span class="slider round"></span>
                         </label>
                     </div>
                     <div class="toggle-group">
-                        <div class="toggle-info"><span class="label">置顶收藏课程</span></div>
+                        <div class="toggle-info">
+                            <span class="label">置顶收藏课程</span>
+                            <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，收藏的课程将置顶显示，方便快速定位。</p>
+                        </div>
                         <label class="switch">
                             <input type="checkbox" id="course-pin-fav">
                             <span class="slider round"></span>
@@ -149,10 +153,9 @@
                         <label for="course-pref">选课偏好 Prompt</label>
                         <textarea id="course-pref" placeholder="告诉 AI 你的选课口味（水课？硬核？高绩点？）..."></textarea>
                     </div>
-                    <div class="divider">API 配置</div>
                     <div class="form-group">
                         <label for="course-api-url">API Base URL</label>
-                        <input type="text" id="course-api-url" placeholder="https://api.siliconflow.cn/v1">
+                        <input type="text" id="course-api-url" placeholder="">
                     </div>
                     <div class="form-group">
                         <label for="course-api-key">API Key</label>
@@ -167,7 +170,7 @@
                     </div>
                     <div class="form-group">
                         <label for="course-model">Model</label>
-                        <input type="text" id="course-model" placeholder="Qwen/Qwen3-8B">
+                        <input type="text" id="course-model" placeholder="">
                     </div>
                     </div>
                 </div>
@@ -228,27 +231,9 @@
             </div>
         </section>
 
-<!-- ===== eval ===== -->
-<section id="section-eval" class="settings-section">
-            <h2>自动评教设置</h2>
-            <p class="section-desc">状态机全自动评教：锁定"很好"，随机评语，自动处理弹窗，期末/助教自动流转。</p>
-            <div class="card">
-                <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">启用自动评教模块</span></div>
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-eval">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <p class="hint-text" style="margin-top:12px; color:var(--md-sys-color-on-surface-variant); font-size:13px;">
-                    进入评教页面后，点击右下角浮动按钮即可启动全自动评教。评语由内置语料库随机生成，无需额外配置。
-                </p>
-            </div>
-        </section>
-
 <!-- ===== general ===== -->
 <section id="section-general" class="settings-section active">
-            <h2>个人信息</h2>
+            <h2>编辑个人信息</h2>
             <p class="section-desc">管理你的基础身份信息，用于自动登录。所有信息本地保存，不上传云端。</p>
             <div class="card">
                 <div class="form-group">
@@ -273,74 +258,46 @@
             </div>
         </section>
 
-<!-- ===== lms ===== -->
-<section id="section-lms" class="settings-section">
-            <h2>智汇南雍增强设置</h2>
-            <p class="section-desc">视频限制解除与课件批量下载增强。</p>
-            <div class="card">
-                <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">启用 LMS 增强模块</span></div>
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-lms">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-
-                <div class="divider">视频</div>
-                <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">解除视频限制</span></div>
-                    <label class="switch">
-                        <input type="checkbox" id="lms-video-remove-restrict">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">自动连播</span></div>
-                    <label class="switch">
-                        <input type="checkbox" id="lms-video-autojump">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-
-                <div class="divider">下载</div>
-                <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">下载列表默认全选</span></div>
-                    <label class="switch">
-                        <input type="checkbox" id="lms-dl-default-all">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">显示文件选择框</span></div>
-                    <label class="switch">
-                        <input type="checkbox" id="lms-dl-show-checkbox">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-            </div>
-        </section>
-
 <!-- ===== login ===== -->
 <section id="section-login" class="settings-section">
-            <h2>自动登录设置</h2>
+            <h2>自动登录相关设置</h2>
             <p class="section-desc">配置自动识图与填充。</p>
             <div class="card">
                 <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">自动填充 (Auto Fill)</span></div>
+                    <div class="toggle-info">
+                        <span class="label">悦读平台自动跳转</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，访问悦读平台时自动跳转到登录入口，提升效率。</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-spoc-redirect">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <span class="label">自动填充</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，在统一认证页面自动填充学号密码、验证码，省去手动输入。</p>
+                    </div>
                     <label class="switch">
                         <input type="checkbox" id="login-autofill">
                         <span class="slider round"></span>
                     </label>
                 </div>
                 <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">自动登录 (Auto Login)</span></div>
+                    <div class="toggle-info">
+                        <span class="label">自动登录</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，在自动填充基础上自动提交登录，无需点击登录按钮。需先开启自动填充。</p>
+                    </div>
                     <label class="switch">
                         <input type="checkbox" id="login-autologin">
                         <span class="slider round"></span>
                     </label>
                 </div>
                 <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">启用 AI 识别 (Enable AI)</span></div>
+                    <div class="toggle-info">
+                        <span class="label">启用 AI 识别</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，将使用 AI 视觉模型自动识别验证码。需配置下方 API 信息。</p>
+                    </div>
                     <label class="switch">
                         <input type="checkbox" id="login-ai-enable">
                         <span class="slider round"></span>
@@ -389,6 +346,83 @@
                 <div class="form-group">
                     <label for="login-extract-model">提取模型</label>
                     <input type="text" id="login-extract-model" placeholder="">
+                </div>
+                </div>
+            </div>
+        </section>
+
+<!-- ===== other ===== -->
+<section id="section-other" class="settings-section">
+            <h2>功能管理</h2>
+            <p class="section-desc">此处可以方便管理其他功能</p>
+
+            <div class="card">
+                <div class="divider">自动评教</div>
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <span class="label">启用自动评教模块</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">进入评教页面后，点击右下角浮动按钮即可启动全自动评教。评语由内置语料库随机生成，无需额外配置。</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-eval">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="divider">智汇南雍增强</div>
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <span class="label">启用 LMS 增强模块</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，在智汇南雍平台激活视频限制解除和下载增强功能。</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-lms">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div id="lms-sub-config" style="display:none;">
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <span class="label">解除视频限制</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，解除视频播放的速度和进度限制，可自由拖拽进度条。</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="lms-video-remove-restrict">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <span class="label">视频自动连播</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，当前视频播放结束自动播放下一集。</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="lms-video-autojump">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <span class="label">下载列表默认全选</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，打开下载页面时自动勾选所有文件。</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="lms-dl-default-all">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <span class="label">下载界面显示文件选择框</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，下载页面显示文件选择框，可手动选择需要下载的文件。</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="lms-dl-show-checkbox">
+                        <span class="slider round"></span>
+                    </label>
                 </div>
                 </div>
             </div>
@@ -447,12 +481,15 @@
         </section>
 
 <!-- ===== seec ===== -->
-<section id="section-seec" class="settings-section">
+<section id="section-display" class="settings-section">
             <h2>显示增强</h2>
             <p class="section-desc">此处管理显示增强功能。</p>
             <div class="card">
                 <div class="toggle-group">
-                    <div class="toggle-info"><span class="label">启用软件工程SEEC平台显示增强</span></div>
+                    <div class="toggle-info">
+                        <span class="label">启用软件工程SEEC平台显示增强</span>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，在软件工程 SEEC 平台激活显示增强功能，优化界面展示效果。</p>
+                    </div>
                     <label class="switch">
                         <input type="checkbox" id="toggle-seec-workpanel">
                         <span class="slider round"></span>

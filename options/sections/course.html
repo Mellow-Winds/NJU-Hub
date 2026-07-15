@@ -1,18 +1,24 @@
 <section id="section-course" class="settings-section">
-            <h2>选课助手</h2>
-            <p class="section-desc">基于专业背景提供"红黑榜"深度分析。</p>
+            <h2>选课助手相关设置</h2>
+            <p class="section-desc">体验NJU-Hub加持下强大的选课功能</p>
             <div class="card-stack">
                 <div class="card">
                     <div class="divider">功能开关设置</div>
                     <div class="toggle-group">
-                        <div class="toggle-info"><span class="label">冲突预警</span></div>
+                        <div class="toggle-info">
+                            <span class="label">冲突预警</span>
+                            <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，选课时自动检测时间冲突，避免选到时间重叠的课程。</p>
+                        </div>
                         <label class="switch">
                             <input type="checkbox" id="course-conflict-check">
                             <span class="slider round"></span>
                         </label>
                     </div>
                     <div class="toggle-group">
-                        <div class="toggle-info"><span class="label">置顶收藏课程</span></div>
+                        <div class="toggle-info">
+                            <span class="label">置顶收藏课程</span>
+                            <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，收藏的课程将置顶显示，方便快速定位。</p>
+                        </div>
                         <label class="switch">
                             <input type="checkbox" id="course-pin-fav">
                             <span class="slider round"></span>
@@ -38,10 +44,9 @@
                         <label for="course-pref">选课偏好 Prompt</label>
                         <textarea id="course-pref" placeholder="告诉 AI 你的选课口味（水课？硬核？高绩点？）..."></textarea>
                     </div>
-                    <div class="divider">API 配置</div>
                     <div class="form-group">
                         <label for="course-api-url">API Base URL</label>
-                        <input type="text" id="course-api-url" placeholder="https://api.siliconflow.cn/v1">
+                        <input type="text" id="course-api-url" placeholder="">
                     </div>
                     <div class="form-group">
                         <label for="course-api-key">API Key</label>
@@ -56,7 +61,7 @@
                     </div>
                     <div class="form-group">
                         <label for="course-model">Model</label>
-                        <input type="text" id="course-model" placeholder="Qwen/Qwen3-8B">
+                        <input type="text" id="course-model" placeholder="">
                     </div>
                     </div>
                 </div>
