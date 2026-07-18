@@ -490,6 +490,7 @@ code {
 .section-desc {
     font-size: 1.05rem;
     color: var(--on-surface-variant);
+    text-align: center;
 }
 
 /* ==================== Feature Grid ==================== */
@@ -805,6 +806,29 @@ code {
     transition: opacity var(--dur-normal);
 }
 .step-link:hover { opacity: 0.7; }
+
+/* Chrome 商店推荐卡片 */
+.install-store-badge {
+    text-align: center;
+    padding: var(--space-8) var(--space-4);
+    margin-bottom: var(--space-10);
+    background: var(--surface-container);
+    border-radius: var(--radius-lg);
+}
+.install-store-badge p {
+    font-size: 1.05rem;
+    color: var(--on-surface-variant);
+    margin-bottom: var(--space-4);
+}
+
+.install-method-title {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--on-surface);
+    margin-top: var(--space-12);
+    margin-bottom: var(--space-4);
+}
 
 .install-cta {
     text-align: center;
