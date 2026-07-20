@@ -75,8 +75,20 @@
 ### Edge 浏览器加载
 
 1. 打开 Edge，地址栏输入 `edge://extensions/`
-2. 开启左下角**开发人员模式**
-3. 点击**加载解压缩的扩展**，选择 `NJU-Hub` 文件夹
+2. 打开左下角 **"开发人员模式"**
+3. 点击 **"加载解压缩的扩展"**，选择 `NJU-Hub` 文件夹
+
+### 方式三：Firefox 浏览器加载
+
+> 需要 Firefox **115 及以上**版本。
+
+1. 打开 Firefox，地址栏输入：
+   ```
+   about:debugging#/runtime/this-firefox
+   ```
+2. 点击 **"临时加载附加组件"（Load Temporary Add-on）**，选择 `NJU-Hub` 文件夹中的 `manifest.json`
+
+> ⚠️ **注意**：临时加载的附加组件在 Firefox 重启后会被移除，需要重新加载。当前是临时解决方案，后续将会找Mozilla签名。
 
 ---
 
