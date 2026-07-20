@@ -1,13 +1,91 @@
 // webportal/webportal.js — 网址导航交互逻辑
 
-let currentFirstId = PORTAL_DATA[0].id;
+let portalData = PORTAL_DATA;  // 默认内置数据，异步加载后可替换
+let currentFirstId = '';
 let currentSecondId = '';
 
-document.addEventListener('DOMContentLoaded', () => {
+const GITHUB_PORTAL_URL = 'https://raw.githubusercontent.com/Mellow-Winds/NJU-Hub/main/data/portal_data.json';
+const REFRESH_INTERVAL = 24 * 60 * 60 * 1000; // 24小时
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadPortalData();
+    if (!currentFirstId && portalData.length > 0) {
+        currentFirstId = portalData[0].id;
+    }
     initNav();
     initTheme();
     initRipples();
 });
+
+// ===== 0. 加载导航数据（三层策略：storage → GitHub → 内置回退） =====
+async function loadPortalData() {
+    // Layer 1: chrome.storage.local（已同步过的数据，最快）
+    try {
+        const stored = await chrome.storage.local.get(['NJU_PORTAL', 'NJU_PORTAL_LAST_FETCH']);
+        if (stored.NJU_PORTAL && Array.isArray(stored.NJU_PORTAL) && stored.NJU_PORTAL.length > 0) {
+            portalData = stored.NJU_PORTAL;
+            console.log('[NJU-Hub] 网址导航: 使用本地同步数据 (' + portalData.length + ' 分类)');
+
+            // 超过24小时后台静默刷新（不阻塞渲染）
+            const now = Date.now();
+            if (!stored.NJU_PORTAL_LAST_FETCH || (now - stored.NJU_PORTAL_LAST_FETCH) > REFRESH_INTERVAL) {
+                refreshPortalInBackground();
+            }
+            return;
+        }
+    } catch (e) {
+        // 静默回退，不影响用户体验
+        console.warn('[NJU-Hub] 网址导航: 读取本地存储失败，尝试在线拉取', e);
+    }
+
+    // Layer 2: 从 GitHub 在线拉取（首次使用或 storage 为空时）
+    try {
+        console.log('[NJU-Hub] 网址导航: 尝试从 GitHub 拉取...');
+        const remote = await fetchPortalFromGitHub();
+        if (remote && Array.isArray(remote) && remote.length > 0) {
+            portalData = remote;
+            await chrome.storage.local.set({
+                NJU_PORTAL: remote,
+                NJU_PORTAL_LAST_FETCH: Date.now()
+            });
+            console.log('[NJU-Hub] 网址导航: GitHub 拉取成功 (' + remote.length + ' 分类)');
+            return;
+        }
+    } catch (e) {
+        // 静默回退到内置数据
+        console.warn('[NJU-Hub] 网址导航: GitHub 拉取失败，使用内置数据', e);
+    }
+
+    // Layer 3: 内置 PORTAL_DATA（已在模块顶部赋值，无需额外操作）
+    console.log('[NJU-Hub] 网址导航: 使用内置数据');
+}
+
+function fetchPortalFromGitHub() {
+    return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({
+            action: 'fetchJson',
+            payload: { url: GITHUB_PORTAL_URL }
+        }, (resp) => {
+            if (chrome.runtime.lastError) { reject(new Error(chrome.runtime.lastError.message)); return; }
+            if (!resp || !resp.ok) { reject(new Error(resp?.error || 'HTTP ' + (resp?.status || 'error'))); return; }
+            resolve(resp.data);
+        });
+    });
+}
+
+function refreshPortalInBackground() {
+    fetchPortalFromGitHub().then(remote => {
+        if (remote && Array.isArray(remote) && remote.length > 0) {
+            chrome.storage.local.set({
+                NJU_PORTAL: remote,
+                NJU_PORTAL_LAST_FETCH: Date.now()
+            });
+            console.log('[NJU-Hub] 网址导航: 后台刷新成功 (' + remote.length + ' 分类)');
+        }
+    }).catch(e => {
+        console.warn('[NJU-Hub] 网址导航: 后台刷新失败', e);
+    });
+}
 
 // ===== 1. 初始化导航 =====
 function initNav() {
@@ -20,7 +98,7 @@ function renderFirstLevel() {
     const navUL = document.getElementById('first-level-nav');
     navUL.textContent = '';
 
-    PORTAL_DATA.forEach(item => {
+    portalData.forEach(item => {
         const li = document.createElement('li');
         li.className = 'nav-item ripple-container';
         li.dataset.id = item.id;
@@ -41,7 +119,7 @@ function switchFirstLevel(firstId) {
     });
 
     // 找到对应一级数据
-    const firstCategory = PORTAL_DATA.find(item => item.id === firstId);
+    const firstCategory = portalData.find(item => item.id === firstId);
     const subs = firstCategory ? firstCategory.subs : [];
 
     // 默认选中第一个二级分类
@@ -84,7 +162,7 @@ function renderCards() {
     // 先移除动画 class，以便重新触发
     grid.classList.remove('cards-revealed');
 
-    const firstCategory = PORTAL_DATA.find(item => item.id === currentFirstId);
+    const firstCategory = portalData.find(item => item.id === currentFirstId);
     const secondCategory = firstCategory?.subs.find(sub => sub.id === currentSecondId);
     const links = secondCategory ? secondCategory.links : [];
 

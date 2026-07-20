@@ -8,14 +8,17 @@ const PORTAL_DATA = [
     subs: [
       {
         id: "portal",
-        name: "校务与门户",
+        name: "校园与门户",
         links: [
           { id: "nju-home", name: "南京大学官方网站", desc: "南京大学官方网站", url: "https://www.nju.edu.cn/" },
           { id: "nju-mail", name: "南京大学邮件系统", desc: "南京大学邮件系统，用于收发邮件", url: "https://mail.nju.edu.cn/" },
           { id: "ehall", name: "网上办事服务大厅", desc: "校内各种行政审批、杂务办理统一入口。查看课表、培养方案、成绩，评教等都在这里。", url: "https://ehall.nju.edu.cn/" },
           { id: "itsc", name: "信息化建设管理服务中心", desc: "正版软件、与信息化有关的教程都可以在这里找到。", url: "https://itsc.nju.edu.cn/" },
           { id: "p-nju", name: "上网服务", desc: "校园网登录的认证和管理页面", url: "https://p.nju.edu.cn" },
-          { id: "nju-box", name: "南大云盘：NJU Box", desc: "南大云盘，有很多实用的功能", url: "https://box.nju.edu.cn/" }
+          { id: "nju-box", name: "南大云盘：NJU Box", desc: "南大云盘，有很多实用的功能", url: "https://box.nju.edu.cn/" },
+          {id:"nju-table",name:"南大表格：NJU Table",desc:"南大表格服务",url:"https://table.nju.edu.cn/"},
+          {id:"vpn",name:"南京大学VPN网站服务平台(旧)",desc:"提供VPN服务，可以在校外访问校内网站",url:"https://vpn.nju.edu.cn/"},
+          {id:"vpn-new",name:"南京大学VPN网站服务平台(新)",desc:"提供VPN服务，可以在校外访问校内网站",url:"https://ztna.nju.edu.cn/"},
         ]
       },
       {
@@ -46,6 +49,13 @@ const PORTAL_DATA = [
           { id: "tyb", name: "体育部", desc: "查看体测成绩、阳光体育打卡规则与选课", url: "https://tyb.nju.edu.cn/" },
           { id: "hospital", name: "校医院", desc: "提供医疗服务与健康咨询", url: "https://hospital.nju.edu.cn/" },
         ]
+      },
+      {
+        id:"other",
+        name:"其他",
+        links:[
+          {id:"itxia",name:"IT侠预约系统",desc:"南京大学IT侠互助协会",url:"https://itxia.nju.edu.cn"},
+        ]
       }
     ]
   },
@@ -64,14 +74,12 @@ const PORTAL_DATA = [
       },
       {
         id: "unofficial",
-        name: "非官方资料整理",
+        name: "非官方资源整理",
         links: [
-          { id: "gulini", name: "鼓励你学哪门课榜", desc: "红黑榜的一个网站", url: "https://table.nju.edu.cn/apps/custom/ad-astra/?page_id=AeyG" },
+          {id: "gulini", name: "鼓励你学哪门课榜", desc: "红黑榜的一个网站", url: "https://table.nju.edu.cn/apps/custom/ad-astra/?page_id=AeyG" },
           {id:"red-black-table",name:"红黑榜（25年及以前）",desc:"25年及以前的红黑榜原始数据",url:"https://table.nju.edu.cn/external-apps/7aded834-74a2-43cc-b515-fb8e01656ef2/?page_id=zI1D"},
           {id:"red-black-table-search1",name:"红黑榜搜索平台：其一",desc:"这个网站可以搜索红黑榜的数据。",url:"https://xk.nju.at/"},
-          { id: "nanna-helper", name: "南哪助手教学资料库", desc: "如题", url: "https://table.nju.edu.cn/apps/custom/nannadata/?page_id=kw9T" },
           {id:"yuque-newer",name:"语雀新生手册",desc:"由南哪助手整理的语雀文档，主要讲解的是一些常见的问题",url:"https://www.yuque.com/greatnju/q-a2.0"},
-          {id:"nanruanfojiao",name:"南软佛脚玩乐指南",desc:"一位软院学长的资料库。有很多实用的内容:)",url:"https://costg.gitbook.io/njuse"},
         ]
       }
     ]
@@ -91,21 +99,39 @@ const PORTAL_DATA = [
           {id:"ketangpai", name:"课堂派",desc:"部分课程会在这个平台开展。比如zc老师的vjf。",url:"https://www.ketangpai.com/"},
           {id:"chaoxing",name:"学习通",desc:"学习通，部分课程会在这个平台开展。",url:"https://i.chaoxing.com"},
           {id:"WE Learn",name:"WE Learn学习平台",desc:"部分英语听说课的教学在这个平台开展。",url:"https://welearn.sflep.com/"},
+          {id:"CPL",name:"CPL",desc:"南京大学C语言程序设计的课程平台网站",url:"https://docs.cpl.icu/#/"}
+        ]
+      },
+      {
+        id:"study-resources",
+        name:"学习资料",
+        links:[
+          {id: "nanna-helper", name: "南哪助手教学资料库", desc: "如题", url: "https://table.nju.edu.cn/apps/custom/nannadata/?page_id=kw9T" },
+          {id:"南软",name:"南软佛脚玩乐指南",desc:"一位软院学长的资料库。有很多实用的内容:)",url:"https://costg.gitbook.io/njuse"},
+        ]
+      },
+      {
+        id: "study-help",
+        name: "实用的学习网站",
+        links: [
+          {id:"aops",name:"AoPS",desc:"AoPS社区是国外知名数学竞赛题目讨论社区",url:"https://artofproblemsolving.com/community"},
+          {id:"mathstack",name:"MathStack",desc:"MathStack是国外知名数学竞赛题目讨论社区",url:"https://math.stackexchange.com/"}
+        ]
+      },
+      {
+        id: "answer",
+        name: "部分课程答案",
+        links: [
+          {id:"daguodexingshuai",name:"南京大学“悦读”《大国的兴衰》作业答案",desc:"如题。",url:"https://www.doc88.com/p-7488996916443.html?r=1"},
+          {id:"pipanzhexue",name:"中国大学MOOC南京大学《批判哲学视野中的人与技术》单元测试答案",desc:"如题。",url:"https://zhuanlan.zhihu.com/p/558918272"}
         ]
       },
       {
         id: "official-other",
-        name: "其他常用网站",
+        name: "其他可能用到的网站",
         links: [
           {id:"zhiwang",name:"中国知网",desc:"知网。",url:"https://www.cnki.net/"},
           {id:"xuexinwang",name:"学信网",desc:"在此处可以查看学籍信息等",url:"https://www.chsi.com.cn/"}
-        ]
-      },
-      {
-        id: "other",
-        name: "其他不好分类的东西",
-        links: [
-          {id:"daguodexingshuai",name:"南京大学“悦读”《大国的兴衰》作业答案",desc:"说实话，这能找到确实让我感到惊讶",url:"https://www.doc88.com/p-7488996916443.html?r=1"}
         ]
       }
     ]

@@ -561,6 +561,10 @@ document.addEventListener('DOMContentLoaded', () => {
         initCourseModule();
     }
 
+    if (typeof initPortalModule === 'function') {
+        initPortalModule();
+    }
+
     // 10. Privacy Policy Modal
     // ============================================================
     const privacyBtn = document.getElementById('btn-privacy-policy');
