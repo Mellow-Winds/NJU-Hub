@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "NJU Hub - 南大智慧终端",
-  "version": "26.1.5",
+  "version": "26.2.1",
   "default_locale": "zh_CN",
   "description": "NJU功能增强：GPA快速查询 | 课表抓取 | 自动登录 | LMS增强",
   "permissions": [
@@ -37,8 +37,7 @@
     "open_in_tab": true
   },
   "background": {
-    "service_worker": "background.js",
-    "scripts": ["background.js"]
+    "service_worker": "background.js"
   },
   "browser_specific_settings": {
     "gecko": {
@@ -53,6 +52,11 @@
     {
       "matches": ["https://authserver.nju.edu.cn/authserver/login*"],
       "js": ["scripts/auth_auto_login.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["*://xk.nju.edu.cn/*"],
+      "js": ["scripts/xk_login_autofill.js"],
       "run_at": "document_end"
     },
     {

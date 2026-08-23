@@ -3,7 +3,7 @@
 南京大学校园浏览器扩展，一站式解决 GPA 查询、自动登录、选课分析、自动评教、LMS 增强等日常需求。
 
 [![Manifest Version](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/mv3/intro/)
-[![Version](https://img.shields.io/badge/version-26.1.5-%23660874)](https://github.com/Mellow-Winds/NJU-Hub)
+[![Version](https://img.shields.io/badge/version-26.2.1-%23660874)](https://github.com/Mellow-Winds/NJU-Hub)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ---
@@ -11,7 +11,7 @@
 ## 功能模块
 
 ### 自动登录，解放双手
-- 本地模型/云端 AI 双轨验证码识别，自动填充统一认证页的账号密码
+- 本地模型/云端 AI 双轨验证码识别，自动填充统一认证页及选课系统登录页的账号密码
 - 支持自动填充和自动登录两种增强
 - 兼容 SiliconCloud / OpenAI / 智谱等大模型 API
 - 悦读平台（SPOC）未登录时自动跳转认证，登录快人一步。
@@ -149,6 +149,7 @@ NJU-Hub/
 │   └── fonts/
 ├── scripts/                   # 内容脚本（注入目标页面）
 │   ├── auth_auto_login.js     # 统一认证页自动登录
+│   ├── xk_login_autofill.js   # 选课系统登录页自动填充
 │   ├── elite_gpa_viewer.js    # GPA 查询
 │   ├── auto_eval.js           # 自动评教
 │   ├── lms_enhance.js         # LMS 视频/下载增强
