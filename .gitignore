@@ -44,5 +44,6 @@ temp
 # cursor
 .cursorrules
 
-# data(temp)
-data
+# data (transient / generated — keep ai_cache.json & merged_ratings.json tracked)
+data/ai_persona_progress.json
+data/merged_ratings.backup.json
