@@ -6,17 +6,13 @@
   "description": "NJU功能增强：GPA快速查询 | 课表抓取 | 自动登录 | LMS增强",
   "permissions": [
     "storage",
-    "declarativeNetRequest"
+    "declarativeNetRequest",
+    "scripting"
   ],
   "web_accessible_resources": [
     {
       "resources": [
         "scripts/seec_xhr_bridge.js",
-        "libs/common_old.onnx",
-        "libs/charset_old.json",
-        "libs/ort-wasm/ort.wasm.bundle.min.mjs",
-        "libs/ort-wasm/ort-wasm-simd-threaded.mjs",
-        "libs/ort-wasm/ort-wasm-simd-threaded.wasm",
         "data/ai_cache.json",
         "data/merged_ratings.json"
       ],
@@ -46,7 +42,7 @@
   "content_scripts": [
     {
       "matches": ["https://authserver.nju.edu.cn/authserver/login*"],
-      "js": ["libs/captcha_ocr.js", "scripts/auth_auto_login.js"],
+      "js": ["scripts/auth_auto_login.js"],
       "run_at": "document_end"
     },
     {
@@ -61,7 +57,9 @@
         "scripts/xk/xk_ai.js",
         "scripts/xk/xk_ui.js",
         "scripts/xk/xk_badges.js",
+        "scripts/xk/xk_filter.js",
         "scripts/xk/xk_schedule.js",
+        "scripts/xk/xk_notify.js",
         "scripts/xk/xk_main.js"
       ],
       "run_at": "document_end"

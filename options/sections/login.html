@@ -15,77 +15,12 @@
                 <div class="toggle-group">
                     <div class="toggle-info">
                         <span class="label">自动填充</span>
-                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，在统一认证页面自动填充学号密码、验证码，省去手动输入。</p>
+                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，在统一认证页面自动填充学号密码。滑块验证码需手动完成。</p>
                     </div>
                     <label class="switch">
                         <input type="checkbox" id="login-autofill">
                         <span class="slider round"></span>
                     </label>
-                </div>
-                <div class="toggle-group">
-                    <div class="toggle-info">
-                        <span class="label">自动登录</span>
-                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，在自动填充基础上自动提交登录，无需点击登录按钮。需先开启自动填充。</p>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="login-autologin">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <div class="toggle-group">
-                    <div class="toggle-info">
-                        <span class="label">启用 AI 识别</span>
-                        <p class="hint-text" style="margin:4px 0 0;font-weight:400;">启用后，将使用 AI 视觉模型自动识别验证码。需配置下方 API 信息。</p>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="login-ai-enable">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-
-                <div id="login-ai-config">
-                <div class="divider">AI 配置</div>
-                <div class="form-group">
-                    <label for="login-api-url">API Base URL</label>
-                    <input type="text" id="login-api-url" placeholder="">
-                </div>
-                <div class="form-group">
-                    <label for="login-api-key">API Key</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="login-api-key" placeholder="">
-                        <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
-                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-                                <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
-                            </svg>
-                        </span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="login-model">Vision Model</label>
-                    <input type="text" id="login-model" placeholder="">
-                </div>
-
-                <div class="divider">二次提取模型（可选）</div>
-                <p class="tutorial-step" style="margin-bottom:12px;">当验证码识别结果位数异常时，将原始回复交给此文本模型二次提取。留空则不启用。</p>
-                <div class="form-group">
-                    <label for="login-extract-api-url">提取 API Base URL</label>
-                    <input type="text" id="login-extract-api-url" placeholder="">
-                </div>
-                <div class="form-group">
-                    <label for="login-extract-api-key">提取 API Key</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="login-extract-api-key" placeholder="">
-                        <span class="toggle-password" role="button" tabindex="0" aria-label="显示密码">
-                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-                                <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
-                            </svg>
-                        </span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="login-extract-model">提取模型</label>
-                    <input type="text" id="login-extract-model" placeholder="">
-                </div>
                 </div>
             </div>
         </section>

@@ -76,6 +76,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         return false;
     }
 
+    if (request.action === 'injectNotifyBridge') {
+        // 在主世界注入通知跳转延迟桥接（绕过页面 CSP）
+        chrome.scripting.executeScript({
+            target: { tabId: sender.tab.id },
+            world: 'MAIN',
+            files: ['scripts/xk/xk_notify_bridge.js']
+        }).catch(err => console.error('[后台] 注入通知桥接失败:', err));
+        return false;
+    }
+
     if (request.action === 'callAI') {
         // 解构 payload，提取基础信息和“剩余所有参数” (...rest)
         const { apiKey, baseUrl, model, messages, ...rest } = request.payload;

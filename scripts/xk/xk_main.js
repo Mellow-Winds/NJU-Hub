@@ -32,7 +32,8 @@
     if (!currentURL.includes('xsxkapp')) return;
 
     const {
-        injectStyles, renderIsland, initPopover, injectBadges, sortFavRows
+        injectStyles, renderIsland, initPopover, injectBadges,
+        renderToolbar, applyFilter, applyRowOrder, startNotify
     } = window.__XK__;
 
     // 初始化全局 pendingAITasks
@@ -65,11 +66,15 @@
                 initPopover();
             }
             injectBadges();
+            renderToolbar();
+            applyFilter();
+            applyRowOrder();
         }, 1000);
     };
 
     // 启动
     startAutoConfirm();
+    startNotify();
 
     // 预加载 AI 缓存和评价库（三层策略），两者都就绪后再启动轮询注入
     const { loadAICache, loadDB } = window.__XK__;

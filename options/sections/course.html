@@ -67,6 +67,55 @@
                 </div>
 
                 <div class="card">
+                    <div class="divider">排序与过滤</div>
+                    <div class="form-group">
+                        <label for="course-sort-mode">排序方式</label>
+                        <div class="nju-dropdown" id="course-sort-mode" data-name="course-sort-mode">
+                            <div class="nju-dropdown-trigger" tabindex="0" role="combobox" aria-expanded="false">
+                                <span class="nju-dropdown-text">默认</span>
+                                <svg class="nju-dropdown-arrow" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+                            </div>
+                            <ul class="nju-dropdown-menu" role="listbox">
+                                <li data-value="none" role="option" class="active">默认</li>
+                                <li data-value="ai" role="option">AI推荐</li>
+                                <li data-value="prob" role="option">选中概率</li>
+                                <li data-value="time" role="option">上课时间</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <span class="label">过滤冲突</span>
+                            <p class="hint-text" style="margin:4px 0 0;font-weight:400;">隐藏与我的课表时间冲突的课程。</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="course-filter-conflict">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <span class="label">过滤已满</span>
+                            <p class="hint-text" style="margin:4px 0 0;font-weight:400;">隐藏已满员的课程。</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="course-filter-full">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <span class="label">过滤跨校区</span>
+                            <p class="hint-text" style="margin:4px 0 0;font-weight:400;">隐藏非主校区的课程。</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="course-filter-campus">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card">
                     <div class="divider">个人信息设置</div>
                     <div class="form-group">
                         <label for="course-my-campus">我的主校区</label>

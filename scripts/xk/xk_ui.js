@@ -101,6 +101,28 @@
             .seg-campus[data-idx="2"] .seg-slider { transform: translateX(200%); }
             .seg-campus[data-idx="3"] .seg-slider { transform: translateX(300%); }
 
+            /* 排序分段控制器（4 段） */
+            .seg-sort { width: 320px; max-width: 100%; }
+            .seg-sort .seg-slider { width: calc((100% - 4px) / 4); }
+            .seg-sort[data-idx="0"] .seg-slider { transform: translateX(0%); }
+            .seg-sort[data-idx="1"] .seg-slider { transform: translateX(100%); }
+            .seg-sort[data-idx="2"] .seg-slider { transform: translateX(200%); }
+            .seg-sort[data-idx="3"] .seg-slider { transform: translateX(300%); }
+
+            /* 选课页工具栏（替换站点「选择过滤」板块） */
+            .xk-filter-item { width: auto !important; }
+            .xk-toolbar {
+                display: flex; flex-direction: column; gap: 8px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            }
+            .xk-tb-row { display: flex; align-items: center; gap: 10px; }
+            .xk-tb-label {
+                font-size: 13px; font-weight: 700; color: #660874;
+                white-space: nowrap; min-width: 58px;
+            }
+            .xk-sw-group { display: flex; align-items: center; gap: 12px; }
+            .xk-sw-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #1c1c1e; font-weight: 600; }
+
             /* iOS 开关 */
             .ios-sw {
                 position: relative; width: 44px; height: 26px; background: #e3e3e4;
@@ -238,7 +260,7 @@
         container.innerHTML = '';
         const schedule = GM_getValue(STORAGE.SCHEDULE, []);
         if (!schedule.length) {
-            container.innerHTML = '<div style="text-align:center;color:#999;margin-top:20px;padding:20px;">暂无课表<br><small>请先在 ehall 课表页面导入</small></div>';
+            container.innerHTML = '<div style="text-align:center;color:#999;margin-top:20px;padding:20px;">暂无课表<br><small>请先点击右下角导入</small></div>';
             return;
         }
         schedule.forEach((item, idx) => {
@@ -321,7 +343,7 @@
                 GM_setValue(STORAGE.FAVORITES, favs);
                 updateFavList(favs);
                 document.getElementById('btn-open-fav').innerHTML = `${I.star} 收藏夹 (${Object.keys(favs).length})`;
-                if (window.__XK__.sortFavRows) window.__XK__.sortFavRows();
+                if (window.__XK__.applyRowOrder) window.__XK__.applyRowOrder();
             }
         };
 
@@ -409,7 +431,7 @@
             <div id="xk-island-main" class="xk-island">
                 <div class="status-wrapper">
                     <div id="xk-dot" class="status-dot"></div>
-                    <span class="status-text">NJU Hub</span>
+                    <span class="status-text">NJU-Hub选课助手</span>
                 </div>
                 <div class="xk-panel">
                     <div style="font-size:12px; font-weight:700; color:#8e8e93;">${I.school} 我的主校区</div>

@@ -8,7 +8,7 @@
 (function () {
     'use strict';
 
-    const { GM_getValue, GM_setValue, STORAGE, checkConflict, calcProb, sortFavRows, setAITagState, CAMPUS_MAP } = window.__XK__;
+    const { GM_getValue, GM_setValue, STORAGE, checkConflict, calcProb, applyRowOrder, setAITagState, CAMPUS_MAP } = window.__XK__;
 
     const THEME = { CONFLICT: '#FF3B30', CAMPUS: '#FF9500' };
 
@@ -72,7 +72,7 @@
                         GM_setValue(STORAGE.FAVORITES, favs);
                         const b = document.getElementById('btn-open-fav');
                         if (b) b.innerHTML = `${window.__XK__.I.star} 收藏夹 (${Object.keys(favs).length})`;
-                        sortFavRows();
+                        applyRowOrder();
                     };
                     kchCell.prepend(btn);
                 }
@@ -193,6 +193,8 @@
                     const cached = aiCache[cacheKey];
 
                     if (cached) {
+                        // 把分数写到行上，供排序直接读取（与徽章显示一致）
+                        row.dataset.aiScore = cached['综合评分'] || '';
                         const aiTag = document.createElement('span');
                         aiTag.className = 'nj-badge';
                         setAITagState(aiTag, cached, cacheKey);
@@ -241,7 +243,7 @@
             row.dataset.checkedHub = 'true';
         });
 
-        sortFavRows();
+        applyRowOrder();
     };
 
     Object.assign(window.__XK__, { injectBadges });

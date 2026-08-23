@@ -24,8 +24,17 @@
         PIN_FAV: 'NJU_PIN_FAV',
         MODE: 'NJU_MODE',
 
+        // 排序与过滤
+        SORT_MODE: 'NJU_SORT_MODE',
+        FILTER_CONFLICT: 'NJU_FILTER_CONFLICT',
+        FILTER_FULL: 'NJU_FILTER_FULL',
+        FILTER_CAMPUS: 'NJU_FILTER_CAMPUS',
+
         // UI
         ISLAND_POS: 'NJU_ISLAND_POS',
+
+        // 通知
+        NOTIFY_DELAY: 'NJU_NOTIFY_DELAY',
 
         // 课表开关
         TOGGLE: 'toggle-schedule',

@@ -353,10 +353,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const KEYS = [
         'common-name', 'student_id', 'login_pass',
-        'login_autofill', 'login_autologin', 'login_ai_enable', 'login_api_url', 'login_api_key', 'login_model',
-        'login_extract_api_url', 'login_extract_api_key', 'login_extract_model',
+        'login_autofill',
         'course_major', 'course_pref', 'course_api_url', 'course_api_key', 'course_model',
         'NJU_CAMPUS', 'NJU_CONFLICT', 'NJU_PIN_FAV',
+        'NJU_SORT_MODE', 'NJU_FILTER_CONFLICT', 'NJU_FILTER_FULL', 'NJU_FILTER_CAMPUS',
         'NJU_SCHEDULE',
         'seatable_last_sync',
         'toggle-eval', 'eval_api_url', 'eval_api_key', 'eval_model',
@@ -407,20 +407,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setVal('common-pwd', data.login_pass);
 
         setCheck('login-autofill', data.login_autofill);
-        setCheck('login-autologin', data.login_autologin);
-        setCheck('login-ai-enable', data.login_ai_enable);
-        // AI 配置折叠
-        const aiToggle = document.getElementById('login-ai-enable');
-        const aiConfig = document.getElementById('login-ai-config');
-        const syncAiConfig = () => { aiConfig.style.display = aiToggle.checked ? '' : 'none'; };
-        syncAiConfig();
-        aiToggle.addEventListener('change', syncAiConfig);
-        setVal('login-api-url', data.login_api_url);
-        setVal('login-api-key', data.login_api_key);
-        setVal('login-model', data.login_model);
-        setVal('login-extract-api-url', data.login_extract_api_url);
-        setVal('login-extract-api-key', data.login_extract_api_key);
-        setVal('login-extract-model', data.login_extract_model);
 
         setVal('course-major', data.course_major);
         setVal('course-pref', data.course_pref);
@@ -432,6 +418,11 @@ document.addEventListener('DOMContentLoaded', () => {
         setCheckDefault('course-conflict-check', data.NJU_CONFLICT, true);
         setCheckDefault('course-pin-fav', data.NJU_PIN_FAV, true);
         setCheckDefault('course-use-own-ai', data.NJU_USE_OWN_AI, false);
+
+        setVal('course-sort-mode', data.NJU_SORT_MODE, 'none');
+        setCheckDefault('course-filter-conflict', data.NJU_FILTER_CONFLICT, false);
+        setCheckDefault('course-filter-full', data.NJU_FILTER_FULL, false);
+        setCheckDefault('course-filter-campus', data.NJU_FILTER_CAMPUS, false);
         // 自用AI配置折叠
         (() => {
             const ownAiToggle = document.getElementById('course-use-own-ai');
@@ -490,14 +481,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'student_id': document.getElementById('common-id').value.trim(),
             'login_pass': document.getElementById('common-pwd').value.trim(),
             'login_autofill': document.getElementById('login-autofill').checked,
-            'login_autologin': document.getElementById('login-autologin').checked,
-            'login_ai_enable': document.getElementById('login-ai-enable').checked,
-            'login_api_url': document.getElementById('login-api-url').value.trim(),
-            'login_api_key': document.getElementById('login-api-key').value.trim(),
-            'login_model': document.getElementById('login-model').value.trim(),
-            'login_extract_api_url': document.getElementById('login-extract-api-url').value.trim(),
-            'login_extract_api_key': document.getElementById('login-extract-api-key').value.trim(),
-            'login_extract_model': document.getElementById('login-extract-model').value.trim(),
             'course_major': document.getElementById('course-major').value.trim(),
             'course_pref': document.getElementById('course-pref').value.trim(),
             'course_api_url': document.getElementById('course-api-url').value.trim(),
@@ -507,6 +490,10 @@ document.addEventListener('DOMContentLoaded', () => {
             'NJU_CONFLICT': document.getElementById('course-conflict-check').checked,
             'NJU_PIN_FAV': document.getElementById('course-pin-fav').checked,
             'NJU_USE_OWN_AI': document.getElementById('course-use-own-ai').checked,
+            'NJU_SORT_MODE': NjuDropdown.getById('course-sort-mode')?.getValue() || 'none',
+            'NJU_FILTER_CONFLICT': document.getElementById('course-filter-conflict').checked,
+            'NJU_FILTER_FULL': document.getElementById('course-filter-full').checked,
+            'NJU_FILTER_CAMPUS': document.getElementById('course-filter-campus').checked,
             'toggle-eval': document.getElementById('toggle-eval').checked,
             'toggle-spoc-redirect': document.getElementById('toggle-spoc-redirect').checked,
             'eval_api_url': document.getElementById('eval-api-url')?.value?.trim() || '',
