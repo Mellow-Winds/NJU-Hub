@@ -7,12 +7,15 @@
   "permissions": [
     "storage",
     "declarativeNetRequest",
-    "scripting"
+    "scripting",
+    "tabs",
+    "downloads"
   ],
   "web_accessible_resources": [
     {
       "resources": [
         "scripts/seec_xhr_bridge.js",
+        "scripts/lms_preview_bridge.js",
         "data/ai_cache.json",
         "data/merged_ratings.json"
       ],

@@ -71,6 +71,131 @@ async function ensureHeaderRules() {
 ensureHeaderRules();
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'lmsOpenWorker') {
+        const courseId = String(request.courseId || '').match(/^\d+$/)?.[0];
+        if (!courseId) {
+            sendResponse({ ok: false, error: '无效的课程 ID' });
+            return false;
+        }
+
+        const workerUrl = `https://lms.nju.edu.cn/course/${courseId}/courseware?njuhub_lms_worker=1#/`;
+        chrome.tabs.create({ url: workerUrl, active: false }, (tab) => {
+            if (chrome.runtime.lastError || !tab?.id) {
+                sendResponse({ ok: false, error: chrome.runtime.lastError?.message || '无法创建后台标签页' });
+                return;
+            }
+            sendResponse({ ok: true, tabId: tab.id });
+        });
+        return true;
+    }
+
+    if (request.action === 'lmsCloseWorker') {
+        const tabId = Number(request.tabId);
+        if (!Number.isInteger(tabId)) {
+            sendResponse({ ok: false, error: '无效的后台标签页 ID' });
+            return false;
+        }
+        chrome.tabs.remove(tabId, () => {
+            sendResponse({ ok: !chrome.runtime.lastError, error: chrome.runtime.lastError?.message || null });
+        });
+        return true;
+    }
+
+    if (request.action === 'lmsWorkerResolve') {
+        const tabId = Number(request.tabId);
+        if (!Number.isInteger(tabId)) {
+            sendResponse({ ok: false, error: '无效的后台标签页 ID' });
+            return false;
+        }
+
+        const targetUrl = String(request.activityUrl || '');
+        if (!/^https:\/\/lms\.nju\.edu\.cn\/course\/\d+\/learning-activity\?njuhub_lms_worker=1#\/\d+/.test(targetUrl)) {
+            sendResponse({ ok: false, error: '无效的活动页面地址' });
+            return false;
+        }
+
+        const forwardResolve = () => {
+            const injectBridge = chrome.scripting.executeScript({
+                target: { tabId, allFrames: true },
+                world: 'MAIN',
+                files: ['scripts/lms_preview_bridge.js']
+            }).catch(() => null);
+
+            injectBridge.finally(() => setTimeout(() => chrome.tabs.sendMessage(tabId, {
+                action: 'lmsWorkerResolveCurrent',
+                file: request.file || null
+            }, (result) => {
+                if (chrome.runtime.lastError) {
+                    sendResponse({ ok: false, error: chrome.runtime.lastError.message });
+                    return;
+                }
+                sendResponse(result || { ok: false, error: '后台页面没有返回结果' });
+            }), 150));
+        };
+
+        let settled = false;
+        const timeout = setTimeout(() => {
+            if (settled) return;
+            settled = true;
+            chrome.tabs.onUpdated.removeListener(onUpdated);
+            sendResponse({ ok: false, error: '活动页面加载超时' });
+        }, 20000);
+
+        const onUpdated = (updatedTabId, changeInfo) => {
+            if (updatedTabId !== tabId || changeInfo.status !== 'complete' || settled) return;
+            settled = true;
+            clearTimeout(timeout);
+            chrome.tabs.onUpdated.removeListener(onUpdated);
+            setTimeout(forwardResolve, 300);
+        };
+        chrome.tabs.onUpdated.addListener(onUpdated);
+        chrome.tabs.update(tabId, { url: targetUrl }, () => {
+            if (chrome.runtime.lastError && !settled) {
+                settled = true;
+                clearTimeout(timeout);
+                chrome.tabs.onUpdated.removeListener(onUpdated);
+                sendResponse({ ok: false, error: chrome.runtime.lastError.message });
+            }
+        });
+        return true;
+    }
+
+    if (request.action === 'lmsWorkerDownload') {
+        const url = String(request.url || '');
+        const filename = String(request.filename || 'download');
+        let parsed;
+        try { parsed = new URL(url); } catch (_) { parsed = null; }
+        if (!parsed || !['lms.nju.edu.cn', 'lms-media.nju.edu.cn'].includes(parsed.hostname)) {
+            sendResponse({ ok: false, error: '下载地址域名不受信任' });
+            return false;
+        }
+
+        chrome.downloads.download({ url, filename, saveAs: false }, (downloadId) => {
+            if (chrome.runtime.lastError || downloadId == null) {
+                sendResponse({ ok: false, error: chrome.runtime.lastError?.message || '浏览器下载失败' });
+                return;
+            }
+            sendResponse({ ok: true, downloadId });
+        });
+        return true;
+    }
+
+    if (request.action === 'lmsWorkerCommand') {
+        const tabId = Number(request.tabId);
+        if (!Number.isInteger(tabId)) {
+            sendResponse({ ok: false, error: '无效的后台标签页 ID' });
+            return false;
+        }
+        chrome.tabs.sendMessage(tabId, request.command || {}, (result) => {
+            if (chrome.runtime.lastError) {
+                sendResponse({ ok: false, error: chrome.runtime.lastError.message });
+                return;
+            }
+            sendResponse(result || { ok: false, error: '后台页面没有返回结果' });
+        });
+        return true;
+    }
+
     if (request.action === 'openOptions') {
         chrome.runtime.openOptionsPage();
         return false;
