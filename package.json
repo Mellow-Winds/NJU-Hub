@@ -4,7 +4,7 @@
   "description": "> 南京大学个人学术指挥中心：一站式浏览器扩展，覆盖 GPA 查询、自动登录、智能选课分析、LMS 增强、自动评教与 SEEC 门户优化。",
   "main": "background.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test tests/*.test.cjs"
   },
   "repository": {
     "type": "git",
