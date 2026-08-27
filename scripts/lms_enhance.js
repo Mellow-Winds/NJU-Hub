@@ -382,24 +382,40 @@
         return media.href;
     }
 
-    function getRecentPreviewUrl(before) {
+    function getPreviewUrlsFromPerformance() {
+        const urls = new Set();
         const entries = performance.getEntriesByType('resource').map(entry => entry.name);
-        for (let i = entries.length - 1; i >= 0; i -= 1) {
-            const url = entries[i];
-            if (before.has(url) || !/pdf-viewer|note-bene/i.test(url)) continue;
+        for (const url of entries) {
+            if (!/pdf-viewer|note-bene/i.test(url)) continue;
             const extracted = extractPreviewFileUrl(url);
-            if (extracted) return extracted;
+            if (extracted) urls.add(extracted);
         }
-        return null;
+        return urls;
     }
 
-    function getPreviewUrlFromDom() {
+    function getPreviewUrlsFromDom() {
+        const urls = new Set();
         const elements = document.querySelectorAll('iframe[src], embed[src], object[data], a[href], [data-url]');
         for (const element of elements) {
             const raw = element.getAttribute('src') || element.getAttribute('data') || element.getAttribute('href') || element.getAttribute('data-url');
             if (!raw || !/pdf-viewer|note-bene/i.test(raw)) continue;
             const extracted = extractPreviewFileUrl(raw);
-            if (extracted) return extracted;
+            if (extracted) urls.add(extracted);
+        }
+        return urls;
+    }
+
+    function collectPreviewUrls() {
+        return new Set([
+            ...getPreviewUrlsFromPerformance(),
+            ...getPreviewUrlsFromDom()
+        ]);
+    }
+
+    function getFreshPreviewUrl(before) {
+        const current = collectPreviewUrls();
+        for (const url of current) {
+            if (!before.has(url)) return url;
         }
         return null;
     }
@@ -437,6 +453,14 @@
             document.body.appendChild(container);
         },
         async tryLegacyDownload(file) {
+            // The legacy blob endpoint can return a cached PDF unrelated to the
+            // requested uploadId. Since it is still a valid PDF, the signature
+            // check below cannot detect the mismatch. Resolve PDFs through the
+            // activity preview, which is tied to the selected file instead.
+            if (/\.pdf$/i.test(file.name)) {
+                return { ok: false, reason: 'PDF 使用预览授权链路下载' };
+            }
+
             const url = `${file.legacyUrl}${file.legacyUrl.includes('?') ? '&' : '?'}preview=true`;
             try {
                 const response = await fetch(url, {
@@ -681,12 +705,13 @@
         initWorker() {
             this.previewUrlResolver = null;
             window.addEventListener('message', (event) => {
-                if (event.source !== window || event.data?.source !== 'NJU-Hub' || event.data?.type !== 'lms-preview-url') return;
+                // Preview requests may originate in an LMS iframe. The URL is
+                // still restricted to trusted LMS hosts by extractPreviewFileUrl.
+                if (event.data?.source !== 'NJU-Hub' || event.data?.type !== 'lms-preview-url') return;
                 const extracted = extractPreviewFileUrl(event.data.url);
-                if (!extracted || !this.previewUrlResolver) return;
-                const resolve = this.previewUrlResolver;
-                this.previewUrlResolver = null;
-                resolve(extracted);
+                const capture = this.previewUrlResolver;
+                if (!extracted || !capture || capture.before.has(extracted)) return;
+                capture.resolve(extracted);
             });
             chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 if (request.action !== 'lmsWorkerResolveCurrent') return false;
@@ -720,33 +745,52 @@
             }
             if (!target) throw new Error(`当前活动页面找不到文件: ${expectedName}`);
 
-            const before = new Set(performance.getEntriesByType('resource').map(entry => entry.name));
-            target.click();
-            await this.waitFor('.document-preview-view-mode', 10000);
-            const noteMode = document.querySelector('#note-mode');
-            if (!noteMode) throw new Error('找不到笔记模式按钮');
-            noteMode.click();
-
-            const bridgeUrl = await new Promise((resolve) => {
-                this.previewUrlResolver = resolve;
-                const captureStart = Date.now();
-                const poll = async () => {
-                    while (Date.now() - captureStart < 12000) {
-                        const url = getRecentPreviewUrl(before) || getPreviewUrlFromDom();
-                        if (url) {
-                            this.previewUrlResolver = null;
-                            resolve(url);
-                            return;
-                        }
-                        await sleep(250);
+            // A hidden/default preview can remain in the DOM. Record all
+            // existing file URLs before clicking and accept only a URL created
+            // by this selection, otherwise a stale file may be downloaded.
+            const before = collectPreviewUrls();
+            const bridgeUrl = await new Promise((resolve, reject) => {
+                let settled = false;
+                const capture = {
+                    before,
+                    resolve: (url) => {
+                        if (settled) return;
+                        settled = true;
+                        if (this.previewUrlResolver === capture) this.previewUrlResolver = null;
+                        resolve(url);
                     }
-                    this.previewUrlResolver = null;
-                    resolve(null);
                 };
-                poll();
+                this.previewUrlResolver = capture;
+
+                const captureStart = Date.now();
+                const run = async () => {
+                    try {
+                        target.click();
+                        await this.waitFor('.document-preview-view-mode', 10000);
+                        const noteMode = document.querySelector('#note-mode');
+                        if (!noteMode) throw new Error('找不到笔记模式按钮');
+                        noteMode.click();
+
+                        while (!settled && Date.now() - captureStart < 12000) {
+                            const url = getFreshPreviewUrl(before);
+                            if (url) {
+                                capture.resolve(url);
+                                return;
+                            }
+                            await sleep(250);
+                        }
+                        capture.resolve(null);
+                    } catch (error) {
+                        if (settled) return;
+                        settled = true;
+                        if (this.previewUrlResolver === capture) this.previewUrlResolver = null;
+                        reject(error);
+                    }
+                };
+                run();
             });
             if (bridgeUrl) return { ok: true, url: bridgeUrl };
-            throw new Error('未捕获到 pdf-viewer 的签名地址');
+            throw new Error(`未捕获到当前文件的新 pdf-viewer 签名地址: ${expectedName}`);
         },
 
         startMonitor() {
