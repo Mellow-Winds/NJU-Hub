@@ -467,27 +467,28 @@
             if (!courseId) return;
             this.showDownloadProgress(mask, selected.length);
 
-            const worker = await runtimeMessage({ action: 'lmsOpenWorker', courseId });
-            if (!worker.ok) {
-                console.warn('[NJU-Hub] 无法创建 LMS 后台标签页:', worker.error);
-            }
-
             const results = [];
-            try {
-                for (let index = 0; index < selected.length; index += 1) {
-                    const file = selected[index];
-                    this.updateDownloadProgress(mask, index, selected.length, file.name);
-                    const legacy = await this.tryLegacyDownload(file);
-                    if (legacy.ok) {
-                        results.push({ file, ok: true, method: 'legacy' });
-                        this.updateDownloadProgress(mask, index + 1, selected.length, file.name);
-                        await sleep(500);
+            for (let index = 0; index < selected.length; index += 1) {
+                const file = selected[index];
+                this.updateDownloadProgress(mask, index, selected.length, file.name);
+                const legacy = await this.tryLegacyDownload(file);
+                if (legacy.ok) {
+                    results.push({ file, ok: true, method: 'legacy' });
+                    this.updateDownloadProgress(mask, index + 1, selected.length, file.name);
+                    await sleep(500);
+                    continue;
+                }
+
+                let worker = null;
+                try {
+                    if (!file.activityId) {
+                        results.push({ file, ok: false, reason: legacy.reason || '缺少活动页面信息' });
                         continue;
                     }
 
-                    if (!worker.ok || !file.activityId) {
-                        results.push({ file, ok: false, reason: legacy.reason || '缺少活动页面信息' });
-                        this.updateDownloadProgress(mask, index + 1, selected.length, file.name);
+                    worker = await runtimeMessage({ action: 'lmsOpenWorker', courseId });
+                    if (!worker.ok) {
+                        results.push({ file, ok: false, reason: worker.error || '无法创建后台标签页' });
                         continue;
                     }
 
@@ -516,11 +517,11 @@
                     results.push(download.ok
                         ? { file, ok: true, method: 'preview' }
                         : { file, ok: false, reason: download.error || '浏览器下载失败' });
-                    this.updateDownloadProgress(mask, index + 1, selected.length, file.name);
-                    await sleep(700);
+                } finally {
+                    if (worker?.ok) await runtimeMessage({ action: 'lmsCloseWorker', tabId: worker.tabId });
                 }
-            } finally {
-                if (worker.ok) await runtimeMessage({ action: 'lmsCloseWorker', tabId: worker.tabId });
+                this.updateDownloadProgress(mask, index + 1, selected.length, file.name);
+                await sleep(700);
             }
 
             this.showDownloadComplete(mask, results);
