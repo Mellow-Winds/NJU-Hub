@@ -9,6 +9,7 @@
     'use strict';
 
     const { GM_getValue, GM_setValue, STORAGE } = window.__XK__;
+    let nextOriginalOrder = 0;
 
     const CN_NUM = { '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '日': 7 };
 
@@ -218,17 +219,41 @@
         const rows = Array.from(tbody.querySelectorAll('tr.course-tr'));
         if (rows.length < 2) return;
 
+        // 站点的默认顺序由后端返回，插件排序会直接重排 DOM；因此首次看到
+        // 这批课程时保存稳定的原始序号，切回“默认”时可以真正恢复它。
+        rows.forEach((row) => {
+            if (row.dataset.xkOriginalOrder === undefined) {
+                row.dataset.xkOriginalOrder = String(nextOriginalOrder++);
+            }
+        });
+
         const pinFav = GM_getValue(STORAGE.PIN_FAV, true);
         const mode = GM_getValue(STORAGE.SORT_MODE, 'none');
-        if (!pinFav && mode === 'none') return;
+
+        if (mode === 'none' && !pinFav) {
+            const desired = rows.slice().sort((a, b) =>
+                Number(a.dataset.xkOriginalOrder) - Number(b.dataset.xkOriginalOrder)
+            );
+            const alreadyDefault = desired.every((row, idx) => row === rows[idx]);
+            if (!alreadyDefault) {
+                const fragment = document.createDocumentFragment();
+                desired.forEach(row => fragment.appendChild(row));
+                tbody.appendChild(fragment);
+            }
+            return;
+        }
 
         const enriched = rows.map(row => ({
             row,
             isFav: row.classList.contains('is-fav-row'),
-            key: getSortKey(row, mode)
+            key: getSortKey(row, mode),
+            originalOrder: Number(row.dataset.xkOriginalOrder)
         }));
 
-        const desired = enriched.slice().sort((a, b) => compareRows(a, b, pinFav, mode));
+        const desired = enriched.slice().sort((a, b) => {
+            const result = compareRows(a, b, pinFav, mode);
+            return result || a.originalOrder - b.originalOrder;
+        });
 
         let same = true;
         for (let i = 0; i < enriched.length; i++) {

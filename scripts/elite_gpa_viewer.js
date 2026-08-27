@@ -300,7 +300,7 @@
                         <div class="item-label">排名百分比</div>
                         <div class="item-val">${data.rankPercentStr}</div>
                         <div class="item-explain-custom">
-                            获取自系统的原始上报数据，<strong>一般收集信息是填这个。</strong>这个数据代表排在你前面的人占总人数的比例，<strong>数字越小越厉害！</strong>
+                            获取自系统的原始数据，代表排在你前面的人占总人数的比例，<strong>数字越小越厉害！</strong>
                         </div>
                     </div>
 
@@ -308,7 +308,7 @@
                         <div class="item-label">百分比排名</div>
                         <div class="item-val purple">${regularPercent}%</div>
                         <div class="item-explain-custom">
-                            转换后的统计学常规比例，代表分数低于你的人占总人数的比例。<strong>数字越大越优秀！</strong>
+                            代表分数低于你的人占总人数的比例。<strong>数字越大越优秀！</strong>
                         </div>
                     </div>
 

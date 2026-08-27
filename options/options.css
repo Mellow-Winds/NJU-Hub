@@ -1449,3 +1449,123 @@ html[data-font="system"] body {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* ── Google-style Floating Text Fields ───────────────────────── */
+.form-group > .floating-field {
+    position: relative;
+    display: block;
+    min-width: 0;
+    margin: 0;
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: inherit;
+    font-weight: 400;
+}
+
+.floating-field input,
+.floating-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: 8px;
+    color: var(--md-sys-color-on-surface);
+    background: transparent;
+    transition:
+        border-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+        box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+        padding var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+.floating-field input {
+    height: 56px;
+    padding: 0 16px;
+}
+
+.floating-field textarea {
+    min-height: 104px;
+    height: 104px;
+    padding: 16px;
+    resize: vertical;
+    line-height: 1.55;
+}
+
+.floating-field .password-wrapper {
+    position: relative;
+}
+
+.floating-field .password-wrapper input {
+    padding-right: 52px;
+}
+
+.floating-field input:hover,
+.floating-field textarea:hover {
+    border-color: var(--md-sys-color-on-surface-variant);
+}
+
+.floating-field input:focus,
+.floating-field textarea:focus {
+    outline: none;
+    border: 2px solid var(--md-sys-color-primary);
+    padding-left: 15px;
+    box-shadow: 0 0 0 1px var(--md-sys-color-primary);
+}
+
+.floating-field textarea:focus {
+    padding: 15px;
+}
+
+.floating-field .password-wrapper input:focus {
+    padding-right: 51px;
+}
+
+.floating-field input::placeholder,
+.floating-field textarea::placeholder {
+    color: var(--md-sys-color-on-surface-variant);
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+.floating-field input:focus::placeholder,
+.floating-field textarea:focus::placeholder {
+    opacity: .62;
+}
+
+.floating-field > .field-label {
+    position: absolute;
+    left: 12px;
+    top: 17px;
+    z-index: 1;
+    max-width: calc(100% - 24px);
+    padding: 0 4px;
+    overflow: hidden;
+    color: var(--md-sys-color-on-surface-variant);
+    background: var(--md-sys-color-surface-container-lowest);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    pointer-events: none;
+    transform-origin: left center;
+    transition:
+        top var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized),
+        color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+        font-size var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized);
+}
+
+.floating-field:focus-within > .field-label,
+.floating-field:has(input:not(:placeholder-shown)) > .field-label,
+.floating-field:has(textarea:not(:placeholder-shown)) > .field-label {
+    top: -8px;
+    color: var(--md-sys-color-primary);
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.floating-field input:not(:placeholder-shown) + .field-label,
+.floating-field textarea:not(:placeholder-shown) + .field-label {
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.floating-field:focus-within > .field-label {
+    color: var(--md-sys-color-primary);
+}

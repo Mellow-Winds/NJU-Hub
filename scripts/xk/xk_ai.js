@@ -90,7 +90,8 @@
             e.stopPropagation();
             if (!cacheKey) return;
             const db = window.__ratingsDB__ || {};
-            const srcData = db[cacheKey];
+            const rawData = db[cacheKey];
+            const srcData = rawData?.reviews && typeof rawData.reviews === 'object' ? rawData.reviews : rawData;
             if (!srcData || typeof srcData !== 'object') return;
 
             const pop = document.getElementById('nj-popover');

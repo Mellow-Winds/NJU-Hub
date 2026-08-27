@@ -120,6 +120,7 @@
                     if (!matched) continue;
 
                     let rawData = db[k];
+                    if (rawData && typeof rawData === 'object' && rawData.reviews && typeof rawData.reviews === 'object') rawData = rawData.reviews;
                     // 新格式：按来源分组 {"2020": [...], "2021": [...]}
                     // 旧格式：直接数组 ["评价", ...]
                     let comms;
@@ -189,8 +190,12 @@
                     appendB(jsmcCell, rawTag);
 
                     // --- AI 标签 ---
-                    const cacheKey = `${c}#${t}`;
-                    const cached = aiCache[cacheKey];
+                    const exactCacheKey = `${c}#${t}`;
+                    const cacheKey = aiCache[exactCacheKey] ? exactCacheKey : Object.keys(aiCache).find(key => {
+                        const [cachedName, cachedTeachers = ''] = key.split('#');
+                        return cachedName === c && cachedTeachers.split(/[\s,，、]+/).includes(t);
+                    });
+                    const cached = cacheKey ? aiCache[cacheKey] : null;
 
                     if (cached) {
                         // 把分数写到行上，供排序直接读取（与徽章显示一致）

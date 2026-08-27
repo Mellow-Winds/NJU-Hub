@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NJU-Hub 红黑榜</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-shell">
+    <header class="topbar">
+        <a class="brand" href="#search-view" data-view-link="search-view" aria-label="回到红黑榜搜索">
+            <img class="brand-logo" src="../icons/icon128.png" alt="NJU-Hub">
+            <span class="brand-text"><strong>NJU-Hub</strong><small>课程红黑榜</small></span>
+        </a>
+        <nav class="nav-links" aria-label="主导航">
+            <button class="nav-link active" type="button" data-view-link="search-view">搜索</button>
+            <button class="nav-link nav-tool ripple-container" id="sync-button" type="button">
+                <span class="sync-icon" aria-hidden="true">↻</span><span>同步</span>
+            </button>
+            <button class="theme-toggle ripple-container" id="theme-toggle" type="button" aria-label="切换夜间模式">
+                <svg class="theme-icon-moon" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <svg class="theme-icon-sun" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </button>
+        </nav>
+    </header>
+
+    <div class="sync-message" id="sync-message" role="status" aria-live="polite"></div>
+
+    <main class="content">
+        <section class="view active" id="search-view">
+            <div class="view-heading">
+                <h1>课程红黑榜</h1>
+                <p>搜索课程名称或老师，看看大家怎么评价。</p>
+            </div>
+
+            <section class="search-card card" aria-label="课程搜索">
+                <form class="search-form" id="search-form">
+                    <label class="floating-field floating-field-wide">
+                        <input id="course-name" name="courseName" type="search" placeholder=" " autocomplete="off">
+                        <span>课程名称</span>
+                    </label>
+                    <label class="floating-field">
+                        <input id="teacher" name="teacher" type="search" placeholder=" " autocomplete="off">
+                        <span>老师</span>
+                    </label>
+                    <button class="filled-button ripple-container" type="submit"><svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m16 16 4.3 4.3"></path></svg><span>搜索</span></button>
+                </form>
+                <div class="search-helper">
+                    <span>支持课程名称、老师和简称模糊搜索</span>
+                    <div class="search-actions">
+                        <button class="text-button ripple-container" id="clear-button" type="button">清空条件</button>
+                        <button class="text-button ripple-container" id="show-all-button" type="button">显示所有</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="results-section" aria-live="polite" hidden>
+                <div class="results-heading">
+                    <div>
+                        <h2 id="results-title">搜索结果</h2>
+                    </div>
+                    <div class="result-meta"><span id="result-summary">—</span><span class="data-status"><i></i> <span id="data-source-label">课程评价库</span></span></div>
+                </div>
+                <div class="results-grid" id="results-grid"></div>
+            </section>
+        </section>
+
+    </main>
+</div>
+
+<div class="course-dialog-backdrop" id="course-dialog-backdrop"></div>
+<div class="course-dialog" id="course-dialog" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="dialog-course-title">
+    <section class="course-dialog-surface" role="document">
+        <button class="dialog-close ripple-container" id="dialog-close" type="button" aria-label="关闭课程详情">×</button>
+        <div id="dialog-content"></div>
+    </section>
+</div>
+
+<script src="../options/material-color-utils.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

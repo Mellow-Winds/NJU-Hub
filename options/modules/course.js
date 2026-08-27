@@ -7,12 +7,16 @@ function initCourseModule() {
     // 8. Data Manager (Red/Black DB & AI Cache)
     // ============================================================
 
-    const dmList = document.getElementById('dm-list');
+    // 评价数据库管理已迁移到 red-black/index.html。
+    // 旧管理器代码保留为兼容旧版页面，但不再影响选课助手的课表功能。
+    if (document.getElementById('dm-list')) {
+        const dmList = document.getElementById('dm-list');
 
     function getReviewCount(data) {
         if (!data) return 0;
         if (Array.isArray(data)) return data.length;
         if (typeof data === 'object') {
+            if (data.reviews && typeof data.reviews === 'object') return getReviewCount(data.reviews);
             let count = 0;
             for (const revs of Object.values(data)) {
                 if (Array.isArray(revs)) count += revs.length;
@@ -32,6 +36,7 @@ function initCourseModule() {
 
     function buildReviewHTML(key, comments) {
         if (!comments) return '';
+        if (comments.reviews && typeof comments.reviews === 'object') comments = comments.reviews;
         let html = '';
         let totalCount = 0;
 
@@ -243,6 +248,10 @@ function initCourseModule() {
             }
         });
     };
+
+    // Expose the legacy manager only when the legacy panel is present.
+    window._renderDataManager = renderDataManager;
+    }
 
     // ============================================================
     // 9. Schedule Preview Modal (Container Transform)
@@ -570,6 +579,15 @@ function initCourseModule() {
                         const existing = db[key];
                         if (typeof existing === 'object' && !Array.isArray(existing) && typeof val === 'object' && !Array.isArray(val)) {
                             for (const [src, revs] of Object.entries(val)) {
+                                if (src === 'reviews' && existing.reviews && typeof existing.reviews === 'object') {
+                                    for (const [reviewSource, reviewTexts] of Object.entries(revs)) {
+                                        if (!Array.isArray(reviewTexts)) continue;
+                                        const prior = existing.reviews[reviewSource] || [];
+                                        const set = new Set([...prior, ...reviewTexts]);
+                                        if (set.size > prior.length) { existing.reviews[reviewSource] = Array.from(set); merged++; }
+                                    }
+                                    continue;
+                                }
                                 if (!Array.isArray(revs)) continue;
                                 if (!existing[src]) { existing[src] = revs; merged++; }
                                 else {
@@ -657,6 +675,4 @@ function initCourseModule() {
         };
     }
 
-    // Expose renderDataManager for external calls (e.g., after save)
-    window._renderDataManager = renderDataManager;
 }

@@ -111,4 +111,9 @@ function bindEvents() {
     document.getElementById('btn-webportal').onclick = () => {
         chrome.tabs.create({ url: chrome.runtime.getURL('webportal/webportal.html') });
     };
+
+    // Course red-black list quick access
+    document.getElementById('btn-red-black').onclick = () => {
+        chrome.tabs.create({ url: chrome.runtime.getURL('red-black/index.html') });
+    };
 }

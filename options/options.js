@@ -471,6 +471,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('save-all-btn').addEventListener('click', () => {
         const btn = document.getElementById('save-all-btn');
         const originalText = btn.innerText;
+        const valueOf = (id) => document.getElementById(id)?.value?.trim() || '';
+        const checkedOf = (id) => document.getElementById(id)?.checked === true;
 
         btn.innerText = '正在保存...';
         btn.disabled = true;
@@ -481,30 +483,30 @@ document.addEventListener('DOMContentLoaded', () => {
             'student_id': document.getElementById('common-id').value.trim(),
             'login_pass': document.getElementById('common-pwd').value.trim(),
             'login_autofill': document.getElementById('login-autofill').checked,
-            'course_major': document.getElementById('course-major').value.trim(),
-            'course_pref': document.getElementById('course-pref').value.trim(),
-            'course_api_url': document.getElementById('course-api-url').value.trim(),
-            'course_api_key': document.getElementById('course-api-key').value.trim(),
-            'course_model': document.getElementById('course-model').value.trim(),
+            'course_major': valueOf('course-major'),
+            'course_pref': valueOf('course-pref'),
+            'course_api_url': valueOf('course-api-url'),
+            'course_api_key': valueOf('course-api-key'),
+            'course_model': valueOf('course-model'),
             'NJU_CAMPUS': NjuDropdown.getById('course-my-campus')?.getValue() || 'XL',
-            'NJU_CONFLICT': document.getElementById('course-conflict-check').checked,
-            'NJU_PIN_FAV': document.getElementById('course-pin-fav').checked,
-            'NJU_USE_OWN_AI': document.getElementById('course-use-own-ai').checked,
+            'NJU_CONFLICT': checkedOf('course-conflict-check'),
+            'NJU_PIN_FAV': checkedOf('course-pin-fav'),
+            'NJU_USE_OWN_AI': checkedOf('course-use-own-ai'),
             'NJU_SORT_MODE': NjuDropdown.getById('course-sort-mode')?.getValue() || 'none',
-            'NJU_FILTER_CONFLICT': document.getElementById('course-filter-conflict').checked,
-            'NJU_FILTER_FULL': document.getElementById('course-filter-full').checked,
-            'NJU_FILTER_CAMPUS': document.getElementById('course-filter-campus').checked,
-            'toggle-eval': document.getElementById('toggle-eval').checked,
-            'toggle-spoc-redirect': document.getElementById('toggle-spoc-redirect').checked,
+            'NJU_FILTER_CONFLICT': checkedOf('course-filter-conflict'),
+            'NJU_FILTER_FULL': checkedOf('course-filter-full'),
+            'NJU_FILTER_CAMPUS': checkedOf('course-filter-campus'),
+            'toggle-eval': checkedOf('toggle-eval'),
+            'toggle-spoc-redirect': checkedOf('toggle-spoc-redirect'),
             'eval_api_url': document.getElementById('eval-api-url')?.value?.trim() || '',
             'eval_api_key': document.getElementById('eval-api-key')?.value?.trim() || '',
             'eval_model': document.getElementById('eval-model')?.value?.trim() || '',
-            'toggle-lms': document.getElementById('toggle-lms').checked,
-            'lms_video_remove_restrict': document.getElementById('lms-video-remove-restrict').checked,
-            'lms_video_autojump': document.getElementById('lms-video-autojump').checked,
-            'lms_dl_default_all': document.getElementById('lms-dl-default-all').checked,
-            'lms_dl_show_checkbox': document.getElementById('lms-dl-show-checkbox').checked,
-            'toggle-seec-workpanel': document.getElementById('toggle-seec-workpanel').checked
+            'toggle-lms': checkedOf('toggle-lms'),
+            'lms_video_remove_restrict': checkedOf('lms-video-remove-restrict'),
+            'lms_video_autojump': checkedOf('lms-video-autojump'),
+            'lms_dl_default_all': checkedOf('lms-dl-default-all'),
+            'lms_dl_show_checkbox': checkedOf('lms-dl-show-checkbox'),
+            'toggle-seec-workpanel': checkedOf('toggle-seec-workpanel')
         };
 
         config.login_user = config.student_id;
@@ -532,7 +534,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ============================================================
-    // 8. options_goto: auto-navigate from floating island button
+    // 8. Red-black course guide
+    // ============================================================
+    const redBlackButton = document.getElementById('btn-open-red-black');
+    if (redBlackButton) {
+        redBlackButton.addEventListener('click', () => {
+            chrome.tabs.create({ url: chrome.runtime.getURL('red-black/index.html') });
+        });
+    }
+
+    // ============================================================
+    // 9. options_goto: auto-navigate from floating island button
     // ============================================================
     chrome.storage.local.get(['options_goto'], (data) => {
         if (data.options_goto) {
@@ -542,7 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ============================================================
-    // 9. Init course module (Data Manager, SeaTable, Schedule, etc.)
+    // 10. Init course module (legacy schedule helpers, when present)
     // ============================================================
     if (typeof initCourseModule === 'function') {
         initCourseModule();
@@ -552,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initPortalModule();
     }
 
-    // 10. Privacy Policy Modal
+    // 11. Privacy Policy Modal
     // ============================================================
     const privacyBtn = document.getElementById('btn-privacy-policy');
     if (privacyBtn) {
