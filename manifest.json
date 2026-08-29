@@ -3,7 +3,7 @@
   "name": "NJU Hub - 南大智慧终端",
   "version": "26.4.1",
   "default_locale": "zh_CN",
-  "description": "NJU功能增强：GPA快速查询 | 课表抓取 | 自动登录 | LMS增强",
+  "description": "NJU功能增强：GPA快速查询 | 课表抓取 | 自动登录 | 场馆抢票 | LMS增强",
   "permissions": [
     "storage",
     "declarativeNetRequest",
@@ -16,6 +16,7 @@
       "resources": [
         "scripts/seec_xhr_bridge.js",
         "scripts/lms_preview_bridge.js",
+        "libs/venue_ocr/*",
         "data/ai_cache.json",
         "data/merged_ratings.json"
       ],
@@ -113,6 +114,18 @@
         "scripts/pe_score_viewer/pe_score_fetcher.js",
         "scripts/pe_score_viewer/pe_score_ui.js",
         "scripts/pe_score_viewer/pe_score_main.js"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["*://ggtypt.nju.edu.cn/*"],
+      "js": [
+        "scripts/venue_grab/vg_data.js",
+        "scripts/venue_grab/vg_match.js",
+        "scripts/venue_grab/vg_selectors.js",
+        "scripts/venue_grab/vg_engine.js",
+        "scripts/venue_grab/vg_ui.js",
+        "scripts/venue_grab/vg_captcha_ai.js"
       ],
       "run_at": "document_end"
     }

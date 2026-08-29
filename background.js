@@ -211,6 +211,31 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         return false;
     }
 
+    if (request.action === 'injectVenueOcr') {
+        // 场馆抢票：主世界注入验证码 XHR 钩子 + 隔离世界注入 OCR 推理包
+        const tabId = sender.tab && sender.tab.id;
+        if (!Number.isInteger(tabId)) { sendResponse({ ok: false }); return false; }
+        chrome.scripting.executeScript({
+            target: { tabId },
+            world: 'MAIN',
+            files: ['scripts/venue_grab/vg_captcha_hook.js']
+        }).catch(err => console.error('[后台] 注入验证码钩子失败:', err));
+        chrome.scripting.executeScript({
+            target: { tabId },
+            files: ['libs/venue_ocr/vg_ocr_bundle.js']
+        }).then(() => {
+            // 预热：立刻加载 det+rec 模型会话（验证码出现时即可推理，不用等 70MB）
+            const modelsBase = chrome.runtime.getURL('libs/venue_ocr/');
+            return chrome.scripting.executeScript({
+                target: { tabId },
+                func: (base) => window.__VG_OCR__ && window.__VG_OCR__.prewarm(base),
+                args: [modelsBase],
+            });
+        }).catch(err => console.error('[后台] 注入 OCR 包失败:', err));
+        sendResponse({ ok: true });
+        return false;
+    }
+
     if (request.action === 'callAI') {
         // 解构 payload，提取基础信息和“剩余所有参数” (...rest)
         const { apiKey, baseUrl, model, messages, ...rest } = request.payload;
