@@ -21,6 +21,16 @@
     const LEAD_MS = 800;  // 提前量：T-0 前 0.8s 发起刷新，让 day/info 请求正好落在 8 点后
 
     const $ = id => document.getElementById(id);
+    // Android App 内静默运行：所有提示走面板日志，不弹系统对话框
+    const QUIET = !!window.vgAndroid;
+    function collapsePanel() {
+        try {
+            const b = document.getElementById('vg-body');
+            if (b) b.style.display = 'none';
+            const c = document.getElementById('vg-collapse');
+            if (c) c.textContent = '展开';
+        } catch (e) {}
+    }
     let state = { armed: false, phase: '', startAt: 0, deadline: 0, attempts: 0, tried: [], log: [] };
     let pollTimer = null, tickTimer = null;
 
@@ -29,6 +39,7 @@
     function log(msg) {
         state.log = (state.log || []).concat(`[${new Date().toLocaleTimeString('zh-CN')}] ${msg}`).slice(-30);
         save(); renderLog();
+        try { console.log('[VG] ' + msg); } catch (e2) { /* logcat 镜像 */ }
     }
     function renderLog() {
         const el = $('vg-log'); if (!el) return;
@@ -195,11 +206,48 @@
         }
     }
 
-    function huntTick(cfg) {
+                        function huntTick(cfg) {
+        const cells = collectCells();
+        try {
+            const vt = ((document.body && document.body.innerText) || '').replace(/\s+/g, ' ').slice(0, 120);
+            console.log('[VG] hunt tick, cells=' + cells.length + ', attempts=' + state.attempts + ', needLogin=' + !!window.__VG_NEED_LOGIN__ + ', 页面= ' + vt);
+        } catch (e2) {}
+        if (cells.length) {
+            log('格子已渲染，开始点击');
+            return tryClickChain(cfg);
+        }
+        const pageText = (document.body && document.body.innerText) || '';
+        // 未登录：头部"登录"或服务器 408 标志 → 等待用户手动登录（绝不刷新）
+        const loggedOut = pageText.includes('请登录后访问') || window.__VG_NEED_LOGIN__ ||
+            (pageText.includes('登录') && !pageText.includes('退出'));
+        if (loggedOut) {
+            if (!state.waitLoginSince) {
+                state.waitLoginSince = Date.now();
+                log('未登录：请在页面右上角点"登录"完成统一认证，引擎将持续等待…');
+                try { if (window.vgAndroid) window.vgAndroid.toast('请在页面中完成登录'); } catch (e2) {}
+            }
+            if (Date.now() - state.waitLoginSince > 1800000) return stop('等待登录超时（30 分钟）');
+            state.deadline = Date.now() + WINDOW_MS;
+            save();
+            pollForGrid(cfg); // 继续轮询等待，不刷新页面
+            return;
+        }
+        // 已登录但不在预约页 → 前往目标预约页
+        const sid = state.phaseCfg && state.phaseCfg.siteId;
+        const cur = (location.pathname.match(/venue-reservation\/(\d+)/) || [])[1];
+        if (sid && cur !== String(sid)) {
+            log('前往目标预约页…');
+            location.href = 'https://ggtypt.nju.edu.cn/venue/venue-reservation/' + sid;
+            return;
+        }
         if (Date.now() > state.deadline || state.attempts >= MAX_ATTEMPTS) return stop('时间窗口/次数超限');
         state.attempts += 1;
+        // 第 3 次刷新仍无格子 → 导出页面快照（诊断弹窗遮挡等）
+        if (state.attempts === 3 && window.vgAndroid && window.vgAndroid.savePage) {
+            try { window.vgAndroid.savePage(document.documentElement.outerHTML); } catch (e2) {}
+        }
         save();
-        log(`格子未渲染，第 ${state.attempts} 次刷新`);
+        log('格子未渲染，第 ' + state.attempts + ' 次刷新');
         location.reload(); // 引擎在下次 load 时经 resume() 接续
     }
 
@@ -215,6 +263,13 @@
             }
             if (Date.now() - t0 > POLL_WINDOW_MS) {
                 clearInterval(pollTimer);
+                // CAS 票据交换中：刷新会丢票据，改为继续等待
+                if (location.search.includes('ticket=')) {
+                    if (Date.now() > state.deadline) return stop('时间窗口超限（等待登录完成）');
+                    log('票据交换中，继续等待…');
+                    pollForGrid(cfg);
+                    return;
+                }
                 return huntTick(cfg); // 2s 未渲染 → 刷新
             }
         }, POLL_MS);
@@ -234,24 +289,22 @@
     }
 
     // ---------- 武装 / 解除 ----------
-    function arm(cfg) {
-        checkLogin().then(r => {
-            if (!r.ok) { log(`预检失败：${r.reason}`); alert(`NJU-Hub 抢票预检：${r.reason}`); return; }
-            log('登录态预检通过');
-            if (cfg.autoCaptcha) {
-                // 预热：注入验证码钩子 + OCR 推理包并加载模型（离 T-0 还有几分钟）
-                chrome.runtime.sendMessage({ action: 'injectVenueOcr' }, res => {
-                    log(res && res.ok ? '验证码自动点选已预热' : '验证码预热注入失败');
-                });
-            }
-            const today = todayAt(cfg.triggerTime, Date.now());
-            state = {
-                armed: true, phase: 'countdown', phaseCfg: cfg,
-                startAt: today > Date.now() ? today : Date.now(), // 触发时间已过 → 立即
-                deadline: Date.now() + WINDOW_MS, attempts: 0, tried: [], log: state.log
-            };
-            save(); startCountdown(cfg);
-        });
+            function arm(cfg) {
+        log('引擎武装' + (cfg.auto ? '（自动）' : '') + '：目标 ' + (cfg.siteLabel || '') + ' ' + (cfg.timeText || ''));
+        if (cfg.autoCaptcha) {
+            chrome.runtime.sendMessage({ action: 'injectVenueOcr' }, res => {
+                log(res && res.ok ? '验证码自动点选已预热' : '验证码预热注入失败');
+            });
+        }
+        const today = todayAt(cfg.triggerTime, Date.now());
+        state = {
+            armed: true, phase: 'countdown', phaseCfg: cfg,
+            startAt: cfg.startImmediately ? Date.now() :
+                (today > Date.now() ? today : Date.now()), // 触发时间已过 → 立即
+            deadline: Date.now() + WINDOW_MS, attempts: 0, tried: [], log: state.log,
+            waitLoginSince: 0
+        };
+        save(); startCountdown(cfg);
     }
     function startCountdown(cfg) {
         setPhase('countdown');
@@ -269,7 +322,13 @@
     }
     function stop(reason) {
         log(`结束：${reason}`);
-        alert(`NJU-Hub 抢票结束：${reason}`);
+        try {
+            // 失败现场快照（Android 桥接存在时落盘，供排查）
+            if (window.vgAndroid && window.vgAndroid.savePage) {
+                window.vgAndroid.savePage(document.documentElement.outerHTML);
+            }
+        } catch (e2) {}
+        if (!QUIET) alert(`NJU-Hub 抢票结束：${reason}`);
         disarm();
     }
     function disarm() {
@@ -290,7 +349,24 @@
         }
     }, 1000);
 
+    // Android 自动模式入口：GrabActivity 注入脚本后直接调用（无视触发时间立即狩猎）
+    window.__VG_FORCE_ARM__ = function (cfgJson) {
+        try {
+            if (state.armed) return; // 已武装（狩猎刷新后续猎）不重复派发
+            const cfg = typeof cfgJson === 'string' ? JSON.parse(cfgJson) : cfgJson;
+            cfg.auto = true;
+            cfg.startImmediately = true;
+            arm(cfg);
+        } catch (e) { try { console.log('[VG] FORCE_ARM 失败: ' + e); } catch (e2) {} }
+    };
     window.addEventListener('vg_arm', e => arm(e.detail.cfg));
+
+    // 消费垫片暂存的 FORCE_ARM 队列（引擎晚于调用加载时）
+    if (window.__VG_ARM_QUEUE__ && window.__VG_ARM_QUEUE__.length) {
+        const q = window.__VG_ARM_QUEUE__;
+        window.__VG_ARM_QUEUE__ = [];
+        q.forEach(cc => { try { window.__VG_FORCE_ARM__(cc); } catch (e) {} });
+    }
     window.addEventListener('vg_disarm', () => disarm());
     // 自动点选模块的诊断日志进面板
     window.addEventListener('vg_ai_log', e => log('[AI] ' + e.detail));

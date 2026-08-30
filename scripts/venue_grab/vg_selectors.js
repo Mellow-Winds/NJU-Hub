@@ -21,8 +21,9 @@
         buddyActiveClass: 'active',
         // 验证码浮层（AJ-Captcha clickWord）出现 = 交接人工
         captchaBox: '.verifybox',
-        // 登录状态条（页面头部，登录后存在；token 失效时 SPA 整页跳 CAS）
-        isLogin: '.isLogin',
+        // 登录状态条（页面头部，登录后存在；token 失效时 SPA 整页跳 CAS）。
+        // 兜底：预约页格子表渲染成功必然已登录（Android 移动版布局无 .isLogin 时依赖此判定）
+        isLogin: '.isLogin, #scrollTable',
         // 失败提示容器 + 关键词（成功 toast 未采到，关键词待实战补正）
         toast: ['.ivu-message-notice-content', '.ivu-message'],
         failKeywords: ['失败', '冲突', '已满', '名额', '不可', '错误']

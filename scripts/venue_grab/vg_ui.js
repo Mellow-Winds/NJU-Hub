@@ -8,13 +8,14 @@
     if (!location.pathname.startsWith('/venue')) return;
     if (document.getElementById('vg-panel')) return;
 
-    const CFG_KEY = 'vg_config';
+    const CFG_KEY = 'vg_config', BUDDIES_KEY = 'vg_buddies';
     const DATA = window.__VG_DATA__ || { sites: [], buddies: [] };
     const DEFAULT_CFG = {
         triggerTime: '08:00:00', siteId: '', siteLabel: '', timeText: '08:00',
         spaceNames: [], buddyName: '', retries: 4, dryRun: false, autoCaptcha: false
     };
     let cfg = Object.assign({}, DEFAULT_CFG);
+    let buddies = [];   // 同伴列表（storage 持久化，面板内可增删；首次以内置数据播种）
 
     // 当前页面 URL 里的 siteId（面板默认选中它）
     const curSiteId = (location.pathname.match(/venue-reservation\/(\d+)/) || [])[1] || '';
@@ -50,14 +51,24 @@
           cursor:pointer;color:#fff}
         #vg-arm-btn{background:#660874}#vg-disarm-btn{background:#999}
         #vg-panel .vg-row{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:#666}
+        .vg-mini-btn{border:0;background:#efe6f3;color:#660874;font-size:11px;font-weight:700;
+          border-radius:8px;padding:2px 8px;cursor:pointer;float:right}
+        .vg-mini-btn:hover{background:#e0d0e8}
+        #vg-buddy-editor{border:1px solid #eee;border-radius:8px;padding:6px;margin-top:4px}
+        #vg-buddy-list:empty::after{content:'暂无同伴，输入名字添加';color:#bbb;font-size:11px}
+        #vg-buddy-list .vg-buddy-row{display:flex;justify-content:space-between;align-items:center;
+          padding:2px 4px;font-size:12px}
+        #vg-buddy-list .vg-buddy-row button{border:0;background:none;color:#c62828;font-size:11px;cursor:pointer}
+        .vg-buddy-addrow{display:flex;gap:4px;margin-top:4px}
+        .vg-buddy-addrow input{flex:1;font-size:12px}
     `;
     document.head.appendChild(css);
 
     const panel = document.createElement('div');
     panel.id = 'vg-panel';
     panel.innerHTML = `
-        <div class="vg-head"><span>场馆抢票</span><span id="vg-phase">待命</span></div>
-        <div class="vg-body">
+        <div class="vg-head"><span>场馆抢票</span><span style="flex:1"></span><span id="vg-collapse" style="cursor:pointer;padding:3px 12px;background:rgba(255,255,255,.3);border-radius:10px;font-size:13px;font-weight:700;">收起</span><span id="vg-phase">待命</span></div>
+        <div class="vg-body" id="vg-body">
           <div id="vg-countdown">--:--:--</div>
           <label>校区</label>
           <select id="vg-campus"></select>
@@ -69,8 +80,15 @@
           <select id="vg-time"></select>
           <label>场地偏好（可多选，不选=抢最先可约的）<button id="vg-space-all" type="button">全选</button></label>
           <div id="vg-space-box"></div>
-          <label>同伴</label>
+          <label>同伴 <button id="vg-buddy-edit" type="button" class="vg-mini-btn">管理</button></label>
           <select id="vg-buddy"><option value="">不选（手动处理）</option></select>
+          <div id="vg-buddy-editor" hidden>
+            <div id="vg-buddy-list"></div>
+            <div class="vg-buddy-addrow">
+              <input type="text" id="vg-buddy-new" placeholder="输入同伴名字">
+              <button id="vg-buddy-add" type="button" class="vg-mini-btn">添加</button>
+            </div>
+          </div>
           <label>触发时间</label><input type="text" id="vg-trigger" placeholder="08:00:00">
           <label>重试次数</label><input type="number" id="vg-retries" min="1" max="20">
           <div class="vg-row"><input type="checkbox" id="vg-dryrun"><span>演练模式（只记录不点击）</span></div>
@@ -82,6 +100,28 @@
           <div id="vg-log"></div>
         </div>`;
     document.body.appendChild(panel);
+
+    // 收起/展开面板（避免挡住站内弹窗）
+    document.getElementById('vg-collapse').onclick = () => {
+        const body = document.getElementById('vg-body');
+        const collapsed = body.style.display === 'none';
+        body.style.display = collapsed ? '' : 'none';
+        document.getElementById('vg-collapse').textContent = collapsed ? '收起' : '展开';
+    };
+
+    // 自动同意"预约须知"首次弹窗（不关掉会挡住时段格子）
+    let protoTries = 0;
+    const protoTimer = setInterval(() => {
+        if (++protoTries > 25) return clearInterval(protoTimer);
+        try {
+            const dlg = [...document.querySelectorAll('.ivu-modal, .ivu-modal-wrap, .ivu-drawer, .ivu-dialog, .bh-dialog')]
+                .find(m => m.offsetParent && (m.innerText || '').includes('预约须知'));
+            if (!dlg) return;
+            const btn = [...dlg.querySelectorAll('button, .ivu-btn, .btn, a, .ivu-checkbox-wrapper')]
+                .find(b => b.offsetParent && /同意|确定|我知道|已阅读/.test(b.innerText || ''));
+            if (btn) { btn.click(); clearInterval(protoTimer); try { console.log('[VG] 已自动同意预约须知'); } catch (e2) {} }
+        } catch (e) {}
+    }, 800);
 
     const $id = id => document.getElementById(id);
     const siteById = id => DATA.sites.find(s => s.id === String(id));
@@ -129,9 +169,38 @@
     function fillBuddy() {
         const sel = $id('vg-buddy');
         sel.innerHTML = '<option value="">不选（手动处理）</option>' +
-            DATA.buddies.map(b => `<option value="${b.name}">${b.name}</option>`).join('');
-        sel.value = DATA.buddies.some(b => b.name === cfg.buddyName) ? cfg.buddyName : '';
+            buddies.map(b => `<option value="${b}">${b}</option>`).join('');
+        sel.value = buddies.includes(cfg.buddyName) ? cfg.buddyName : '';
     }
+
+    // ---------- 同伴管理 ----------
+    const saveBuddies = () => chrome.storage.local.set({ [BUDDIES_KEY]: buddies });
+    function renderBuddyEditor() {
+        const list = $id('vg-buddy-list');
+        list.innerHTML = buddies
+            .map(b => `<div class="vg-buddy-row"><span>${b}</span><button type="button" data-name="${b}">删除</button></div>`)
+            .join('');
+        list.querySelectorAll('button').forEach(btn => {
+            btn.onclick = () => {
+                buddies = buddies.filter(x => x !== btn.dataset.name);
+                saveBuddies(); renderBuddyEditor(); fillBuddy();
+            };
+        });
+    }
+    $id('vg-buddy-edit').onclick = () => {
+        const ed = $id('vg-buddy-editor');
+        ed.hidden = !ed.hidden;
+        if (!ed.hidden) renderBuddyEditor();
+    };
+    $id('vg-buddy-add').onclick = () => {
+        const input = $id('vg-buddy-new');
+        const name = input.value.trim();
+        if (name && !buddies.includes(name)) {
+            buddies.push(name);
+            saveBuddies(); renderBuddyEditor(); fillBuddy();
+        }
+        input.value = '';
+    };
     function fillForm() {
         fillCampus(); fillSport(); fillSite(); fillTime(); fillSpace(); fillBuddy();
         $id('vg-trigger').value = cfg.triggerTime;
@@ -157,8 +226,10 @@
         return cfg;
     }
 
-    chrome.storage.local.get([CFG_KEY], d => {
+    chrome.storage.local.get([CFG_KEY, BUDDIES_KEY], d => {
         cfg = Object.assign({}, DEFAULT_CFG, d[CFG_KEY] || {});
+        buddies = d[BUDDIES_KEY] || DATA.buddies.map(b => b.name);
+        if (d[BUDDIES_KEY] === undefined) saveBuddies(); // 首次用内置数据播种
         fillForm();
     });
 
