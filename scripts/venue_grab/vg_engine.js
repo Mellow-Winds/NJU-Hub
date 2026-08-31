@@ -10,6 +10,12 @@
 (function () {
     'use strict';
     if (!location.pathname.startsWith('/venue')) return;
+    const FEATURE_KEY = 'toggle-venue-auto-reserve';
+    chrome.storage.local.get([FEATURE_KEY], data => {
+        if (data[FEATURE_KEY] === true) initVenueGrab();
+    });
+
+    function initVenueGrab() {
 
     const { todayAt, cellTimes, pickCandidate } = window.__VG_MATCH__;
     const SEL = window.__VG_SEL__;
@@ -370,5 +376,12 @@
     window.addEventListener('vg_disarm', () => disarm());
     // 自动点选模块的诊断日志进面板
     window.addEventListener('vg_ai_log', e => log('[AI] ' + e.detail));
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+        if (areaName !== 'local' || !changes[FEATURE_KEY] || changes[FEATURE_KEY].newValue === true) return;
+        if (state.armed) disarm();
+        document.getElementById('vg-panel')?.remove();
+        document.getElementById('vg-style')?.remove();
+    });
     resume(); // 刷新后接续狩猎
+    }
 })();

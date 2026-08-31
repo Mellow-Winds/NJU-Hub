@@ -6,6 +6,12 @@
 (function () {
     'use strict';
     if (!location.pathname.startsWith('/venue')) return;
+    const FEATURE_KEY = 'toggle-venue-auto-reserve';
+    chrome.storage.local.get([FEATURE_KEY], data => {
+        if (data[FEATURE_KEY] === true) initVenueGrabUi();
+    });
+
+    function initVenueGrabUi() {
     if (document.getElementById('vg-panel')) return;
 
     const CFG_KEY = 'vg_config', BUDDIES_KEY = 'vg_buddies';
@@ -250,4 +256,12 @@
         window.dispatchEvent(new CustomEvent('vg_arm', { detail: { cfg: readForm() } }));
     $id('vg-disarm-btn').onclick = () =>
         window.dispatchEvent(new CustomEvent('vg_disarm'));
+
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+        if (areaName !== 'local' || !changes[FEATURE_KEY] || changes[FEATURE_KEY].newValue === true) return;
+        window.dispatchEvent(new CustomEvent('vg_disarm'));
+        document.getElementById('vg-panel')?.remove();
+        document.getElementById('vg-style')?.remove();
+    });
+    }
 })();

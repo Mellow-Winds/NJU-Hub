@@ -73,7 +73,8 @@ function loadDashboardData() {
         'toggle-schedule',
         'toggle-eval',
         'toggle-lms',
-        'toggle-seec-workpanel'
+        'toggle-seec-workpanel',
+        'toggle-venue-auto-reserve'
     ];
     chrome.storage.local.get(keys, (data) => {
         ['toggle-login', 'toggle-spoc-redirect', 'toggle-schedule', 'toggle-eval', 'toggle-lms', 'toggle-seec-workpanel'].forEach((id) => {
@@ -81,6 +82,8 @@ function loadDashboardData() {
             if (!el) return;
             el.checked = data[id] !== false;
         });
+        const venueToggle = document.getElementById('toggle-venue-auto-reserve');
+        if (venueToggle) venueToggle.checked = data['toggle-venue-auto-reserve'] === true;
     });
 }
 
@@ -93,6 +96,21 @@ function bindEvents() {
     // Feature toggles
     document.querySelectorAll('input[type="checkbox"][id^="toggle-"]').forEach((input) => {
         input.addEventListener('change', () => {
+            if (input.id === 'toggle-venue-auto-reserve' && input.checked) {
+                input.checked = false;
+                NjuModal.confirm({
+                    title: '注意',
+                    message: '此功能为社区贡献，涉及自动化点击操作，请确认您已知悉。所造成的一切后果由本人承担。原开发者未参与设计、实现此功能。',
+                    confirmText: '我已阅读并知晓',
+                    cancelText: '取消',
+                    danger: true,
+                    onConfirm: () => {
+                        input.checked = true;
+                        chrome.storage.local.set({ [input.id]: true });
+                    }
+                });
+                return;
+            }
             chrome.storage.local.set({ [input.id]: input.checked });
         });
     });

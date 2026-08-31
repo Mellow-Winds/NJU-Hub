@@ -364,6 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'toggle-lms',
         'lms_video_remove_restrict', 'lms_video_autojump',
         'lms_dl_default_all', 'lms_dl_show_checkbox',
+        'toggle-venue-auto-reserve',
         'toggle-seec-workpanel'
     ];
 
@@ -458,11 +459,29 @@ document.addEventListener('DOMContentLoaded', () => {
         setCheckDefault('lms-video-autojump', data.lms_video_autojump, false);
         setCheckDefault('lms-dl-default-all', data.lms_dl_default_all, false);
         setCheckDefault('lms-dl-show-checkbox', data.lms_dl_show_checkbox, true);
+        setCheckDefault('toggle-venue-auto-reserve', data['toggle-venue-auto-reserve'], false);
         setCheckDefaultOn('toggle-seec-workpanel', data['toggle-seec-workpanel']);
 
         // Initialize ripples after DOM is fully rendered
         initRipples();
     });
+
+    // 场馆自动预约属于高风险自动化功能，首次开启前要求用户确认知悉风险。
+    const venueAutoReserveToggle = document.getElementById('toggle-venue-auto-reserve');
+    if (venueAutoReserveToggle) {
+        venueAutoReserveToggle.addEventListener('change', () => {
+            if (!venueAutoReserveToggle.checked) return;
+            venueAutoReserveToggle.checked = false;
+            NjuModal.confirm({
+                title: '注意',
+                message: '此功能为社区贡献，涉及自动化点击操作，请确认您已知悉。所造成的一切后果由本人承担。原开发者未参与设计、实现此功能。',
+                confirmText: '我已阅读并知晓',
+                cancelText: '取消',
+                danger: true,
+                onConfirm: () => { venueAutoReserveToggle.checked = true; }
+            });
+        });
+    }
 
     // ============================================================
     // 7. Data Saving
@@ -506,6 +525,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'lms_video_autojump': checkedOf('lms-video-autojump'),
             'lms_dl_default_all': checkedOf('lms-dl-default-all'),
             'lms_dl_show_checkbox': checkedOf('lms-dl-show-checkbox'),
+            'toggle-venue-auto-reserve': checkedOf('toggle-venue-auto-reserve'),
             'toggle-seec-workpanel': checkedOf('toggle-seec-workpanel')
         };
 
