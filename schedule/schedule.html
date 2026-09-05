@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程表 - NJU-Hub</title>
+    <link rel="stylesheet" href="schedule.css">
+</head>
+<body>
+<div class="app-shell">
+    <header class="topbar">
+        <a class="brand" href="#" id="brand-home" aria-label="回到课表视图">
+            <img class="brand-logo" src="../icons/icon128.png" alt="NJU-Hub">
+            <span class="brand-text"><strong>NJU-Hub</strong><small>课程表</small></span>
+        </a>
+        <nav class="nav-links" aria-label="主导航">
+            <button class="nav-link active" id="view-btn-grid" type="button" data-view="grid">课表</button>
+            <button class="nav-link" id="view-btn-edit" type="button" data-view="edit">编辑</button>
+            <button class="nav-tool" id="sync-button" type="button">
+                <span class="sync-icon" aria-hidden="true">↻</span><span>从选课系统同步</span>
+            </button>
+            <button class="nav-tool" id="export-button" type="button">导出 HTML</button>
+        </nav>
+    </header>
+
+    <div class="sync-message" id="sync-message" role="status" aria-live="polite"></div>
+
+    <main class="content">
+        <!-- ===== 课表网格视图 ===== -->
+        <section class="view active" id="grid-view">
+            <div id="grid-render"><!-- 由 schedule_layout.renderGrid 渲染 --></div>
+        </section>
+
+        <!-- ===== 编辑视图 ===== -->
+        <section class="view" id="edit-view">
+            <section class="card" id="edit-meta-card">
+                <div class="card-head">
+                    <h2 class="card-title">课表信息</h2>
+                    <div class="card-actions">
+                        <button class="filled-button" id="btn-save" type="button">保存</button>
+                    </div>
+                </div>
+                <div class="meta-form" id="meta-form">
+                    <div class="form-row">
+                        <label class="form-field form-field-narrow">
+                            <span>学期</span>
+                            <input type="text" id="meta-season" placeholder="如 2026秋">
+                        </label>
+                        <label class="form-field">
+                            <span>标题</span>
+                            <input type="text" id="meta-title" placeholder="课表总览标题">
+                        </label>
+                        <label class="form-field">
+                            <span>副标题</span>
+                            <input type="text" id="meta-subtitle" placeholder="副标题说明">
+                        </label>
+                        <label class="form-field form-field-narrow">
+                            <span>每节高度(px)</span>
+                            <input type="number" id="meta-h" min="28" max="80" step="1">
+                        </label>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-field">
+                            <span>快照说明</span>
+                            <input type="text" id="meta-snapshot" placeholder="本次修改摘要，如 2026-09-05 · 从选课系统同步">
+                        </label>
+                    </div>
+                    <label class="form-field">
+                        <span>冲突与处理清单（每行一条）</span>
+                        <textarea id="meta-notes" rows="4" placeholder="每行一条说明，显示在课表底部"></textarea>
+                    </label>
+                </div>
+            </section>
+
+            <section class="card" id="edit-courses-card">
+                <div class="card-head">
+                    <h2 class="card-title">课程列表</h2>
+                    <div class="card-actions">
+                        <button class="text-button" id="btn-conflict-check" type="button">自动检测冲突</button>
+                        <button class="filled-button" id="btn-add-course" type="button">＋ 添加课程</button>
+                    </div>
+                </div>
+                <div id="course-list"><!-- 由 schedule.js 渲染课程卡 --></div>
+            </section>
+        </section>
+    </main>
+</div>
+
+<script src="../options/material-color-utils.js"></script>
+<script src="../libs/nju-modal.js"></script>
+<script src="schedule_data.js"></script>
+<script src="schedule_parser.js"></script>
+<script src="schedule_layout.js"></script>
+<script src="schedule_exporter.js"></script>
+<script src="schedule.js"></script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+/* schedule/schedule.css
+ *
+ * 课表页外壳样式（吃 --md-sys-color-* 主题变量）+ 编辑视图样式
+ * 网格课表配色由 schedule_layout.js 注入 <style>（与导出 HTML 共用同一份 CSS，保证所见即导出）
+ */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    font-family: 'Google Sans Flex', 'MiSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body {
+    background: var(--md-sys-color-background, #f4f6fb);
+    color: var(--md-sys-color-on-background, #1c1b1f);
+}
+
+.app-shell { max-width: 1360px; margin: 0 auto; padding: 0 20px 48px; }
+
+/* ============ 1. 顶栏 ============ */
+.topbar {
+    display: flex; align-items: center; gap: 24px;
+    padding: 14px 0; flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+.brand-logo { width: 36px; height: 36px; border-radius: 9px; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+.brand-text strong { font-size: 16px; }
+.brand-text small { font-size: 11px; color: var(--md-sys-color-on-surface-variant, #5f5e66); }
+
+.nav-links { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.nav-link {
+    border: none; background: transparent; cursor: pointer;
+    font-size: 14px; padding: 8px 14px; border-radius: 20px; font-family: inherit;
+    color: var(--md-sys-color-on-surface-variant, #5f5e66);
+    transition: background .2s ease, color .2s ease;
+}
+.nav-link.active {
+    background: var(--md-sys-color-primary-container, #d7e9f5);
+    color: var(--md-sys-color-on-primary-container, #0c3d52);
+    font-weight: 600;
+}
+.nav-tool {
+    border: 1px solid var(--md-sys-color-outline-variant, #d9dde6);
+    background: var(--md-sys-color-surface-container, #eceff5);
+    color: var(--md-sys-color-on-surface, #1c1b1f);
+    cursor: pointer; font-size: 13px; padding: 8px 14px; border-radius: 20px; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: opacity .2s ease;
+}
+.nav-tool:disabled { opacity: .55; cursor: default; }
+.sync-icon { display: inline-block; }
+.nav-tool.loading .sync-icon { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============ 2. 提示条 ============ */
+.sync-message {
+    display: none; margin: 0 0 14px; padding: 10px 16px; border-radius: 10px;
+    font-size: 13px; line-height: 1.6;
+    background: var(--md-sys-color-primary-container, #d7e9f5);
+    color: var(--md-sys-color-on-primary-container, #0c3d52);
+}
+.sync-message.show { display: block; }
+.sync-message.error {
+    background: var(--md-sys-color-error-container, #ffdad6);
+    color: var(--md-sys-color-on-error-container, #410002);
+}
+
+/* ============ 3. 视图切换 ============ */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ============ 4. 卡片与按钮 ============ */
+.card {
+    background: var(--md-sys-color-surface-container, #eceff5);
+    border-radius: 16px; padding: 16px 18px; margin-bottom: 14px;
+}
+.card-title { font-size: 15px; margin: 0; }
+.card-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
+}
+.card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.filled-button {
+    border: none; cursor: pointer; border-radius: 20px; padding: 8px 16px;
+    font-size: 13px; font-family: inherit;
+    background: var(--md-sys-color-primary, #0ea5e9);
+    color: var(--md-sys-color-on-primary, #ffffff);
+}
+.text-button {
+    border: none; background: transparent; cursor: pointer; font-size: 13px; padding: 8px 12px;
+    border-radius: 20px; font-family: inherit; color: var(--md-sys-color-primary, #0ea5e9);
+}
+.text-button:hover { background: var(--md-sys-color-primary-container, #d7e9f5); }
+
+/* ============ 5. 表单 ============ */
+.form-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.form-field {
+    display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 160px;
+    font-size: 12px; color: var(--md-sys-color-on-surface-variant, #5f5e66);
+}
+.form-field-narrow { flex: 0 0 150px; min-width: 120px; }
+.form-field input, .form-field textarea, .form-field select {
+    border: 1px solid var(--md-sys-color-outline, #8a8f9c); border-radius: 8px;
+    padding: 7px 10px; font-size: 13px; font-family: inherit;
+    background: var(--md-sys-color-surface-container-lowest, #ffffff);
+    color: var(--md-sys-color-on-surface, #1c1b1f);
+}
+.form-field textarea { resize: vertical; }
+.form-field input:focus, .form-field textarea:focus, .form-field select:focus {
+    outline: 2px solid var(--md-sys-color-primary, #0ea5e9); outline-offset: -1px;
+}
+
+/* ============ 6. 课程卡片 ============ */
+.course-card {
+    background: var(--md-sys-color-surface-container-low, #f5f7fa);
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
+}
+.course-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.course-card-index { font-size: 12px; color: var(--md-sys-color-on-surface-variant, #5f5e66); }
+.field-name { flex: 1; min-width: 180px; }
+.course-card-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px;
+}
+.course-field {
+    display: flex; flex-direction: column; gap: 4px;
+    font-size: 11px; color: var(--md-sys-color-on-surface-variant, #5f5e66);
+}
+.course-card input, .course-card select {
+    border: 1px solid var(--md-sys-color-outline-variant, #d9dde6); border-radius: 8px;
+    padding: 6px 9px; font-size: 13px; font-family: inherit; width: 100%;
+    background: var(--md-sys-color-surface-container-lowest, #ffffff);
+    color: var(--md-sys-color-on-surface, #1c1b1f);
+}
+.course-card input:focus, .course-card select:focus {
+    outline: 2px solid var(--md-sys-color-primary, #0ea5e9); outline-offset: -1px;
+}
+.course-row-full { grid-column: 1 / -1; }
+.time-raw { font-size: 12px; color: var(--md-sys-color-on-surface-variant, #5f5e66); word-break: break-all; }
+.time-raw.fail { color: #c03030; font-weight: 600; }
+
+/* 状态徽章（与网格配色一致：蓝=已选 橙=预选 红=撞必修） */
+.cls-badge { font-size: 11px; padding: 3px 10px; border-radius: 10px; font-weight: 600; white-space: nowrap; }
+.cls-badge.sel { background: #dce9ff; color: #2f6ad0; }
+.cls-badge.pre { background: #fff0cd; color: #8a5f00; }
+.cls-badge.pre_cf { background: #ffd8d8; color: #c03030; }
+.parse-fail-badge {
+    font-size: 11px; padding: 3px 10px; border-radius: 10px; font-weight: 600; white-space: nowrap;
+    background: #ffd8d8; color: #c03030;
+}
+
+.card-delete {
+    border: none; background: transparent; cursor: pointer; font-family: inherit;
+    color: var(--md-sys-color-error, #b3261e); font-size: 12px; padding: 6px 10px; border-radius: 8px;
+}
+.card-delete:hover { background: var(--md-sys-color-error-container, #ffdad6); }
+
+/* ============ 7. 空态 ============ */
+.empty-state {
+    text-align: center; padding: 60px 20px; border-radius: 16px;
+    background: var(--md-sys-color-surface-container, #eceff5);
+}
+.empty-state h2 { font-size: 17px; margin: 0 0 8px; }
+.empty-state p { font-size: 13px; color: var(--md-sys-color-on-surface-variant, #5f5e66); margin: 0 0 20px; }
+.empty-state .empty-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ============ 8. 网格区域容器（内部配色由 JS 注入，固定浅色保证与导出一致） ============ */
+#grid-render { overflow-x: auto; }
+#grid-render .wrap {
+    max-width: 1280px; margin: 0 auto; background: #fff;
+    border-radius: 12px; box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
+    padding: 18px 20px 22px; min-width: 720px;
+}
+
+/* 无障碍：尊重系统减弱动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+    .nav-tool.loading .sync-icon { animation: none; }
+}
