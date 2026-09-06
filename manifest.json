@@ -80,6 +80,7 @@
         "scripts/xk/xk_notify.js",
         "schedule/schedule_parser.js",
         "schedule/schedule_layout.js",
+        "scripts/schedule/xk_schedule_grabber.js",
         "scripts/xk/xk_preselect.js",
         "scripts/xk/xk_main.js"
       ],

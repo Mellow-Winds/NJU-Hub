@@ -27,7 +27,7 @@
         const cell = row.querySelector(sel);
         if (!cell) return '';
         const clone = cell.cloneNode(true);
-        clone.querySelectorAll('.nj-badge, .nj-br').forEach((el) => el.remove());
+        clone.querySelectorAll('.nj-badge, .nj-br, .pre-actions, .fav-toggle-btn, .pre-toggle-btn').forEach((el) => el.remove());
         return clone.textContent.trim();
     };
 
@@ -91,7 +91,7 @@
         const kch = row.querySelector('td.kch');
         if (kch) {
             const clone = kch.cloneNode(true);
-            clone.querySelectorAll('.fav-toggle-btn').forEach((el) => el.remove());
+            clone.querySelectorAll('.fav-toggle-btn, .pre-actions, .pre-toggle-btn').forEach((el) => el.remove());
             code = clone.textContent.trim();
         }
 
@@ -100,6 +100,10 @@
         const fav = parseFavId(favId);
         if (!name && fav.name) name = fav.name;
         if (!teacher && fav.teacher) teacher = fav.teacher;
+        if (!times.length) {
+            const time = cleanCell('td.sjdd', row);
+            if (time) times = [time];
+        }
         if (!times.length && fav.times.length) times = fav.times;
 
         if (!name) return null;   // 拿不到课程名 → 无效行
@@ -221,6 +225,46 @@
         log('抓到', out.length, '门课程');
         return { ok: true, count: out.length, rows: out };
     };
+
+    /** 选课助手导入：仅抓取「我的课程」，不把「我的报名」当作已选。 */
+    const grabSelected = async () => {
+        const openBtn = findOpenBtn();
+        if (!openBtn) return { ok: false, error: '未找到“已选课程”按钮，请先进入选课系统首页。' };
+        // 定位包含目标页签的窗口，禁止回退到选课主列表。
+        const visible = el => el && el.getClientRects().length > 0;
+        const selectedTab = () => findTabs().find(t => t.textContent.trim() === '我的课程' && visible(t));
+        const scopeFor = tab => tab?.closest('.jqx-window, [class*="window-content"], [class*="window-container"]')
+            || tab?.closest('.jqx-tabs');
+        if (!selectedTab() && !windowRows().some(r => r.querySelector('td.xklx'))) openBtn.click();
+        let scope;
+        for (let i = 0; i < 24; i++) {
+            const tab = selectedTab();
+            if (tab) {
+                scope = scopeFor(tab);
+                await clickTab(tab);
+                break;
+            }
+            const row = windowRows().find(r => r.querySelector('td.xklx'));
+            if (row) { scope = row.closest('.jqx-window, [class*="window-content"], [class*="window-container"]'); break; }
+            await wait(250);
+        }
+        if (!scope) return { ok: false, error: '未找到“我的课程”窗口，请打开“已选课程”后重试。' };
+        let last = '', stable = 0;
+        // 等待行内容稳定，避免刚切换页签时读取旧行或尚未填入的教师。
+        for (let i = 0; i < 24; i++) {
+            const rows = Array.from(scope.querySelectorAll('tr.course-tr')).filter(visible)
+                .filter(r => !r.querySelector('td.yxrs') || r.querySelector('td.xklx'));
+            const parsed = rows.map(r => parseRow(r, 'sel')).filter(c => c && c.cls === 'sel');
+            const signature = JSON.stringify(parsed);
+            stable = signature === last ? stable + 1 : 0;
+            last = signature;
+            if (parsed.length && stable >= 3) return { ok: true, rows: parsed, count: parsed.length };
+            await wait(250);
+        }
+        return { ok: false, error: '未读取到稳定的已选课程数据，原课表已保留。请等待网站加载完成后重试。' };
+    };
+
+    Object.assign(NS, { grabSelected });
 
     // ============ 5. 消息监听 ============
     chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {

@@ -188,14 +188,6 @@
         btn.type = 'button';
         btn.className = 'pre-toggle-btn';
         btn.dataset.preId = identity(course);
-        btn.onclick = e => {
-            e.stopPropagation();
-            const pre = { ...get(KEY, {}) };
-            if (pre[btn.dataset.preId]) delete pre[btn.dataset.preId];
-            else pre[btn.dataset.preId] = { ...course, added: Date.now() };
-            set(KEY, pre);
-            refresh();
-        };
         actions.appendChild(btn);
         const active = !!get(KEY, {})[btn.dataset.preId];
         btn.textContent = active ? '取消预选' : '预选';
@@ -205,6 +197,31 @@
     const startPreselect = () => {
         if (document.getElementById('xk-timetable-float')) return;
         migrate();
+        // 表格重绘/克隆会保留按钮 HTML，却丢失节点上的 onclick。
+        // 在文档捕获阶段统一处理，并读取当前行，避免页签切换后使用旧课程。
+        document.addEventListener('click', e => {
+            const button = e.target.closest?.('.pre-toggle-btn');
+            const row = button?.closest('tr.course-tr');
+            if (!row) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            const text = selector => {
+                const cell = row.querySelector(selector)?.cloneNode(true);
+                if (!cell) return '';
+                cell.querySelectorAll('.nj-badge, .nj-br, .pre-actions, .fav-toggle-btn, .pre-toggle-btn').forEach(n => n.remove());
+                cell.querySelectorAll('br').forEach(n => n.replaceWith('\n'));
+                return cell.textContent.trim();
+            };
+            const course = { name: text('.kcmc'), teacher: text('.jsmc'), time: text('.sjdd') };
+            if (!course.name) { alert('课程信息尚未加载，请稍后重试。'); return; }
+            const id = identity(course);
+            button.dataset.preId = id;
+            const pre = { ...get(KEY, {}) };
+            if (pre[id]) delete pre[id];
+            else pre[id] = { ...course, added: Date.now() };
+            set(KEY, pre);
+            refresh();
+        }, true);
         const style = document.createElement('style');
         style.textContent = `.pre-actions{display:flex;justify-content:center;align-items:center;gap:6px;margin-bottom:4px}.pre-actions .fav-toggle-btn{margin:0}.pre-toggle-btn{border:1px solid #ddd;border-radius:10px;padding:2px 8px;font-size:11px;white-space:nowrap;cursor:pointer;background:#f8f8f8;color:#666}.pre-toggle-btn.active{background:#8061bd;color:white}#xk-timetable-float{position:fixed;z-index:2147483646;border:0;border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;padding:0;background:#660874;color:white;box-shadow:0 4px 18px #0003;cursor:grab;touch-action:none}#xk-timetable-float svg{width:24px;height:24px;pointer-events:none}#xk-timetable-float:focus-visible{outline:2px solid #660874;outline-offset:4px}#xk-timetable-modal .pre-grid{display:grid;grid-template-columns:44px repeat(7,minmax(100px,1fr));min-width:780px}#xk-timetable-modal .pre-day{text-align:center;background:#344e87;color:white;padding:10px 0}#xk-timetable-modal .pre-day-body{position:relative;border-left:1px solid #dce2ed;background:repeating-linear-gradient(to bottom,#fff 0 47px,#dce2ed 47px 48px)}#xk-timetable-modal .pre-period{height:48px;text-align:center;line-height:48px}#xk-timetable-modal .pre-course{position:absolute;box-sizing:border-box;border-radius:6px;padding:6px;overflow:hidden;overflow-wrap:anywhere;font-size:12px;border-left:3px solid}#xk-timetable-modal .pre-blue{background:#dce9ff;border-color:#2f6ad0}#xk-timetable-modal .pre-amber{background:#fff0cd;border-color:#d89a00}#xk-timetable-modal small{display:block;font-size:10px}#xk-timetable-modal [data-remove]{float:right;cursor:pointer;appearance:none;border:0;background:transparent;color:#888;border-radius:5px;padding:0 3px;font-size:16px;line-height:20px;font-family:inherit;box-shadow:none}#xk-timetable-modal .pre-course strong{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}#xk-timetable-modal .pre-course small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#xk-timetable-modal .xk-body{overflow:auto}#xk-timetable-modal .xk-header button{cursor:pointer}#xk-timetable-modal .pre-heading{display:flex;gap:12px;align-items:center}#xk-pre-manager .pre-empty{text-align:center;color:#999;margin-top:20px;padding:20px}#xk-pre-manager .pre-select-all{background:#eee;color:#333;flex:none;padding:8px 12px}#xk-pre-manager .pre-delete{background:#FF3B30;color:white;flex:none;padding:8px 12px}`;
         document.head.appendChild(style);
@@ -217,14 +234,35 @@
         };
         manager.querySelector('[data-delete]').onclick = () => remove([...manager.querySelectorAll('input:checked')].map(c => ({ source: 'pre', id: c.value })));
         timetable = modal('xk-timetable-modal', '我的课表', true);
-        timetable.querySelector('.pre-heading').innerHTML = `<button type="button" class="xk-btn">编辑</button><span>${X.I.calendar} 我的课表</span>`;
-        timetable.querySelector('.pre-heading button').onclick = e => {
+        timetable.querySelector('footer').style.cssText = 'justify-content:flex-end;gap:8px;';
+        timetable.querySelector('footer').innerHTML = '<button type="button" class="xk-btn" data-edit style="flex:none;padding:8px 14px;background:#eee;color:#333;">编辑</button><button type="button" class="xk-btn" data-import style="flex:none;padding:8px 14px;background:#660874;color:white;">导入已选课程</button>';
+        timetable.querySelector('[data-edit]').onclick = e => {
             editing = !editing;
             e.target.textContent = editing ? '完成' : '编辑';
             renderTimetable();
         };
-        timetable.querySelector('footer').innerHTML = '<small>移除仅修改插件本地记录；同一时段的课程并排显示。</small><button type="button" class="xk-btn">导入已选课表</button>';
-        timetable.querySelector('footer button').onclick = () => window.open('https://ehallapp.nju.edu.cn/jwapp/sys/wdkb/*default/index.do#/xskcb', '_blank');
+        timetable.querySelector('[data-import]').onclick = async e => {
+            const button = e.currentTarget;
+            if (button.disabled) return;
+            button.disabled = true;
+            button.textContent = '正在导入…';
+            try {
+                const result = await window.__XK_SCHED__.grabSelected();
+                if (!result.ok) throw new Error(result.error);
+                // 网站快照替换旧导入，保留教师及教学班信息；预选课组独立存储。
+                const courses = result.rows.map(c => ({ ...c, timeStr: c.timeRaw }));
+                await chrome.storage.local.set({ [STORAGE.SCHEDULE]: courses });
+                await X.init();
+                refresh();
+                const missing = courses.filter(c => !c.teacher).length;
+                if (missing) alert(`已导入 ${courses.length} 条课程记录，其中 ${missing} 条在网站中未提供教师信息。`);
+            } catch (err) {
+                alert(`导入失败：${err.message}`);
+            } finally {
+                button.disabled = false;
+                button.textContent = '导入已选课程';
+            }
+        };
         const btn = document.createElement('button');
         btn.id = 'xk-timetable-float';
         btn.type = 'button';
