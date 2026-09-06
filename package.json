@@ -17,8 +17,5 @@
   "bugs": {
     "url": "https://github.com/Mellow-Winds/NJU-Hub/issues"
   },
-  "homepage": "https://github.com/Mellow-Winds/NJU-Hub#readme",
-  "dependencies": {
-    "onnxruntime-web": "^1.27.0"
-  }
+  "homepage": "https://github.com/Mellow-Winds/NJU-Hub#readme"
 }

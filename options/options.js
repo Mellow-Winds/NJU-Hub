@@ -595,7 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p>本插件<strong>不收集、不存储、不上传</strong>任何用户个人数据至开发者服务器。所有配置信息（包括学号、密码、API Key、课表数据、课程评价等）均<strong>仅存储于您本地浏览器的 Chrome Storage 中</strong>，开发者无法访问这些数据。</p>
 
                     <p style="margin-top:20px;"><strong style="color:#1A1B21;font-size:16px;">第三方 AI 服务</strong></p>
-                    <p>当您使用自动登录（验证码识别）、选课助手等 AI 功能时，插件会将相关请求数据（如验证码图片、课程信息等）发送至<strong>您自行配置</strong>的第三方 AI 服务提供商（如 SiliconFlow、OpenAI、智谱 AI 等）。这些请求<strong>直接由您的浏览器发送至对应 API 地址</strong>，不经过开发者服务器。请参阅对应服务提供商的隐私政策以了解其数据处理方式。</p>
+                    <p>当您使用选课助手的 AI 分析功能时，插件会将相关请求数据（如课程信息等）发送至<strong>您自行配置</strong>的第三方 AI 服务提供商（如 SiliconFlow、OpenAI、智谱 AI 等）。这些请求<strong>直接由您的浏览器发送至对应 API 地址</strong>，不经过开发者服务器。请参阅对应服务提供商的隐私政策以了解其数据处理方式。</p>
 
                     <p style="margin-top:20px;"><strong style="color:#1A1B21;font-size:16px;">权限使用说明</strong></p>
                     <p><code style="background:#E8E8EF;padding:1px 6px;border-radius:4px;font-size:13px;">storage</code> — 用于在本地保存您的配置信息、课表数据和课程评价。</p>

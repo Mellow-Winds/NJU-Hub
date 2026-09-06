@@ -1,6 +1,6 @@
 # NJU Hub - 南京大学全场景增强插件
 
-南京大学校园浏览器扩展，一站式解决 GPA 查询、自动登录、选课分析、场馆抢票、自动评教、LMS 增强等日常需求。
+南京大学校园浏览器扩展，一站式解决 GPA 查询、自动登录、选课分析、自动评教、LMS 增强等日常需求。
 
 [![Manifest Version](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/mv3/intro/)
 [![Version](https://img.shields.io/badge/version-26.5-%23660874)](https://github.com/Mellow-Winds/NJU-Hub)
@@ -11,20 +11,12 @@
 ## 功能模块
 
 ### 自动登录，解放双手
-- 本地模型/云端 AI 双轨验证码识别，自动填充统一认证页及选课系统登录页的账号密码
-- 支持自动填充和自动登录两种增强
-- 兼容 SiliconCloud / OpenAI / 智谱等大模型 API
+- 自动填充统一认证页及选课系统登录页的账号密码，验证码由用户手动完成
 - 悦读平台（SPOC）未登录时自动跳转认证，登录快人一步。
 
 ### 成绩查询，快人一步
 - 点击插件图标，进入导览页，一键跳转至交换生系统（elite.nju.edu.cn），即可自动弹出弹窗显示 GPA 成绩。
 - 进入体育部平台（ggtypt.nju.edu.cn）即可自动弹出弹窗显示体测和体育课成绩。
-
-### 场馆抢票，快人一步
-- 智慧场馆（ggtypt.nju.edu.cn）自动预约：在场馆预约页右下角打开"场馆抢票"面板，提前配置触发时间（默认 08:00:00），到点自动刷新页面、选中目标时段并提交预约。
-- 全校 24 个可预约场地信息离线内置，按校区 / 运动类型 / 场馆三级选择，时段与场地名均为真实数据，使用时无需联网读取。
-- 支持多场地偏好自动候补、同伴自动选择、预约须知自动勾选、抢票失败自动重试。
-- 验证码自动点选（实验性）：内置 ddddocr 本地模型（文字检测 + 识别，约 110MB），完全离线识别点选文字并自动点击，无需任何 API Key；默认关闭，可在面板中开启。
 
 ### 选课助手，优化体验
 - 红黑榜库：内置约 2316 门课程、11000+ 条评价，支持课程名称/老师模糊查询、简称匹配和按字符顺序匹配
@@ -66,7 +58,7 @@
 1. **下载源码**
 
    ```bash
-   git clone https://github.com/Mellow-Winds/NJU-Hub.git
+   git clone --depth 1 https://github.com/Mellow-Winds/NJU-Hub.git
    ```
 
    或从 [GitHub Releases](https://github.com/Mellow-Winds/NJU-Hub/releases) 下载 `Source code (zip)` 并解压。
@@ -109,26 +101,17 @@
 
 ### AI 模块配置
 
-自动登录和选课助手需要配置 AI 接口：
+选课助手的 AI 分析功能可按需配置接口；登录凭证自动填充无需 AI：
 
 1. 前往任一 LLM 提供商注册获取 API Key（如 [SiliconCloud](https://siliconflow.cn)、[OpenAI](https://platform.openai.com)、[智谱 AI](https://open.bigmodel.cn) 等）
 2. 在对应模块的 AI 配置区域填写 API Base URL、API Key 和模型名称
-3. 自动登录需要支持视觉识别的模型（用于验证码识别）
-4. 各模块 AI 配置互相独立，可按需使用不同提供商
+3. 保存配置后即可使用课程 AI 分析
 
 ### 选课助手额外配置
 
 - 填写**专业背景**和**选课偏好**，AI 将据此分析课程
 - 在选课助手设置页的**红黑榜**栏目点击入口，打开课程评价查询页面
 - 在红黑榜页面点击顶栏**同步**，从公共评价库获取数据并覆盖本地缓存
-
-### 场馆抢票使用说明
-
-1. 打开 ggtypt.nju.edu.cn 场馆预约页（如"场馆预约/四组团体育馆-羽毛球"），右下角出现"场馆抢票"面板
-2. 依次选择 **校区 → 运动类型 → 场馆 → 目标时段**，可选：多场地偏好（自动候补）、同伴（列表可在面板内"管理"增删）、重试次数
-3. 设置**触发时间**（默认 08:00:00，场馆当天时段 8 点解锁），点击**启动**进入倒计时；到点自动刷新、选格、勾选须知并提交，验证码弹出后人工输入即可
-4. 可选开启**自动点选验证码（实验性）**：内置本地模型离线识别并自动点选文字，失败自动换图重试，未成功时回落人工
-5. 建议抢票前保持场馆系统登录状态（场馆系统为单会话模式，其他设备登录会互踢）；**演练模式**只记录不点击，可用于流程测试
 
 ### 红黑榜查询
 
@@ -193,11 +176,10 @@ NJU-Hub/
 │   │   ├── xk_ui.js
 │   │   ├── xk_badges.js
 │   │   └── xk_schedule.js
-│   ├── pe_score_viewer/       # 体育成绩查看
+│   └── pe_score_viewer/       # 体育成绩查看
 │   │   ├── pe_score_fetcher.js
 │   │   ├── pe_score_ui.js
 │   │   └── pe_score_main.js
-│   └── venue_grab/            # 场馆抢票（倒计时 + 自动预约 + 验证码自动点选）
 ├── webportal/                 # 网址导航面板
 │   ├── webportal.html
 │   ├── webportal.css
@@ -205,9 +187,7 @@ NJU-Hub/
 │   └── data.js
 ├── libs/                      # 第三方库
 │   ├── xlsx.full.min.js       # SheetJS — Excel 读写
-│   ├── captcha_ocr.js         # 验证码 OCR 库
-│   ├── nju-modal.js           # 自定义弹窗组件
-│   └── venue_ocr/             # 场馆验证码识别（ddddocr 检测/识别模型 + ONNX Runtime wasm）
+│   └── nju-modal.js           # 自定义弹窗组件
 ├── data/                      # 内置数据集
 └── docs/                      # 文档（隐私政策等）
 ```
