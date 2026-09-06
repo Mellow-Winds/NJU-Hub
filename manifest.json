@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "NJU Hub - 南大智慧终端",
-  "version": "26.4.1",
+  "version": "26.5",
   "default_locale": "zh_CN",
   "description": "NJU功能增强：GPA快速查询 | 课表抓取 | 自动登录 | 场馆抢票 | LMS增强",
   "permissions": [
@@ -79,13 +79,11 @@
         "scripts/xk/xk_filter.js",
         "scripts/xk/xk_schedule.js",
         "scripts/xk/xk_notify.js",
+        "schedule/schedule_parser.js",
+        "schedule/schedule_layout.js",
+        "scripts/xk/xk_preselect.js",
         "scripts/xk/xk_main.js"
       ],
-      "run_at": "document_end"
-    },
-    {
-      "matches": ["*://xk.nju.edu.cn/*"],
-      "js": ["scripts/schedule/xk_schedule_grabber.js"],
       "run_at": "document_end"
     },
     {

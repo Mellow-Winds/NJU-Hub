@@ -39,6 +39,7 @@
         if (!secMatch) return null;
         const sS = parseInt(secMatch[1]);
         const eS = secMatch[2] ? parseInt(secMatch[2]) : sS;
+        if (sS < 1 || eS < sS || eS > 20) return null;
 
         let weeks = '';
         const wkMatch = s.match(RE_WEEK);
@@ -62,7 +63,8 @@
      * @returns {{slots: Array, fail: boolean}} fail=整串无任何可解析时间段
      */
     const parseTimeStr = (str) => {
-        const segments = String(str || '').split(/[\n,，;；]+/);
+        const segments = String(str || '').replace(/(\d)\s*[-–—~～]\s*(\d)/g, '$1-$2')
+            .split(/[\n,，;；]+|(?=(?:周|星期|礼拜)[一二三四五六日天1-7])/);
         const slots = [];
         for (const seg of segments) {
             const slot = parseSegment(seg);

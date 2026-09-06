@@ -65,7 +65,7 @@
                 transition: width 0.5s ${APPLE_EASE}, height 0.5s ${APPLE_EASE};
                 box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             }
-            .xk-island.expanded { width: 380px; height: 420px; box-shadow: 0 25px 70px rgba(0,0,0,0.15); }
+            .xk-island.expanded { width: 380px; height: 470px; box-shadow: 0 25px 70px rgba(0,0,0,0.15); }
             .status-wrapper {
                 width: 160px; height: 40px; display: flex; align-items: center;
                 justify-content: center; gap: 8px; flex-shrink: 0;
@@ -182,6 +182,7 @@
             }
             .xk-modal-overlay.open { opacity: 1; pointer-events: auto; }
             .xk-modal {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
                 width: 450px; max-width: 90vw; max-height: 80vh; background: #fff;
                 border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
                 display: flex; flex-direction: column; overflow: hidden;
@@ -194,6 +195,8 @@
                 font-weight: 800; font-size: 17px; background: #fff;
             }
             .xk-close { cursor: pointer; color: #888; font-size: 22px; line-height: 1; transition: 0.2s; }
+            .xk-modal .xk-close { appearance:none; display:inline-flex; align-items:center; justify-content:center; flex:none; width:28px; height:28px; padding:0; border:0; border-radius:6px; background:transparent; box-shadow:none; font-family:inherit; font-weight:400; }
+            .xk-modal .xk-close:focus-visible { outline:2px solid ${THEME.PURPLE}; outline-offset:2px; }
             .xk-close:hover { color: #333; }
             .xk-body {
                 flex: 1; overflow-y: auto; padding: 10px; display: flex;
@@ -252,43 +255,7 @@
     };
 
     /**
-     * 更新课表列表 UI
-     */
-    const updateSchedList = () => {
-        const container = document.getElementById('sched-container');
-        if (!container) return;
-        container.innerHTML = '';
-        const schedule = GM_getValue(STORAGE.SCHEDULE, []);
-        if (!schedule.length) {
-            container.innerHTML = '<div style="text-align:center;color:#999;margin-top:20px;padding:20px;">暂无课表<br><small>请先点击右下角导入</small></div>';
-            return;
-        }
-        schedule.forEach((item, idx) => {
-            const row = document.createElement('div');
-            row.className = 'sched-row';
-            row.innerHTML = `
-                <div class="sched-idx">${idx + 1}</div>
-                <div class="sched-info">
-                    <div class="sched-name">${item.name || '(未命名)'}</div>
-                    <div class="sched-time">${item.teacher || ''} ${item.time || ''}</div>
-                </div>
-            `;
-            container.appendChild(row);
-        });
-    };
-
-    /**
-     * 更新课表按钮上的计数
-     */
-    const updateSchedCount = () => {
-        const btn = document.getElementById('btn-open-sched');
-        if (!btn) return;
-        const schedule = GM_getValue(STORAGE.SCHEDULE, []);
-        btn.innerHTML = `${I.calendar} 课表 (${schedule.length})`;
-    };
-
-    /**
-     * 注入收藏夹管理 Modal + 课表查看 Modal
+     * 注入收藏夹管理 Modal
      */
     const injectModals = () => {
         if (document.getElementById('fav-modal-wrapper')) return;
@@ -371,40 +338,6 @@
             r.readAsText(e.target.files[0]);
         };
 
-        // ===== 课表查看 Modal =====
-        const schedDiv = document.createElement('div');
-        schedDiv.id = 'sched-modal-wrapper';
-        schedDiv.className = 'xk-modal-overlay';
-        schedDiv.innerHTML = `
-            <div class="xk-modal">
-                <div class="xk-header"><span>${I.calendar} 我的课表</span><span class="xk-close" id="sched-close">✕</span></div>
-                <div class="xk-body" id="sched-container"></div>
-                <div class="xk-footer">
-                    <button class="xk-btn" id="sched-clear" style="background:#FF3B30; color:white; padding:8px 16px; flex:none;">${I.trash} 清空课表</button>
-                    <div style="flex:1;"></div>
-                    <button class="xk-btn" id="sched-import" style="background:${THEME.PURPLE}; color:white; padding:8px 16px; flex:none;">${I.clipboard} 导入课表</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(schedDiv);
-
-        const schedModal = schedDiv;
-        document.getElementById('sched-close').onclick = () => schedModal.classList.remove('open');
-        schedModal.onclick = (e) => { if (e.target === schedModal) schedModal.classList.remove('open'); };
-
-        document.getElementById('sched-import').onclick = () => {
-            window.open('https://ehallapp.nju.edu.cn/jwapp/sys/wdkb/*default/index.do#/xskcb', '_blank');
-        };
-
-        document.getElementById('sched-clear').onclick = () => {
-            const schedule = GM_getValue(STORAGE.SCHEDULE, []);
-            if (schedule.length === 0) return;
-            if (confirm(`确定清空全部 ${schedule.length} 门课表记录吗？`)) {
-                GM_setValue(STORAGE.SCHEDULE, []);
-                updateSchedList();
-                updateSchedCount();
-            }
-        };
     };
 
     /**
@@ -429,7 +362,7 @@
 
         root.innerHTML = `
             <div id="xk-island-main" class="xk-island">
-                <div class="status-wrapper">
+                <div class="status-wrapper" tabindex="-1">
                     <div id="xk-dot" class="status-dot"></div>
                     <span class="status-text">NJU-Hub选课助手</span>
                 </div>
@@ -460,7 +393,11 @@
 
                     <div style="display:flex; gap:10px; width: 100%;">
                         <button id="btn-open-fav" class="xk-btn" style="background:#f0f0f5; color:#333; border:1px solid #ddd;">${I.star} 收藏夹 (${Object.keys(favorites).length})</button>
-                        <button id="btn-open-sched" class="xk-btn" style="background:#f0f0f5; color:#333; border:1px solid #ddd;">${I.calendar} 课表 (${(GM_getValue(STORAGE.SCHEDULE, [])).length})</button>
+                        <button id="btn-open-sched" class="xk-btn" style="background:#f0f0f5; color:#333; border:1px solid #ddd;">${I.calendar} 课表 (${window.__XK__.preselectEntries().length})</button>
+                    </div>
+
+                    <div style="display:flex; gap:10px; width:100%;">
+                        <button id="btn-open-pre" class="xk-btn" style="background:#f0f0f5; color:#333; border:1px solid #ddd;">预选课程管理 (${Object.keys(GM_getValue('NJU_PRESELECT', {})).length})</button>
                     </div>
 
                     <div style="display:flex; gap:10px; width: 100%;">
@@ -479,7 +416,7 @@
 
         // ===== hover 展开 =====
         island.onmouseenter = () => island.classList.add('expanded');
-        island.onmouseleave = () => island.classList.remove('expanded');
+        island.onmouseleave = () => { island.classList.remove('expanded'); island.scrollTop = 0; };
 
         document.getElementById('xk-dot').style.backgroundColor = '#34C759';
 
@@ -527,11 +464,8 @@
             });
         };
 
-        // ===== 课表按钮 =====
-        document.getElementById('btn-open-sched').onclick = () => {
-            updateSchedList();
-            document.getElementById('sched-modal-wrapper').classList.add('open');
-        };
+        document.getElementById('btn-open-pre').onclick = () => window.__XK__.openPreselect();
+        document.getElementById('btn-open-sched').onclick = () => window.__XK__.openTimetable();
 
         // ===== 一键AI分析按钮 =====
         document.getElementById('btn-ai-analyze').onclick = () => {
@@ -549,8 +483,6 @@
         CAMPUS_IDX,
         injectStyles,
         updateFavList,
-        updateSchedList,
-        updateSchedCount,
         injectModals,
         renderIsland
     });

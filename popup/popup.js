@@ -135,8 +135,5 @@ function bindEvents() {
         chrome.tabs.create({ url: chrome.runtime.getURL('red-black/index.html') });
     };
 
-    // Schedule quick access
-    document.getElementById('btn-schedule').onclick = () => {
-        chrome.tabs.create({ url: chrome.runtime.getURL('schedule/schedule.html') });
-    };
+
 }

@@ -73,6 +73,8 @@
     };
 
     // 启动
+    injectStyles();
+    window.__XK__.startPreselect();
     startAutoConfirm();
     startNotify();
 

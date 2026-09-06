@@ -78,6 +78,8 @@
                 }
             }
 
+            if (kchCell) window.__XK__.injectPreselect(kchCell, { name, teacher, time });
+
             // 1. 选中概率
             const numCell = row.querySelector('.yxrs');
             if (numCell) {

@@ -17,8 +17,8 @@ Thumbs.db
 .env
 .env.local
 
-#FYP
-FYP
+#参考资料
+ThisProject
 
 #devlog
 devlog
@@ -50,3 +50,4 @@ data/merged_ratings.backup.json
 
 # claude
 .claude
+AGENTS.MD
