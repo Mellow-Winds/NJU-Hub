@@ -22,9 +22,14 @@
     const IGNORE_KEY = 'gemini_ignored_tasks';
 
     // 从 chrome.storage.local 读取开关（与 options/popup 的写入方式一致）
-    chrome.storage.local.get([TOGGLE_KEY], (result) => {
+    chrome.storage.local.get([TOGGLE_KEY, 'ui_theme_color'], (result) => {
         // 开关默认开启：仅在显式设为 false 时关闭
         if (result[TOGGLE_KEY] === false) return;
+        const theme = result.ui_theme_color;
+        if (typeof theme === 'string' && /^#[\da-f]{6}$/i.test(theme)) {
+            document.documentElement.style.setProperty('--lms-main', theme);
+            document.documentElement.style.setProperty('--lms-rgb', [1, 3, 5].map(index => parseInt(theme.slice(index, index + 2), 16)).join(', '));
+        }
 
         startEnhancement();
     });
@@ -129,7 +134,16 @@
         .gemini-task-opt { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.04); }
         .gemini-ios-switch { appearance: none; -webkit-appearance: none; width: 46px; height: 26px; background: #e9e9ea; border-radius: 13px; position: relative; cursor: pointer; outline: none; transition: 0.3s; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
         .gemini-ios-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; border-radius: 50%; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: transform 0.3s; }
-        .gemini-ios-switch:checked { background: #ff4d4f; } .gemini-ios-switch:checked::after { transform: translateX(20px); }
+        .gemini-ios-switch:checked { background: #28BD6E; } .gemini-ios-switch:checked::after { transform: translateX(20px); }
+        #seec-dl-ball { position: fixed; bottom: 30px; right: 30px; z-index: 100000; }
+        .seec-download-mask .lms-panel { max-width: calc(100vw - 32px); max-height: calc(100vh - 40px); }
+        .seec-download-mask .lms-list-container { min-height: 0; }
+        .seec-download-mask .lms-close { border: 0; flex-shrink: 0; }
+        .seec-download-mask .lms-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+        .seec-download-mask .lms-dl-name { pointer-events: none; }
+        .seec-download-mask .lms-footer { flex-wrap: wrap; gap: 12px; }
+        .seec-card-actions { display: flex; gap: 10px; margin-top: 12px; }
+        .seec-card-actions .lms-btn { flex: 1; text-decoration: none; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     `;
     document.head.appendChild(styleSheet);
@@ -191,17 +205,166 @@
             card.onclick = (e) => { e.preventDefault(); e.stopPropagation(); titleNode.click(); };
             grids[targetGrid].appendChild(card); item.dataset.processed = 'true';
         });
-        document.getElementById('section-ignored').style.display = grids.ignored.children.length > 0 ? 'block' : 'none';
+        document.getElementById('section-ignored').style.display = 'none';
     }
 
     // 4. 课件面板重构
+    function saveCourseware(url, filename) {
+        return new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage({ action: 'seecDownload', url, filename }, result => {
+                const error = chrome.runtime.lastError?.message || (!result?.ok && (result?.error || '下载请求失败'));
+                if (error) reject(new Error(error));
+                else resolve(result.downloadId);
+            });
+        });
+    }
+
+    let coursewareFiles = [];
+    let downloadMask = null;
+    function showCoursewareDownload(files = coursewareFiles) {
+        if (downloadMask) return;
+        // 固定打开面板时的文件快照，翻页或切课不会改变正在提交的队列。
+        files = files.slice();
+        const mask = document.createElement('div');
+        mask.className = 'lms-mask seec-download-mask';
+        mask.setAttribute('role', 'dialog');
+        mask.setAttribute('aria-modal', 'true');
+        mask.setAttribute('aria-label', '课件下载');
+        const previousOverflow = document.body.style.overflow;
+        const previousFocus = document.activeElement;
+        document.body.style.overflow = 'hidden';
+        downloadMask = mask;
+        let running = false;
+        const close = () => {
+            if (running || mask.classList.contains('lms-closing')) return;
+            mask.classList.add('lms-closing');
+            mask.querySelector('.lms-panel')?.classList.add('lms-closing');
+            document.body.style.overflow = previousOverflow;
+            document.removeEventListener('keydown', onKey);
+            setTimeout(() => { mask.remove(); downloadMask = null; previousFocus?.focus(); }, 280);
+        };
+        const onKey = event => {
+            if (event.key === 'Escape') close();
+            if (event.key !== 'Tab') return;
+            const controls = Array.from(mask.querySelectorAll('button:not(:disabled), input'));
+            if (!controls.length) { event.preventDefault(); return; }
+            const first = controls[0], last = controls[controls.length - 1];
+            if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+            else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        };
+        document.addEventListener('keydown', onKey);
+        mask.onclick = event => { if (event.target === mask) close(); };
+        document.body.appendChild(mask);
+
+        const renderList = () => {
+            mask.innerHTML = `<div class="lms-panel">
+                <div class="lms-header"><h3>课件下载 (${files.length})</h3><button type="button" class="lms-close seec-dl-close" aria-label="关闭">×</button></div>
+                <div class="lms-list-container lms-scrollable"></div>
+                <div class="lms-footer">
+                    <div style="display:flex;gap:10px"><button type="button" class="lms-btn seec-dl-all">全选</button><button type="button" class="lms-btn seec-dl-invert">反选</button></div>
+                    <button type="button" class="lms-btn lms-btn-prime seec-dl-submit" disabled>下载所选</button>
+                </div></div>`;
+            const list = mask.querySelector('.lms-list-container');
+            const submit = mask.querySelector('.seec-dl-submit');
+            const update = () => {
+                mask.querySelectorAll('.lms-dl-item').forEach(row => {
+                    row.classList.toggle('selected', row.querySelector('.seec-file-select').checked);
+                });
+                submit.disabled = !mask.querySelectorAll('.seec-file-select:checked').length;
+            };
+            files.forEach(file => {
+                const row = document.createElement('div');
+                row.className = 'lms-dl-item';
+                row.innerHTML = `<input type="checkbox" class="lms-ios-checkbox seec-file-select"><span class="lms-file-tag"></span><span class="lms-dl-name"></span>`;
+                const input = row.querySelector('.seec-file-select');
+                input.file = file;
+                input.checked = files.length === 1;
+                input.setAttribute('aria-label', file.name);
+                const ext = file.name.split('.').pop().toLowerCase();
+                const tag = row.querySelector('.lms-file-tag');
+                tag.textContent = ext.length <= 5 ? ext : 'FILE';
+                tag.classList.add(`tag-${/^(pdf|doc|ppt|xls)/.exec(ext)?.[1] || 'file'}`);
+                row.querySelector('.lms-dl-name').textContent = file.name;
+                row.title = file.name;
+                row.onclick = event => { if (event.target !== input) input.checked = !input.checked; update(); };
+                input.onchange = update;
+                list.appendChild(row);
+            });
+            if (!files.length) {
+                list.textContent = '当前列表暂无课件，请先打开课程的课件页面。';
+                list.style.padding = '24px';
+            }
+            mask.querySelector('.seec-dl-close').onclick = close;
+            mask.querySelector('.seec-dl-all').onclick = () => {
+                mask.querySelectorAll('.seec-file-select').forEach(input => { input.checked = true; }); update();
+            };
+            mask.querySelector('.seec-dl-invert').onclick = () => {
+                mask.querySelectorAll('.seec-file-select').forEach(input => { input.checked = !input.checked; }); update();
+            };
+            submit.onclick = () => run(Array.from(mask.querySelectorAll('.seec-file-select:checked'), input => input.file));
+            update();
+            mask.querySelector('.seec-dl-close').focus();
+        };
+        const run = async selected => {
+            if (running || !selected.length) return;
+            running = true;
+            mask.innerHTML = `<div class="lms-panel lms-progress-panel">
+                <div class="lms-header"><h3>课件下载</h3></div>
+                <div class="lms-progress-body" role="status">
+                    <div class="lms-progress-icon" aria-hidden="true"></div>
+                    <div class="lms-progress-title">正在提交下载，请稍候。</div>
+                    <div class="lms-progress-subtitle">文件将保存到浏览器的下载目录。</div>
+                    <div class="lms-progress-count"></div><div class="lms-progress-current"></div>
+                </div></div>`;
+            const results = [];
+            for (const file of selected) {
+                mask.querySelector('.lms-progress-count').textContent = `已处理 ${results.length} / ${selected.length}`;
+                mask.querySelector('.lms-progress-current').textContent = `当前文件：${file.name}`;
+                try {
+                    if (!file.url) throw new Error('无法识别当前课程，请重新打开课程页面');
+                    await saveCourseware(file.url, file.name);
+                    results.push({ file, ok: true });
+                } catch (error) { results.push({ file, ok: false, error: error.message }); }
+            }
+            running = false;
+            const failed = results.filter(result => !result.ok);
+            mask.innerHTML = `<div class="lms-panel lms-progress-panel">
+                <div class="lms-header"><h3>课件下载</h3><button type="button" class="lms-close seec-dl-close" aria-label="关闭">×</button></div>
+                <div class="lms-progress-body lms-complete-body" role="status">
+                    <div class="lms-progress-icon done" aria-hidden="true"></div>
+                    <div class="lms-progress-title">${failed.length ? '部分下载未能提交' : '下载已提交'}</div>
+                    <div class="lms-progress-subtitle">已提交 ${results.length - failed.length} 个文件${failed.length ? `，${failed.length} 个文件失败` : ''}。<br>保存完成情况请查看浏览器下载列表。</div>
+                    <div class="lms-download-errors"></div>
+                    <div class="lms-footer lms-complete-footer" style="width:100%;box-sizing:border-box;margin-top:28px">
+                        <button type="button" class="lms-btn seec-dl-retry">重试失败文件</button>
+                        <button type="button" class="lms-btn lms-btn-prime seec-dl-close">关闭</button>
+                    </div>
+                </div></div>`;
+            if (failed.length) {
+                mask.querySelector('.lms-progress-icon').style.display = 'none';
+                failed.forEach(result => {
+                    const detail = document.createElement('div');
+                    detail.className = 'lms-download-error';
+                    detail.textContent = `${result.file.name}：${result.error}。可重试，或点击阅读后手动保存。`;
+                    mask.querySelector('.lms-download-errors').appendChild(detail);
+                });
+            }
+            const retry = mask.querySelector('.seec-dl-retry');
+            retry.style.display = failed.length ? '' : 'none';
+            retry.onclick = () => run(failed.map(result => result.file));
+            mask.querySelectorAll('.seec-dl-close').forEach(button => { button.onclick = close; });
+            mask.querySelector('.seec-dl-close').focus();
+        };
+        renderList();
+    }
+
     function processCourseware() {
         const cwTab = document.querySelector('.courseware-tab');
+        const existingBall = document.getElementById('seec-dl-ball');
+        if (existingBall) existingBall.style.display = cwTab && cwTab.getClientRects().length ? 'flex' : 'none';
         if (!cwTab) return;
 
         const rows = cwTab.querySelectorAll('.el-table__row');
-        if (rows.length === 0) return;
-
         let cwGridContainer = document.getElementById('gemini-cw-main');
         if (!cwGridContainer) {
             cwGridContainer = document.createElement('div');
@@ -210,12 +373,28 @@
             cwGridContainer.innerHTML = `<div class="gemini-section-title title-cw">课程资料库</div><div class="gemini-grid" id="grid-courseware"></div>`;
             cwTab.appendChild(cwGridContainer);
         }
+        if (!existingBall) {
+            const ball = document.createElement('button');
+            ball.id = 'seec-dl-ball';
+            ball.type = 'button';
+            ball.className = 'lms-circle-ball lms-ball-green';
+            ball.title = '课件下载（当前列表）';
+            ball.setAttribute('aria-label', '课件下载');
+            ball.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="display:block"><path fill="currentColor" d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>';
+            ball.onclick = () => { processCourseware(); showCoursewareDownload(); };
+            document.body.appendChild(ball);
+        }
 
         const grid = document.getElementById('grid-courseware');
-        const courseId = location.pathname.match(/\/course\/(\d+)/)?.[1] || '17';
+        const courseId = location.pathname.match(/\/course\/(\d+)/)?.[1];
+        // Vue 可复用表格行；切课、翻页或更新资料后按当前列表重建，避免保存旧课程文件。
+        const signature = JSON.stringify([location.pathname, Array.from(rows, row => row.innerText)]);
+        if (cwGridContainer.dataset.signature === signature) return;
+        cwGridContainer.dataset.signature = signature;
+        grid.replaceChildren();
+        coursewareFiles = [];
 
         rows.forEach(row => {
-            if (row.dataset.geminiCwRebuilt === 'true') return;
 
             const nameCell = row.cells[1], sizeCell = row.cells[2], dateCell = row.cells[3];
             if (!nameCell) return;
@@ -223,7 +402,9 @@
             const fileName = nameCell.innerText.trim();
             const fileSize = sizeCell ? sizeCell.innerText.trim() : '';
             const fileDate = dateCell ? dateCell.innerText.trim() : '';
-            const ossUrl = `https://seec-portal.oss-cn-hangzhou.aliyuncs.com/${courseId}/${encodeURIComponent(fileName)}`;
+            const ossUrl = courseId ? `https://seec-portal.oss-cn-hangzhou.aliyuncs.com/${courseId}/${encodeURIComponent(fileName)}` : null;
+            const file = { name: fileName, url: ossUrl };
+            coursewareFiles.push(file);
 
             const ext = fileName.split('.').pop().toLowerCase();
             let borderColor = '#007bff';
@@ -238,16 +419,44 @@
 
             card.innerHTML = `
                 <div>
-                    <h3 class="cw-title" title="${fileName}">${fileName}</h3>
-                    <div class="gemini-card-info" style="margin-top:4px">大小: ${fileSize}</div>
-                    <div class="gemini-card-info">上传: ${fileDate}</div>
+                    <h3 class="cw-title"></h3>
+                    <div class="gemini-card-info seec-file-size" style="margin-top:4px"></div>
+                    <div class="gemini-card-info seec-file-date"></div>
                 </div>
-                <div class="gemini-cw-btn">阅读 / 下载</div>
+                <div>
+                    <div class="seec-card-actions">
+                        <a class="lms-btn seec-read" target="_blank" rel="noopener noreferrer">阅读</a>
+                        <button type="button" class="lms-btn lms-btn-prime seec-save">下载</button>
+                    </div>
+                    <div class="gemini-card-info seec-save-status" role="status"></div>
+                </div>
             `;
 
-            card.onclick = () => { window.open(ossUrl, '_blank'); };
+            const title = card.querySelector('.cw-title');
+            title.textContent = fileName;
+            title.title = fileName;
+            card.querySelector('.seec-file-size').textContent = `大小: ${fileSize}`;
+            card.querySelector('.seec-file-date').textContent = `上传: ${fileDate}`;
+            if (ossUrl) card.querySelector('.seec-read').href = ossUrl;
+            const saveButton = card.querySelector('.seec-save');
+            const saveStatus = card.querySelector('.seec-save-status');
+            saveButton.onclick = async () => {
+                if (saveButton.disabled) return;
+                saveButton.disabled = true;
+                saveButton.textContent = '提交中…';
+                saveStatus.textContent = '';
+                try {
+                    if (!file.url) throw new Error('无法识别当前课程，请重新打开课程页面');
+                    await saveCourseware(file.url, file.name);
+                    saveStatus.textContent = '已提交下载';
+                } catch (error) {
+                    saveStatus.textContent = `下载失败：${error.message}，请重试`;
+                } finally {
+                    saveButton.disabled = false;
+                    saveButton.textContent = '下载';
+                }
+            };
             grid.appendChild(card);
-            row.dataset.geminiCwRebuilt = 'true';
         });
     }
 
@@ -259,15 +468,18 @@
     // 5. 设置面板模块 (文字图标)
     const settingBtn = document.createElement('div');
     settingBtn.className = 'gemini-fab-setting';
+    settingBtn.style.right = '30px';
+    settingBtn.style.bottom = '90px';
+    settingBtn.title = '选择哪些作业显示在任务列表';
     settingBtn.innerHTML = '设置';
     document.body.appendChild(settingBtn);
     settingBtn.onclick = () => {
         const mask = document.createElement('div'); mask.className = 'gemini-mask';
         const tasks = Object.keys(taskMap).length > 0 ? Object.keys(taskMap) : Array.from(document.querySelectorAll('.task-title')).map(n => n.innerText.trim());
-        const taskHtml = [...new Set(tasks)].map(t => `<div class="gemini-task-opt"><span style="font-size:14px; font-weight:600; color:#333;">${t}</span><input type="checkbox" class="gemini-ios-switch" data-task="${t}" ${ignoredTasks.includes(t) ? 'checked' : ''}></div>`).join('');
-        mask.innerHTML = `<div class="gemini-panel"><div class="gemini-panel-header"><span>偏好设置</span><span style="cursor:pointer; color:#999;" id="gemini-close-setting">×</span></div><div class="gemini-panel-body">${taskHtml || '<div style="text-align:center; color:#999; padding:20px;">请先打开“任务”页加载数据</div>'}</div></div>`;
+        const taskHtml = [...new Set(tasks)].map(t => `<div class="gemini-task-opt"><span style="font-size:14px; font-weight:600; color:#333;">${t}</span><input type="checkbox" class="gemini-ios-switch" data-task="${t}" ${!ignoredTasks.includes(t) ? 'checked' : ''}></div>`).join('');
+        mask.innerHTML = `<div class="gemini-panel"><div class="gemini-panel-header"><span>选择哪些作业显示在任务列表</span><span style="cursor:pointer; color:#999;" id="gemini-close-setting">×</span></div><div class="gemini-panel-body"><div style="font-size:12px;color:#888;padding-top:12px">开启表示显示，关闭表示隐藏。</div>${taskHtml || '<div style="text-align:center; color:#999; padding:20px;">请先打开“任务”页加载数据</div>'}</div></div>`;
         document.body.appendChild(mask);
-        mask.querySelectorAll('.gemini-ios-switch').forEach(sw => sw.onchange = (e) => { const tName = e.target.dataset.task; if (e.target.checked) { if (!ignoredTasks.includes(tName)) ignoredTasks.push(tName); } else { ignoredTasks = ignoredTasks.filter(t => t !== tName); } localStorage.setItem(IGNORE_KEY, JSON.stringify(ignoredTasks)); });
+        mask.querySelectorAll('.gemini-ios-switch').forEach(sw => sw.onchange = (e) => { const tName = e.target.dataset.task; if (!e.target.checked) { if (!ignoredTasks.includes(tName)) ignoredTasks.push(tName); } else { ignoredTasks = ignoredTasks.filter(t => t !== tName); } localStorage.setItem(IGNORE_KEY, JSON.stringify(ignoredTasks)); });
         mask.querySelector('#gemini-close-setting').onclick = () => { mask.style.animation = 'fadeIn 0.3s reverse'; setTimeout(() => { mask.remove(); processAssignments(true); }, 280); };
     };
 

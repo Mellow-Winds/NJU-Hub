@@ -93,6 +93,7 @@
     },
     {
       "matches": ["https://lms.nju.edu.cn/*"],
+      "css": ["scripts/download_panel.css"],
       "js": ["scripts/lms_enhance.js"],
       "run_at": "document_end"
     },
@@ -103,6 +104,7 @@
     },
     {
       "matches": ["*://p-nju.seec.seecoder.cn/*"],
+      "css": ["scripts/download_panel.css"],
       "js": ["scripts/seec_workpanel.js"],
       "run_at": "document_end"
     },

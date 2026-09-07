@@ -160,14 +160,31 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         return true;
     }
 
-    if (request.action === 'lmsWorkerDownload') {
+    if (request.action === 'lmsWorkerDownload' || request.action === 'seecDownload') {
+        const isSeec = request.action === 'seecDownload';
         const url = String(request.url || '');
-        const filename = String(request.filename || 'download');
+        let filename = String(request.filename || 'download');
         let parsed;
         try { parsed = new URL(url); } catch (_) { parsed = null; }
-        if (!parsed || !['lms.nju.edu.cn', 'lms-media.nju.edu.cn'].includes(parsed.hostname)) {
+        const allowedHosts = isSeec
+            ? ['seec-portal.oss-cn-hangzhou.aliyuncs.com']
+            : ['lms.nju.edu.cn', 'lms-media.nju.edu.cn'];
+        if (!parsed || parsed.protocol !== 'https:' || parsed.username || parsed.password ||
+            !allowedHosts.includes(parsed.hostname) || (parsed.port && parsed.port !== '443')) {
             sendResponse({ ok: false, error: '下载地址域名不受信任' });
             return false;
+        }
+        if (isSeec) {
+            let origin;
+            try { origin = new URL(sender.url); } catch (_) { origin = null; }
+            if (!origin || !['http:', 'https:'].includes(origin.protocol) ||
+                origin.hostname !== 'p-nju.seec.seecoder.cn') {
+                sendResponse({ ok: false, error: '下载请求必须来自 SEEC 门户' });
+                return false;
+            }
+            // 课件名称只能是文件名，不能成为下载目录或非法 Windows 路径。
+            filename = filename.replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').replace(/^[. ]+|[. ]+$/g, '') || 'download';
+            if (/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(filename)) filename = `_${filename}`;
         }
 
         chrome.downloads.download({ url, filename, saveAs: false }, (downloadId) => {
