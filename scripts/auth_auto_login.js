@@ -17,6 +17,7 @@
 
         // ── 状态提示框 ──
         const box = document.createElement('div');
+        box.className = 'nju-auto-login-notice';
         Object.assign(box.style, {
             position: 'fixed', top: '15px', left: '50%', transform: 'translateX(-50%)',
             zIndex: '10000', background: 'rgba(30,30,30,0.9)', color: '#4cd964',

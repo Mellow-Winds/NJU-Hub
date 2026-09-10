@@ -37,12 +37,23 @@ function loadTheme() {
     const MCU = window.MaterialColorUtils;
     if (!MCU) return;
 
-    chrome.storage.sync.get(['ui_theme_color', 'ui_theme_mode'], (uiData) => {
+    chrome.storage.sync.get(['ui_theme_color', 'ui_theme_mode', 'ui_material_mode'], (uiData) => {
         const color = uiData.ui_theme_color || '#0ea5e9';
-        const isDark = uiData.ui_theme_mode === 'dark';
+        const materialMode = ['default', 'enhanced', 'liquid-glass'].includes(uiData.ui_material_mode)
+            ? uiData.ui_material_mode
+            : 'default';
+        const isDark = materialMode === 'default' && uiData.ui_theme_mode === 'dark';
         MCU.applyTheme(color, isDark);
+        document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+        if (!isDark && uiData.ui_theme_mode === 'dark') {
+            chrome.storage.sync.set({ ui_theme_mode: 'light' });
+        }
     });
 }
+
+chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'sync' && (changes.ui_theme_color || changes.ui_theme_mode || changes.ui_material_mode)) loadTheme();
+});
 
 // ── Dynamic Greeting ───────────────────────────────────────────────
 

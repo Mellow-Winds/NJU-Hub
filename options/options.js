@@ -179,14 +179,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================================
 
     const MCU = window.MaterialColorUtils;
+    const MATERIAL_MODE_KEY = 'ui_material_mode';
+    const VALID_MATERIAL_MODES = new Set(['default', 'enhanced', 'liquid-glass']);
+    let _materialMode = 'default';
     // Track the original source color to prevent tonal-palette drift
     // when toggling dark mode or saving (never read back from computed CSS).
     let _currentSourceColor = '#0ea5e9';
 
 
+    const normalizeMaterialMode = (mode) => VALID_MATERIAL_MODES.has(mode) ? mode : 'default';
+
     const applyTheme = ({ color, mode }) => {
         const safeColor = (typeof color === 'string' && color.trim()) ? color.trim() : '#0ea5e9';
-        const isDark = mode === 'dark';
+        const isDark = mode === 'dark' && _materialMode === 'default';
         // Remember the original source color
         _currentSourceColor = safeColor;
 
@@ -207,7 +212,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (colorInput) colorInput.value = safeColor;
 
         const darkToggle = document.getElementById('ui-dark-mode');
-        if (darkToggle) darkToggle.checked = isDark;
+        if (darkToggle) {
+            darkToggle.disabled = _materialMode !== 'default';
+            darkToggle.checked = isDark;
+            darkToggle.setAttribute('aria-disabled', String(darkToggle.disabled));
+            darkToggle.title = darkToggle.disabled ? '暗夜模式仅适用于普通卡片' : '';
+        }
 
         document.querySelectorAll('.color-chip').forEach((btn) => {
             btn.classList.toggle('active', btn.dataset.color?.toLowerCase() === safeColor.toLowerCase());
@@ -221,8 +231,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fontDropdown) fontDropdown.setValue(nextFont, true);
     };
 
-    const UI_KEYS = ['ui_theme_color', 'ui_theme_mode', 'ui_font_family'];
+    const UI_KEYS = ['ui_theme_color', 'ui_theme_mode', 'ui_font_family', MATERIAL_MODE_KEY];
     const uiStorage = chrome.storage.sync;
+
+    const refreshThemeForMaterialMode = () => {
+        uiStorage.get(['ui_theme_color', 'ui_theme_mode', MATERIAL_MODE_KEY], (uiData) => {
+            if (chrome.runtime.lastError) return;
+            _materialMode = normalizeMaterialMode(uiData[MATERIAL_MODE_KEY]);
+            const requestedMode = uiData.ui_theme_mode || 'light';
+            const effectiveMode = _materialMode === 'default' && requestedMode === 'dark' ? 'dark' : 'light';
+            applyTheme({ color: uiData.ui_theme_color || '#0ea5e9', mode: effectiveMode });
+            if (effectiveMode !== requestedMode) uiStorage.set({ ui_theme_mode: effectiveMode });
+        });
+    };
+
+    chrome.storage.onChanged.addListener((changes, area) => {
+        if (area !== 'sync') return;
+        if (changes[MATERIAL_MODE_KEY] || changes.ui_theme_mode || changes.ui_theme_color) {
+            refreshThemeForMaterialMode();
+        }
+    });
 
     const persistTheme = async ({ color, mode }) => {
         await uiStorage.set({ ui_theme_color: color, ui_theme_mode: mode });
@@ -328,6 +356,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const darkToggle = document.getElementById('ui-dark-mode');
         if (darkToggle) {
             darkToggle.addEventListener('change', async () => {
+                if (_materialMode !== 'default') {
+                    darkToggle.checked = false;
+                    return;
+                }
                 const mode = darkToggle.checked ? 'dark' : 'light';
                 const color = _currentSourceColor;
                 applyTheme({ color, mode });
@@ -371,10 +403,14 @@ document.addEventListener('DOMContentLoaded', () => {
         uiStorage.get(UI_KEYS),
         chrome.storage.local.get(KEYS)
     ]).then(([uiData, data]) => {
+        _materialMode = normalizeMaterialMode(uiData[MATERIAL_MODE_KEY]);
+        const requestedThemeMode = uiData.ui_theme_mode || 'light';
+        const effectiveThemeMode = _materialMode === 'default' && requestedThemeMode === 'dark' ? 'dark' : 'light';
         applyTheme({
             color: uiData.ui_theme_color || '#0ea5e9',
-            mode: uiData.ui_theme_mode || 'light'
+            mode: effectiveThemeMode
         });
+        if (effectiveThemeMode !== requestedThemeMode) uiStorage.set({ ui_theme_mode: effectiveThemeMode });
         applyFont(uiData.ui_font_family || 'google-sans-flex');
 
         const setVal = (id, val, defaultVal = '') => {

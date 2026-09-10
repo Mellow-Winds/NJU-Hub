@@ -117,6 +117,13 @@
         const glass = document.getElementById('ui-glass-mode');
         if (better) better.checked = state.mode === 'enhanced';
         if (glass) glass.checked = state.mode === 'liquid-glass';
+        const darkToggle = document.getElementById('ui-dark-mode');
+        if (darkToggle) {
+            darkToggle.disabled = state.mode !== 'default';
+            darkToggle.setAttribute('aria-disabled', String(darkToggle.disabled));
+            darkToggle.title = darkToggle.disabled ? '暗夜模式仅适用于普通卡片' : '';
+            if (darkToggle.disabled) darkToggle.checked = false;
+        }
         document.querySelectorAll('[name="lab-mode"]').forEach(input => {
             input.checked = input.value === state.mode;
         });
@@ -162,11 +169,33 @@
         state.mode = ['default', 'enhanced', 'liquid-glass'].includes(mode) ? mode : 'default';
         apply();
         try {
-            await storageCall(chrome.storage.sync, 'set', { [MODE_KEY]: state.mode });
+            const nextValues = { [MODE_KEY]: state.mode };
+            // Dark mode is a property of the default material only. Changing to
+            // either enhanced or liquid glass immediately moves the theme back to
+            // the light palette instead of leaving an invalid mixed state behind.
+            if (state.mode !== 'default') nextValues.ui_theme_mode = 'light';
+            await storageCall(chrome.storage.sync, 'set', nextValues);
         } catch (error) {
             const status = document.getElementById('lab-status');
             if (status) status.textContent = `材质状态保存失败：${error.message}`;
         }
+    };
+
+    const spawnModeRipple = (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        const label = target?.closest('.lab-mode-list label');
+        if (!label || event.button > 0) return;
+        const rect = label.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height) * 1.35;
+        const ripple = document.createElement('span');
+        ripple.className = 'lab-ripple';
+        ripple.style.width = `${size}px`;
+        ripple.style.height = `${size}px`;
+        ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
+        ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
+        label.appendChild(ripple);
+        requestAnimationFrame(() => ripple.classList.add('is-active'));
+        ripple.addEventListener('animationend', () => ripple.remove(), { once: true });
     };
 
     const loadState = async () => {
@@ -240,6 +269,8 @@
             if (event.target.id === 'ui-better-card-mode') saveMode(event.target.checked ? 'enhanced' : 'default');
             if (event.target.id === 'ui-glass-mode') saveMode(event.target.checked ? 'liquid-glass' : 'default');
         });
+
+        host.addEventListener('pointerdown', spawnModeRipple);
 
         host.addEventListener('input', (event) => {
             if (event.target.id === 'lab-blur') state.blur = Number(event.target.value);

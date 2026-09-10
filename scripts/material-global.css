@@ -209,3 +209,147 @@ html[data-nju-global-still="true"] :is(
         transition: none !important;
     }
 }
+
+/* -------------------------------------------------------------------------
+   Cross-surface corrections
+   ------------------------------------------------------------------------- */
+
+/* A dark theme belongs only to the default material. Its canvas is black on
+   both settings and popup pages; the state layer forces other materials back
+   to light before this fallback can be visible. */
+html[data-nju-material-page="extension"][data-theme="dark"][data-nju-global-mode="default"],
+html[data-nju-material-page="extension"][data-theme="dark"][data-nju-global-mode="default"] body,
+html[data-nju-material-page="extension"][data-theme="dark"][data-nju-global-mode="default"] .akari-layout,
+html[data-nju-material-page="extension"][data-theme="dark"][data-nju-global-mode="default"] .akari-content,
+html[data-nju-material-page="popup"][data-theme="dark"][data-nju-global-mode="default"],
+html[data-nju-material-page="popup"][data-theme="dark"][data-nju-global-mode="default"] body {
+    background: #000 !important;
+    background-image: none !important;
+}
+
+/* The campus selector is itself a material surface in liquid-glass mode.
+   Keep the selected segment readable without introducing a second opaque
+   container over the glass island. */
+html[data-nju-global-mode="enhanced"] :is(.ios-seg-ctrl.seg-campus, #ctrl-campus) {
+    background: #f7f9fc !important;
+    border: 1px solid rgba(112, 129, 141, .72) !important;
+    box-shadow: 0 8px 18px rgba(20, 33, 43, .1) !important;
+}
+html[data-nju-global-mode="liquid-glass"] :is(.ios-seg-ctrl.seg-campus, #ctrl-campus) {
+    background: rgba(255, 255, 255, .22) !important;
+    border: 1px solid rgba(255, 255, 255, .72) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .72), 0 8px 18px rgba(20, 33, 43, .12) !important;
+    backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%) !important;
+}
+html[data-nju-global-mode="liquid-glass"] .seg-campus .seg-slider {
+    background: rgba(255, 255, 255, .54) !important;
+    border: 1px solid rgba(255, 255, 255, .72) !important;
+    box-shadow: 0 4px 12px rgba(20, 33, 43, .14), inset 0 1px 0 rgba(255, 255, 255, .78) !important;
+}
+html[data-nju-global-mode="liquid-glass"] .seg-campus .seg-btn,
+html[data-nju-global-mode="enhanced"] .seg-campus .seg-btn {
+    color: #17222d !important;
+}
+
+/* xk timetable: the course blocks are the only separators. Remove the
+   repeated grid paint, header/period borders, and modal header/footer rules. */
+html[data-nju-global-mode] #xk-timetable-modal .xk-header,
+html[data-nju-global-mode] #xk-timetable-modal .xk-footer,
+html[data-nju-global-mode] #xk-timetable-modal .pre-grid > *,
+html[data-nju-global-mode] #xk-timetable-modal .pre-day,
+html[data-nju-global-mode] #xk-timetable-modal .pre-day-body,
+html[data-nju-global-mode] #xk-timetable-modal .pre-period {
+    border: 0 !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+html[data-nju-global-mode] #xk-timetable-modal .pre-day,
+html[data-nju-global-mode] #xk-timetable-modal .pre-day-body,
+html[data-nju-global-mode] #xk-timetable-modal .pre-period {
+    background: transparent !important;
+    background-image: none !important;
+}
+html[data-nju-global-mode] #xk-timetable-modal .pre-day {
+    color: #17222d !important;
+}
+html[data-nju-global-mode="enhanced"] #xk-timetable-modal .pre-course {
+    background: #f7f9fc !important;
+    border: 1px solid rgba(112, 129, 141, .72) !important;
+    border-left-width: 3px !important;
+    box-shadow: 0 6px 14px rgba(20, 33, 43, .1) !important;
+}
+html[data-nju-global-mode="enhanced"] #xk-timetable-modal .pre-blue,
+html[data-nju-global-mode="liquid-glass"] #xk-timetable-modal .pre-blue {
+    border-left-color: #2f6ad0 !important;
+}
+html[data-nju-global-mode="enhanced"] #xk-timetable-modal .pre-amber,
+html[data-nju-global-mode="liquid-glass"] #xk-timetable-modal .pre-amber {
+    border-left-color: #d89a00 !important;
+}
+html[data-nju-global-mode="liquid-glass"] #xk-timetable-modal .pre-course {
+    background: rgba(255, 255, 255, .58) !important;
+    border: 1px solid rgba(255, 255, 255, .84) !important;
+    border-left-width: 3px !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .72), 0 6px 16px rgba(20, 33, 43, .14) !important;
+    backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(135%) !important;
+    -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(135%) !important;
+    color: #17222d !important;
+}
+html[data-nju-global-mode="liquid-glass"] #xk-timetable-modal .pre-blue {
+    border-left-color: #2f6ad0 !important;
+}
+html[data-nju-global-mode="liquid-glass"] #xk-timetable-modal .pre-amber {
+    border-left-color: #d89a00 !important;
+}
+
+/* Flatten modal internals so the outer material card owns the boundary. */
+html[data-nju-global-mode="liquid-glass"] :is(.xk-modal .xk-header, .xk-modal .xk-body, .xk-modal .xk-footer, .xk-island .xk-panel) {
+    background: transparent !important;
+    border-color: transparent !important;
+}
+html[data-nju-global-mode="enhanced"] :is(.xk-modal .xk-header, .xk-modal .xk-body, .xk-modal .xk-footer, .xk-island .xk-panel) {
+    background: #f7f9fc !important;
+    border-color: transparent !important;
+}
+
+/* Liquid-glass keeps dark SVG artwork legible on its light surface. */
+html[data-nju-global-mode="liquid-glass"] :is(#xk-timetable-float, #btn-open-sched, .lms-circle-ball) {
+    color: #111827 !important;
+}
+html[data-nju-global-mode="liquid-glass"] :is(#xk-timetable-float, #btn-open-sched, .lms-circle-ball) svg,
+html[data-nju-global-mode="liquid-glass"] :is(#xk-timetable-float, #btn-open-sched, .lms-circle-ball) svg *,
+html[data-nju-global-mode="liquid-glass"] :is(#xk-timetable-float, #btn-open-sched, .lms-circle-ball) path {
+    color: #111827 !important;
+    fill: #111827 !important;
+    stroke: #111827 !important;
+}
+
+/* No hairline separators inside material panels. The card boundary remains
+   the sole grouping device; selected rows use a surface change instead. */
+html[data-nju-global-mode] :is(.xk-modal .xk-header, .xk-modal .xk-footer, .lms-header, .lms-footer, .lms-dl-item) {
+    border-top-color: transparent !important;
+    border-right-color: transparent !important;
+    border-bottom-color: transparent !important;
+    border-left-color: transparent !important;
+}
+
+/* Automatic-login feedback is a white, mode-aware card rather than a green
+   dark toast. */
+.nju-auto-login-notice {
+    background: #fff !important;
+    color: #111827 !important;
+    border: 1px solid rgba(112, 129, 141, .48) !important;
+    box-shadow: 0 12px 28px rgba(20, 33, 43, .16) !important;
+}
+html[data-nju-global-mode="enhanced"] .nju-auto-login-notice {
+    background: #fff !important;
+    border-color: rgba(112, 129, 141, .72) !important;
+}
+html[data-nju-global-mode="liquid-glass"] .nju-auto-login-notice {
+    background: rgba(255, 255, 255, .78) !important;
+    border-color: rgba(255, 255, 255, .9) !important;
+    box-shadow: 0 14px 32px rgba(20, 33, 43, .18), inset 0 1px 0 rgba(255, 255, 255, .86) !important;
+    backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%) !important;
+}

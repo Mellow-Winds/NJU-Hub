@@ -32,6 +32,31 @@ body:has(#section-personalize.active) .content{min-height:0;min-width:0;overflow
 #material-laboratory{width:100%;margin:12px auto 0}
 .lab-page{display:block}
 .lab-page>.lab-controls{width:100%;margin-top:0}
+
+/* Every settings surface uses the same measure as personalization. This keeps
+   cards aligned when a section contains a long control row or a full-width
+   field instead of letting the old 640px cap make content press against it. */
+.settings-section:not(#section-personalize) > .card,
+.settings-section:not(#section-personalize) > .card-stack{
+    box-sizing:border-box;
+    width:100%;
+    max-width:760px!important;
+    min-width:0;
+}
+.settings-section:not(#section-personalize) > .card,
+.settings-section:not(#section-personalize) > .card-stack > .card{
+    padding:24px!important;
+}
+.settings-section:not(#section-personalize) > .card > .divider:first-child,
+.settings-section:not(#section-personalize) > .card-stack > .card > .divider:first-child{
+    margin-top:0;
+}
+.settings-section:not(#section-personalize) > .card-stack > .card{
+    box-sizing:border-box;
+    width:100%;
+    max-width:none!important;
+    min-width:0;
+}
 html[data-nju-mode="liquid-glass"] .sidebar{background:color-mix(in srgb,#f9f9ff 34%,transparent);border-color:#ffffff9c;backdrop-filter:blur(var(--personalize-blur,24px)) saturate(135%);-webkit-backdrop-filter:blur(var(--personalize-blur,24px)) saturate(135%);box-shadow:0 18px 42px #14212b24,inset 0 1px 0 #ffffffb8,inset 1px 0 0 #ffffff45}
 html[data-nju-mode="liquid-glass"] .nav-item.active{background:#ffffff52;color:var(--md-sys-color-on-surface);box-shadow:inset 0 1px 0 #ffffff8c,0 8px 20px #14212b18;filter:none}
 html[data-nju-mode="liquid-glass"] .nav-item:hover{background:#ffffff38;color:var(--md-sys-color-on-surface)}
@@ -55,11 +80,24 @@ html[data-nju-mode="liquid-glass"] .settings-section#section-personalize #materi
 .lab-controls-heading span{font-size:13px;color:#56606d}
 .lab-controls-intro{margin:8px 0 22px;font-size:14px;color:#31404c}
 .lab-mode-list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 32px}
-.lab-mode-list label{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border:0;border-radius:24px;background:var(--md-sys-color-surface-container-high,#edf2fb);font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color 160ms ease,color 160ms ease}
+.lab-mode-list label{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;overflow:hidden;border:1px solid transparent;border-radius:24px;background:var(--md-sys-color-surface-container-high,#edf2fb);font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color 160ms ease,color 160ms ease,border-color 160ms ease,box-shadow 160ms ease}
 .lab-mode-list label:has(input:checked){background:var(--md-sys-color-primary-container,#cfe1ff);color:var(--md-sys-color-on-primary-container,#102235);font-weight:650}
 .lab-mode-list label:active{transform:none}
 .lab-mode-list input{position:absolute;opacity:0;pointer-events:none}
 .lab-mode-list input{accent-color:var(--lab-primary)}
+
+/* The selector itself follows the selected material. Enhanced stays opaque;
+   liquid glass is the only variant that lets the wallpaper show through. */
+html[data-nju-mode="default"] .lab-mode-list label{background:var(--md-sys-color-surface-container-high,#edf2fb);border-color:var(--md-sys-color-outline-variant,#ccd3da)}
+html[data-nju-mode="default"] .lab-mode-list label:has(input:checked){background:var(--md-sys-color-primary-container,#cfe1ff);border-color:var(--md-sys-color-primary)}
+html[data-nju-mode="enhanced"] .lab-mode-list label{background:#f6f8fb;border-color:#70818d;box-shadow:0 4px 12px #17222d12}
+html[data-nju-mode="enhanced"] .lab-mode-list label:has(input:checked){background:#e7eef8;border-color:#526b7a;color:#17222d}
+html[data-nju-mode="liquid-glass"] .lab-mode-list label{background:#ffffff2e;border-color:#ffffffa8;backdrop-filter:blur(var(--personalize-blur,24px)) saturate(145%);-webkit-backdrop-filter:blur(var(--personalize-blur,24px)) saturate(145%);box-shadow:inset 0 1px 0 #ffffffa8,0 8px 18px #14212b12}
+html[data-nju-mode="liquid-glass"] .lab-mode-list label:has(input:checked){background:#ffffff5c;border-color:#ffffffd0;color:#17222d}
+.lab-ripple{position:absolute;z-index:0;border-radius:50%;background:currentColor;opacity:0;transform:scale(0);pointer-events:none;will-change:transform,opacity}
+.lab-mode-list label > input,.lab-mode-list label::after{z-index:1}
+.lab-ripple.is-active{animation:labRippleExpand 420ms cubic-bezier(.2,0,0,1) forwards}
+@keyframes labRippleExpand{0%{transform:scale(0);opacity:.2}100%{transform:scale(1);opacity:0}}
 .lab-ranges{display:grid;gap:28px}
 .lab-range label{display:flex;justify-content:space-between;font-size:16px;font-weight:500;margin-bottom:10px}
 .lab-range output{font-variant-numeric:tabular-nums;color:#416277}
@@ -90,3 +128,11 @@ html[data-nju-mode="liquid-glass"] .settings-section#section-personalize #materi
 html[data-nju-mode="enhanced"] .sidebar{background:var(--md-sys-color-surface-container-lowest);border:1px solid #70818d;box-shadow:0 16px 36px #17222d24;backdrop-filter:none}
 html[data-nju-still="true"] #section-personalize *,html[data-nju-still="true"] .sidebar *{animation:none!important;transition:none!important}
 @media(prefers-reduced-motion:reduce){#section-personalize *, .sidebar *{transition:none!important}}
+
+/* Default dark mode is intentionally a black canvas. Non-default materials
+   are forced back to the light palette by options.js/material-laboratory.js. */
+html[data-theme="dark"][data-nju-global-mode="default"],
+html[data-theme="dark"][data-nju-global-mode="default"] body,
+html[data-theme="dark"][data-nju-global-mode="default"] .akari-layout,
+html[data-theme="dark"][data-nju-global-mode="default"] .akari-content{background-color:#000!important;background-image:none!important}
+html[data-theme="dark"][data-nju-global-mode="default"] body:has(#section-personalize.active)::before{background:#000!important}
