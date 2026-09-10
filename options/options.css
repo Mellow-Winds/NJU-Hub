@@ -1452,6 +1452,7 @@ html[data-font="system"] body {
     gap: 16px;
     width: 100%;
     max-width: 760px;
+    margin-bottom: 16px;
 }
 
 .about-link-grid .card {
@@ -1460,6 +1461,14 @@ html[data-font="system"] body {
     min-width: 0;
     max-width: none;
     margin-bottom: 0;
+}
+
+.about-link-card {
+    padding: 0 20px 20px;
+}
+
+.about-link-card .divider {
+    margin-top: 18px;
 }
 
 .about-link-button {
