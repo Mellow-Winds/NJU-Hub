@@ -1,5 +1,28 @@
 /* Shared material layer. It is intentionally scoped to NJU-Hub surfaces. */
 
+html[data-nju-wallpaper-enabled="true"] {
+    background-image:
+        linear-gradient(rgba(249, 249, 255, .42), rgba(249, 249, 255, .42)),
+        var(--nju-global-wallpaper-image);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+html[data-theme="dark"][data-nju-wallpaper-enabled="true"] {
+    background-image:
+        linear-gradient(rgba(12, 16, 26, .58), rgba(12, 16, 26, .58)),
+        var(--nju-global-wallpaper-image);
+}
+
+html[data-nju-wallpaper-enabled="true"] body {
+    background: transparent !important;
+}
+
+html[data-nju-wallpaper-enabled="true"] :is(.akari-layout, .akari-content, .portal-container) {
+    background: transparent !important;
+}
+
 html[data-nju-global-mode="enhanced"],
 html[data-nju-global-mode="liquid-glass"] {
     --nju-global-border: rgba(112, 129, 141, .72);

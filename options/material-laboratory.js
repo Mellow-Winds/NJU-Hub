@@ -83,6 +83,9 @@
         root.classList.toggle('ui-wallpaper-enabled', active);
         if (active) root.style.setProperty('--personalize-wallpaper-image', `url("${state.wallpaperData}")`);
         else root.style.removeProperty('--personalize-wallpaper-image');
+        root.dataset.njuWallpaperEnabled = String(active);
+        if (active) root.style.setProperty('--nju-global-wallpaper-image', `url("${state.wallpaperData}")`);
+        else root.style.removeProperty('--nju-global-wallpaper-image');
 
         const preview = document.getElementById('ui-wallpaper-preview');
         const clear = document.getElementById('ui-wallpaper-clear');
