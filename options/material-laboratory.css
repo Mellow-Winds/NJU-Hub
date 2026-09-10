@@ -57,6 +57,29 @@ body:has(#section-personalize.active) .content{min-height:0;min-width:0;overflow
     max-width:none!important;
     min-width:0;
 }
+
+/* Text fields get a contained surface so wallpaper cannot compete with
+   labels or entered values. The surface is inherited from the enclosing
+   material card, so it never introduces a mismatched inner color. */
+.settings-section:not(#section-personalize) .form-group:has(> .floating-field){
+    box-sizing:border-box;
+    padding:12px;
+    border:1px solid var(--nju-global-border,var(--md-sys-color-outline-variant,#ccd3da));
+    border-radius:16px;
+    background:var(--nju-card-surface,var(--md-sys-color-surface-container-lowest,#f9f9ff));
+    box-shadow:0 6px 16px rgba(20,33,43,.08);
+}
+.settings-section:not(#section-personalize) .form-group:has(> .floating-field) .floating-field input,
+.settings-section:not(#section-personalize) .form-group:has(> .floating-field) .floating-field textarea{
+    background:transparent!important;
+}
+.settings-section:not(#section-personalize) .form-group:has(> .floating-field) .floating-field > .field-label{
+    background:var(--nju-card-surface,var(--md-sys-color-surface-container-lowest,#f9f9ff));
+}
+html[data-nju-global-mode="liquid-glass"] .settings-section:not(#section-personalize) .form-group:has(> .floating-field){
+    backdrop-filter:blur(var(--nju-global-blur,24px)) saturate(145%);
+    -webkit-backdrop-filter:blur(var(--nju-global-blur,24px)) saturate(145%);
+}
 html[data-nju-mode="liquid-glass"] .sidebar{background:color-mix(in srgb,#f9f9ff 34%,transparent);border-color:#ffffff9c;backdrop-filter:blur(var(--personalize-blur,24px)) saturate(135%);-webkit-backdrop-filter:blur(var(--personalize-blur,24px)) saturate(135%);box-shadow:0 18px 42px #14212b24,inset 0 1px 0 #ffffffb8,inset 1px 0 0 #ffffff45}
 html[data-nju-mode="liquid-glass"] .nav-item.active{background:#ffffff52;color:var(--md-sys-color-on-surface);box-shadow:inset 0 1px 0 #ffffff8c,0 8px 20px #14212b18;filter:none}
 html[data-nju-mode="liquid-glass"] .nav-item:hover{background:#ffffff38;color:var(--md-sys-color-on-surface)}

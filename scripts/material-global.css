@@ -89,8 +89,20 @@ html[data-nju-global-mode="enhanced"] :is(
 }
 
 /* Settings sections outside personalization still use the shared card contract. */
+html[data-nju-material-page="extension"][data-nju-global-mode="default"] .settings-section:not(#section-personalize) > .card,
+html[data-nju-material-page="extension"][data-nju-global-mode="default"] .settings-section:not(#section-personalize) > .card-stack > .card {
+    --nju-card-surface: var(--md-sys-color-surface-container-lowest, #f9f9ff);
+    background: var(--nju-card-surface) !important;
+    border: 1px solid var(--md-sys-color-outline-variant, #ccd3da) !important;
+    border-radius: 28px !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
 html[data-nju-material-page="extension"][data-nju-global-mode="enhanced"] .settings-section:not(#section-personalize) > .card,
 html[data-nju-material-page="extension"][data-nju-global-mode="enhanced"] .settings-section:not(#section-personalize) > .card-stack > .card {
+    --nju-card-surface: #f7f9fc;
     background: #f7f9fc !important;
     border: 1px solid var(--nju-global-border) !important;
     border-radius: 28px !important;
@@ -101,9 +113,10 @@ html[data-nju-material-page="extension"][data-nju-global-mode="enhanced"] .setti
 
 html[data-nju-material-page="extension"][data-nju-global-mode="liquid-glass"] .settings-section:not(#section-personalize) > .card,
 html[data-nju-material-page="extension"][data-nju-global-mode="liquid-glass"] .settings-section:not(#section-personalize) > .card-stack > .card {
-    background:
+    --nju-card-surface:
         linear-gradient(135deg, rgba(255, 255, 255, .22), transparent 46%, rgba(255, 255, 255, .08)),
-        color-mix(in srgb, #f9f9ff min(var(--nju-global-opacity, 68%), 82%), transparent) !important;
+        color-mix(in srgb, #f9f9ff min(var(--nju-global-opacity, 68%), 82%), transparent);
+    background: var(--nju-card-surface) !important;
     border: 1px solid var(--nju-global-border) !important;
     border-radius: 28px !important;
     box-shadow: var(--nju-global-shadow) !important;
