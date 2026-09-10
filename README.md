@@ -2,8 +2,6 @@
 
 面向南京大学校园场景的浏览器扩展，集中提供自动登录、成绩查询、选课辅助、课表管理、课程评价、自动评教、LMS/SEEC 增强和校园网址导航等功能。
 
-当前扩展版本：**26.6**
-
 [![Manifest Version](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/mv3/intro/)
 [![Version](https://img.shields.io/badge/version-26.6-%23660874)](https://github.com/Mellow-Winds/NJU-Hub)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
