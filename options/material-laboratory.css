@@ -42,7 +42,7 @@ html[data-nju-mode="liquid-glass"] .settings-section#section-personalize #materi
 html[data-nju-mode="enhanced"] .settings-section#section-personalize > .card,
 html[data-nju-mode="enhanced"] .settings-section#section-personalize #material-laboratory .lab-card{background:#f6f8fb;border:1px solid #70818d;box-shadow:0 16px 36px #17222d24}
 html[data-nju-mode="liquid-glass"] .settings-section#section-personalize > .card,
-html[data-nju-mode="liquid-glass"] .settings-section#section-personalize #material-laboratory .lab-card{background:linear-gradient(135deg,#ffffff20,transparent 46%,#ffffff08),color-mix(in srgb,#f9f9ff min(var(--personalize-opacity,68%),48%),transparent);border:1px solid #ffffffa8;backdrop-filter:blur(var(--personalize-blur,24px)) saturate(145%);-webkit-backdrop-filter:blur(var(--personalize-blur,24px)) saturate(145%);box-shadow:0 18px 42px #14212b2a,inset 0 1px 0 #ffffffb8,inset 1px 0 0 #ffffff45,inset 0 -1px 0 #ffffff28}
+html[data-nju-mode="liquid-glass"] .settings-section#section-personalize #material-laboratory .lab-card{background:linear-gradient(135deg,#ffffff20,transparent 46%,#ffffff08),color-mix(in srgb,#f9f9ff min(var(--personalize-opacity,68%),82%),transparent);border:1px solid #ffffffa8;backdrop-filter:blur(var(--personalize-blur,24px)) saturate(145%);-webkit-backdrop-filter:blur(var(--personalize-blur,24px)) saturate(145%);box-shadow:0 18px 42px #14212b2a,inset 0 1px 0 #ffffffb8,inset 1px 0 0 #ffffff45,inset 0 -1px 0 #ffffff28}
 .material-mode-switches{display:grid;gap:4px;margin-top:8px}
 .material-mode-switches .toggle-group{border:0;padding:10px 0}
 .material-mode-switches .hint-text{margin:4px 0 0;font-size:12px;line-height:1.5;color:var(--md-sys-color-on-surface-variant,#56606d)}

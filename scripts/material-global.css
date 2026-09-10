@@ -23,6 +23,43 @@ html[data-nju-wallpaper-enabled="true"] :is(.akari-layout, .akari-content, .port
     background: transparent !important;
 }
 
+/* Popup is a compact control surface: it never uses the selected wallpaper. */
+html[data-nju-material-page="popup"] {
+    background-image: none !important;
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--md-sys-color-primary) 24%, #ffffff),
+        color-mix(in srgb, var(--md-sys-color-primary) 7%, var(--md-sys-color-background))
+    ) !important;
+}
+
+html[data-theme="dark"][data-nju-material-page="popup"] {
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--md-sys-color-primary) 30%, var(--md-sys-color-background)),
+        var(--md-sys-color-background)
+    ) !important;
+}
+
+html[data-nju-material-page="popup"] body {
+    background: inherit !important;
+    background-image: none !important;
+}
+
+html[data-nju-material-page="popup"][data-nju-global-mode="liquid-glass"] .card {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .34), rgba(255, 255, 255, .12) 48%, rgba(255, 255, 255, .2)),
+        rgba(255, 255, 255, .2) !important;
+    border-color: rgba(255, 255, 255, .74) !important;
+    box-shadow: 0 18px 40px rgba(20, 33, 43, .14), inset 0 1px 0 rgba(255, 255, 255, .86) !important;
+    backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(165%) !important;
+    -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(165%) !important;
+}
+
+html[data-nju-material-page="popup"] .feature-row {
+    border-bottom: 0;
+}
+
 html[data-nju-global-mode="enhanced"],
 html[data-nju-global-mode="liquid-glass"] {
     --nju-global-border: rgba(112, 129, 141, .72);
@@ -56,6 +93,7 @@ html[data-nju-material-page="extension"][data-nju-global-mode="enhanced"] .setti
 html[data-nju-material-page="extension"][data-nju-global-mode="enhanced"] .settings-section:not(#section-personalize) > .card-stack > .card {
     background: #f7f9fc !important;
     border: 1px solid var(--nju-global-border) !important;
+    border-radius: 28px !important;
     box-shadow: var(--nju-global-shadow) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
@@ -65,8 +103,9 @@ html[data-nju-material-page="extension"][data-nju-global-mode="liquid-glass"] .s
 html[data-nju-material-page="extension"][data-nju-global-mode="liquid-glass"] .settings-section:not(#section-personalize) > .card-stack > .card {
     background:
         linear-gradient(135deg, rgba(255, 255, 255, .22), transparent 46%, rgba(255, 255, 255, .08)),
-        color-mix(in srgb, #f9f9ff min(var(--nju-global-opacity, 68%), 48%), transparent) !important;
+        color-mix(in srgb, #f9f9ff min(var(--nju-global-opacity, 68%), 82%), transparent) !important;
     border: 1px solid var(--nju-global-border) !important;
+    border-radius: 28px !important;
     box-shadow: var(--nju-global-shadow) !important;
     backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%) !important;
     -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%) !important;
@@ -84,7 +123,7 @@ html[data-nju-global-mode="liquid-glass"] :is(
 ) {
     background:
         linear-gradient(135deg, rgba(255, 255, 255, .22), transparent 46%, rgba(255, 255, 255, .08)),
-        color-mix(in srgb, #f9f9ff min(var(--nju-global-opacity, 68%), 48%), transparent) !important;
+        color-mix(in srgb, #f9f9ff min(var(--nju-global-opacity, 68%), 82%), transparent) !important;
     border: 1px solid var(--nju-global-border) !important;
     box-shadow: var(--nju-global-shadow) !important;
     backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%) !important;
@@ -124,7 +163,7 @@ html[data-nju-material-page="popup"][data-nju-global-mode="enhanced"] .card {
 html[data-nju-material-page="popup"][data-nju-global-mode="liquid-glass"] .card {
     background:
         linear-gradient(135deg, rgba(255, 255, 255, .22), transparent 46%, rgba(255, 255, 255, .08)),
-        color-mix(in srgb, #f9f9ff min(var(--nju-global-opacity, 68%), 48%), transparent) !important;
+        color-mix(in srgb, #f9f9ff min(var(--nju-global-opacity, 68%), 82%), transparent) !important;
     border-color: var(--nju-global-border) !important;
     box-shadow: var(--nju-global-shadow) !important;
     backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%) !important;
