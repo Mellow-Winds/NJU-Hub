@@ -54,6 +54,15 @@
   },
   "content_scripts": [
     {
+      "matches": [
+        "*://*.nju.edu.cn/*",
+        "*://p-nju.seec.seecoder.cn/*"
+      ],
+      "css": ["scripts/material-global.css"],
+      "js": ["scripts/material-global.js"],
+      "run_at": "document_start"
+    },
+    {
       "matches": ["https://authserver.nju.edu.cn/authserver/login*"],
       "js": ["scripts/auth_auto_login.js"],
       "run_at": "document_end"

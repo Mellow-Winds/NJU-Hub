@@ -100,8 +100,13 @@
     const apply = () => {
         const root = document.documentElement;
         root.dataset.njuMode = state.mode;
+        root.dataset.njuGlobalMode = state.mode;
+        root.dataset.njuGlobalStill = String(state.still);
+        root.dataset.njuReducedTransparency = String(state.reducedTransparency);
         root.style.setProperty('--personalize-blur', `${state.blur}px`);
         root.style.setProperty('--personalize-opacity', `${state.reducedTransparency ? Math.max(88, state.opacity) : state.opacity}%`);
+        root.style.setProperty('--nju-global-blur', `${state.blur}px`);
+        root.style.setProperty('--nju-global-opacity', `${state.reducedTransparency ? Math.max(88, state.opacity) : state.opacity}%`);
         root.dataset.njuStill = String(state.still);
         applyWallpaper();
 
