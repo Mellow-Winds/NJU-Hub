@@ -55,15 +55,17 @@ html[data-nju-mode="liquid-glass"] .settings-section#section-personalize #materi
 .lab-controls-heading span{font-size:13px;color:#56606d}
 .lab-controls-intro{margin:8px 0 22px;font-size:14px;color:#31404c}
 .lab-mode-list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 32px}
-.lab-mode-list label{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border:0;border-radius:24px;background:var(--md-sys-color-surface-container-high,#edf2fb);font-size:14px;cursor:pointer;transition:background-color 160ms ease,transform 100ms ease}
+.lab-mode-list label{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border:0;border-radius:24px;background:var(--md-sys-color-surface-container-high,#edf2fb);font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color 160ms ease,color 160ms ease}
 .lab-mode-list label:has(input:checked){background:var(--md-sys-color-primary-container,#cfe1ff);color:var(--md-sys-color-on-primary-container,#102235);font-weight:650}
-.lab-mode-list label:active{transform:scale(.98)}
+.lab-mode-list label:active{transform:none}
 .lab-mode-list input{position:absolute;opacity:0;pointer-events:none}
 .lab-mode-list input{accent-color:var(--lab-primary)}
 .lab-ranges{display:grid;gap:28px}
 .lab-range label{display:flex;justify-content:space-between;font-size:16px;font-weight:500;margin-bottom:10px}
 .lab-range output{font-variant-numeric:tabular-nums;color:#416277}
-.lab-range input{appearance:none;-webkit-appearance:none;width:100%;height:24px;margin:0;background:transparent;accent-color:var(--lab-primary);cursor:pointer}
+.lab-range input{appearance:none;-webkit-appearance:none;width:100%;height:24px;margin:0;padding:0;border:0;outline:0;background:transparent;box-shadow:none;accent-color:var(--lab-primary);cursor:pointer}
+.lab-range input:focus{outline:0!important;border:0!important;padding:0!important;box-shadow:none!important}
+.lab-range input:focus-visible{outline:2px solid var(--md-sys-color-primary)!important;outline-offset:4px}
 .lab-range input::-webkit-slider-runnable-track{height:4px;border-radius:999px;background:#cfe1ff}
 .lab-range input::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-10px;border:2px solid #3d83c8;border-radius:50%;background:#f8fbff;box-sizing:border-box}
 .lab-range input::-moz-range-track{height:4px;border-radius:999px;background:#cfe1ff}
