@@ -12,8 +12,17 @@
     <!-- ===== 左侧一级导航 ===== -->
     <nav class="sidebar">
         <div class="sidebar-header">
-            <div class="logo">网址导航</div>
-            <div class="version">NJU-Hub v26.5</div>
+            <div class="sidebar-title-row">
+                <div class="logo">网址导航</div>
+                <button id="portal-sync-button" class="sidebar-sync-button ripple-container" type="button" aria-label="同步网址导航" title="同步网址导航">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M20 11a8 8 0 0 0-14.9-3L3 10"></path>
+                        <path d="M3 5v5h5"></path>
+                        <path d="M4 13a8 8 0 0 0 14.9 3L21 14"></path>
+                        <path d="M21 19v-5h-5"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
         <ul class="nav-menu" id="first-level-nav">
             <!-- JS 动态渲染 -->

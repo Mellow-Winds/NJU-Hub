@@ -25,7 +25,7 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <div class="logo">NJU-Hub</div>
-            <div class="version">v2.0.1</div>
+            <div class="version">v26.6</div>
         </div>
         <ul class="nav-menu">
             <li class="nav-group-header">个人</li>
@@ -77,20 +77,15 @@
         
 <!-- ===== about ===== -->
 <section id="section-about" class="settings-section">
-            <div class="card card-full">
-                <div class="divider">AI 配置教程</div>
-                <div class="about-tutorial">
-                    <p class="tutorial-step"><strong>1. 获取 API Key</strong> — 前往大模型服务提供商的开放平台注册并获取 API Key。常用提供商包括 SiliconCloud、OpenAI、智谱 AI 等。注册后在控制台创建 API Key 并复制。</p>
-                    <p class="tutorial-step"><strong>2. 配置 API Base URL</strong> — 将提供商提供的 API 地址填入对应模块的「API Base URL」输入框。通常格式为 <code>https://api.xxx.com/v1</code>，具体以提供商文档为准。</p>
-                    <p class="tutorial-step"><strong>3. 填写 API Key</strong> — 将步骤 1 获取的 Key 粘贴到「API Key」输入框中，该 Key 仅保存在你本地浏览器的插件存储中。</p>
-                    <p class="tutorial-step"><strong>4. 选择模型</strong> — 在「Model」输入框中填写模型名称（如 <code>Qwen/Qwen3-8B</code>）。请选择适用于课程分析的文本模型。</p>
-                    <p class="tutorial-step"><strong>5. 多个模块独立配置</strong> — 自动登录、选课助手模块的 AI 配置互相独立，你可以为不同模块使用不同的 API Key 和模型。</p>
+            <div class="about-link-grid">
+                <div class="card about-link-card">
+                    <div class="divider">AI 配置教程</div>
+                    <button id="btn-ai-config-tutorial" class="btn-small about-link-button" type="button">点击查看</button>
                 </div>
-            </div>
-
-            <div class="card">
-                <div class="divider">隐私政策</div>
-                <button id="btn-privacy-policy" class="btn-small" type="button" style="width:100%;">查看隐私政策</button>
+                <div class="card about-link-card">
+                    <div class="divider">隐私政策</div>
+                    <button id="btn-privacy-policy" class="btn-small about-link-button" type="button">点击查看</button>
+                </div>
             </div>
 
             <div class="card">
@@ -103,6 +98,16 @@
                 <p class="tutorial-step" style="font-size:15px;font-weight:700;color:var(--md-sys-color-primary);">QQ：2860339144</p>
                 <p class="tutorial-step" style="font-size:15px;font-weight:700;color:var(--md-sys-color-primary);">Mail：251250226@smail.nju.edu.cn</p>
             </div>
+
+            <template id="ai-config-tutorial-template">
+                <div class="about-tutorial">
+                    <p class="tutorial-step"><strong>1. 获取 API Key</strong> — 前往大模型服务提供商的开放平台注册并获取 API Key。常用提供商包括 SiliconCloud、OpenAI、智谱 AI 等。注册后在控制台创建 API Key 并复制。</p>
+                    <p class="tutorial-step"><strong>2. 配置 API Base URL</strong> — 将提供商提供的 API 地址填入对应模块的「API Base URL」输入框。通常格式为 <code>https://api.xxx.com/v1</code>，具体以提供商文档为准。</p>
+                    <p class="tutorial-step"><strong>3. 填写 API Key</strong> — 将步骤 1 获取的 Key 粘贴到「API Key」输入框中，该 Key 仅保存在你本地浏览器的插件存储中。</p>
+                    <p class="tutorial-step"><strong>4. 选择模型</strong> — 在「Model」输入框中填写模型名称（如 <code>Qwen/Qwen3-8B</code>）。请选择适用于课程分析的文本模型。</p>
+                    <p class="tutorial-step"><strong>5. 多个模块独立配置</strong> — 自动登录、选课助手模块的 AI 配置互相独立，你可以为不同模块使用不同的 API Key 和模型。</p>
+                </div>
+            </template>
         </section>
 
 <!-- ===== course ===== -->
@@ -142,6 +147,7 @@
                     </div>
                     <div id="course-own-ai-config" style="display:none;">
                     <div class="divider" style="margin-top:16px;">自用AI设置</div>
+                    <div class="field-group-stack">
                     <div class="form-group">
                         <label class="floating-field">
                             <input type="text" id="course-major" placeholder="此处填写您的专业">
@@ -178,6 +184,7 @@
                             <input type="text" id="course-model" placeholder=" ">
                             <span class="field-label">Model</span>
                         </label>
+                    </div>
                     </div>
                     </div>
                 </div>
@@ -267,6 +274,7 @@
 <!-- ===== general ===== -->
 <section id="section-general" class="settings-section active">
             <div class="card">
+                <div class="field-group-stack">
                 <div class="form-group">
                     <label class="floating-field">
                         <input type="text" id="common-name" placeholder="应该如何称呼您？">
@@ -291,6 +299,7 @@
                         </div>
                         <span class="field-label">统一认证密码</span>
                     </label>
+                    </div>
                 </div>
             </div>
         </section>
@@ -452,32 +461,31 @@
                     </div>
                 </div>
 
-                <div class="divider">背景与材质</div>
-                <div class="wallpaper-picker">
-                    <div class="wallpaper-preview" id="ui-wallpaper-preview" role="img" aria-label="壁纸预览">
-                        <div class="wallpaper-preview-scrim"></div>
-                        <span class="wallpaper-preview-label">未选择壁纸</span>
+                <div class="wallpaper-settings">
+                    <div class="divider">背景与材质</div>
+                    <div class="wallpaper-picker">
+                        <div class="wallpaper-preview" id="ui-wallpaper-preview" role="img" aria-label="壁纸预览">
+                            <div class="wallpaper-preview-scrim"></div>
+                            <span class="wallpaper-preview-label">未选择壁纸</span>
+                        </div>
+                        <div class="wallpaper-actions">
+                            <button type="button" class="btn-small wallpaper-select-btn" id="ui-wallpaper-select">选择壁纸</button>
+                            <button id="ui-wallpaper-clear" class="btn-small wallpaper-clear-btn" type="button" hidden>清除壁纸</button>
+                        </div>
+                        <input id="ui-wallpaper-input" class="visually-hidden" type="file" accept="image/*">
                     </div>
-                    <div class="wallpaper-actions">
-                        <button type="button" class="btn-small wallpaper-select-btn" id="ui-wallpaper-select">选择壁纸</button>
-                        <button id="ui-wallpaper-clear" class="btn-small wallpaper-clear-btn" type="button" hidden>清除壁纸</button>
-                    </div>
-                    <input id="ui-wallpaper-input" class="visually-hidden" type="file" accept="image/*">
-                    <p id="ui-wallpaper-status" class="hint-text wallpaper-status" role="status" aria-live="polite">支持常见图片格式，图片会自动压缩后保存。</p>
                 </div>
 
                 <div class="material-mode-switches" aria-label="卡片材质模式">
                     <div class="toggle-group">
                         <div class="toggle-info">
                             <span class="label">更好的卡片</span>
-                            <p class="hint-text">不透光，边界更清晰。</p>
                         </div>
                         <label class="switch"><input type="checkbox" id="ui-better-card-mode" aria-label="更好的卡片"><span class="slider round"></span></label>
                     </div>
                     <div class="toggle-group">
                         <div class="toggle-info">
                             <span class="label">液态玻璃</span>
-                            <p class="hint-text">背景透过卡片，并保留模糊与边缘高光。</p>
                         </div>
                         <label class="switch"><input type="checkbox" id="ui-glass-mode" aria-label="液态玻璃"><span class="slider round"></span></label>
                     </div>
@@ -520,6 +528,7 @@
 <script src="../libs/nju-modal.js"></script>
 <script src="material-color-utils.js"></script>
 <script src="material-laboratory.js"></script>
+<script src="../scripts/material-global.js"></script>
 <script src="options.js"></script>
   
   <script src="modules/course.js"></script>

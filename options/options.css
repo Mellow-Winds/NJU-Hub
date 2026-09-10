@@ -1388,6 +1388,36 @@ html[data-theme="dark"] .hint-text {
     animation: saveToast var(--md-sys-motion-duration-medium4) var(--md-sys-motion-spring);
 }
 
+.theme-mode-notice {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    z-index: 1000;
+    max-width: min(440px, calc(100vw - 32px));
+    padding: 12px 18px;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: 999px;
+    color: var(--md-sys-color-inverse-on-surface);
+    background: var(--md-sys-color-inverse-surface);
+    box-shadow: 0 10px 28px rgba(20, 33, 43, .2);
+    font-size: 13px;
+    line-height: 1.45;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 12px);
+    transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard), transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized-decelerate);
+}
+
+.theme-mode-notice.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .theme-mode-notice { transition-duration: .01ms; }
+}
+
 /* ── Reveal Animation (page load) ──────────────────────────────── */
 @keyframes akariMotionReveal {
     from {
@@ -1416,6 +1446,26 @@ html[data-font="system"] body {
 }
 
 /* ── About Section ─────────────────────────────────────────────── */
+.about-link-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    width: 100%;
+    max-width: 760px;
+}
+
+.about-link-grid .card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    max-width: none;
+    margin-bottom: 0;
+}
+
+.about-link-button {
+    width: 100%;
+}
+
 .about-tutorial {
     display: flex;
     flex-direction: column;
@@ -1459,6 +1509,12 @@ html[data-font="system"] body {
     color: var(--md-sys-color-on-surface-variant);
     font-size: inherit;
     font-weight: 400;
+}
+
+@media (max-width: 700px) {
+    .about-link-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .floating-field input,

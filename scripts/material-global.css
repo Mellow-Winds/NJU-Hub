@@ -46,6 +46,35 @@ html[data-nju-material-page="popup"] body {
     background-image: none !important;
 }
 
+/* Liquid glass without a user wallpaper gets a generated theme-colored
+   substrate. It lives behind every supported material surface, including
+   the popup where the body otherwise paints over the document background. */
+html[data-nju-gradient-enabled="true"] {
+    background-image:
+        radial-gradient(circle at 88% 10%, color-mix(in srgb, var(--nju-global-gradient-c, #e4d9ff) 76%, transparent), transparent 58%),
+        radial-gradient(circle at 10% 88%, color-mix(in srgb, var(--nju-global-gradient-a, #d9f4ff) 70%, transparent), transparent 60%),
+        linear-gradient(var(--nju-global-gradient-angle, 135deg), var(--nju-global-gradient-a, #d9f4ff), var(--nju-global-gradient-b, #f5dcf4) 52%, var(--nju-global-gradient-c, #e4d9ff));
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+html[data-nju-gradient-enabled="true"] body {
+    background: transparent !important;
+    background-image: none !important;
+}
+
+html[data-nju-gradient-enabled="true"] :is(
+    .akari-layout, .akari-content, .portal-container, .app-shell
+) {
+    background: transparent !important;
+}
+
+html[data-nju-material-page="extension"][data-nju-gradient-enabled="true"] body:has(#section-personalize.active)::before {
+    background: transparent !important;
+}
+
+/* Popup cards and quick actions use the same translucent controls as options. */
 html[data-nju-material-page="popup"][data-nju-global-mode="liquid-glass"] .card {
     background:
         linear-gradient(135deg, rgba(255, 255, 255, .34), rgba(255, 255, 255, .12) 48%, rgba(255, 255, 255, .2)),
@@ -54,6 +83,30 @@ html[data-nju-material-page="popup"][data-nju-global-mode="liquid-glass"] .card 
     box-shadow: 0 18px 40px rgba(20, 33, 43, .14), inset 0 1px 0 rgba(255, 255, 255, .86) !important;
     backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(165%) !important;
     -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(165%) !important;
+}
+
+html[data-nju-material-page="popup"][data-nju-global-mode="liquid-glass"] .primary-btn {
+    background: #ffffff52 !important;
+    border: 1px solid #ffffff9c !important;
+    border-radius: 999px !important;
+    color: var(--md-sys-color-on-surface) !important;
+    box-shadow: inset 0 1px 0 #ffffff8c, 0 8px 20px #14212b18 !important;
+    backdrop-filter: blur(14px) saturate(135%) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(135%) !important;
+}
+html[data-nju-material-page="popup"][data-nju-global-mode="liquid-glass"] .primary-btn:hover {
+    background: #ffffff70 !important;
+    color: var(--md-sys-color-on-surface) !important;
+    box-shadow: inset 0 1px 0 #ffffff9c, 0 10px 24px #14212b20 !important;
+}
+html[data-nju-material-page="popup"][data-nju-global-mode="liquid-glass"] .primary-btn:active {
+    background: #ffffff5c !important;
+    filter: none !important;
+    transform: scale(.97);
+}
+html[data-nju-material-page="popup"][data-nju-global-mode="liquid-glass"] .primary-btn:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary) !important;
+    outline-offset: 3px;
 }
 
 html[data-nju-material-page="popup"] .feature-row {
@@ -69,6 +122,77 @@ html[data-nju-global-mode="liquid-glass"] {
 html[data-nju-global-mode="liquid-glass"] {
     --nju-global-border: rgba(255, 255, 255, .68);
     --nju-global-shadow: 0 18px 42px rgba(20, 33, 43, .18), inset 0 1px 0 rgba(255, 255, 255, .72), inset 1px 0 0 rgba(255, 255, 255, .24);
+}
+
+/* Webportal keeps its left navigation as a first-class material surface.
+   The right side is an open canvas; only the segmented tabs and link cards
+   establish grouping. */
+html[data-nju-material-page="webportal"][data-nju-global-mode="enhanced"] .sidebar {
+    background: var(--md-sys-color-surface-container-lowest) !important;
+    border: 1px solid #70818d !important;
+    box-shadow: 0 16px 36px #17222d24 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+html[data-nju-material-page="webportal"][data-nju-global-mode="enhanced"] .tabs-list {
+    background: #f7f9fc !important;
+    border-color: var(--nju-global-border) !important;
+    box-shadow: var(--nju-global-shadow) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+html[data-nju-material-page="webportal"][data-nju-global-mode="liquid-glass"] .sidebar {
+    background: color-mix(in srgb, #f9f9ff 34%, transparent) !important;
+    border-color: #ffffff9c !important;
+    box-shadow: 0 18px 42px #14212b24, inset 0 1px 0 #ffffffb8, inset 1px 0 0 #ffffff45 !important;
+    backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(135%) !important;
+    -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(135%) !important;
+}
+html[data-nju-material-page="webportal"][data-nju-global-mode="liquid-glass"] .tabs-list {
+    background:
+        linear-gradient(135deg, #ffffff3d, transparent 46%, #ffffff14),
+        color-mix(in srgb, #f9f9ff min(var(--nju-global-opacity, 68%), 82%), transparent) !important;
+    border-color: #ffffffad !important;
+    box-shadow: 0 18px 42px #14212b2e, inset 0 1px 0 #ffffffb8 !important;
+    backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%) !important;
+}
+html[data-nju-material-page="webportal"][data-nju-global-mode="enhanced"] .sidebar-sync-button {
+    background: #f7f9fc !important;
+    border-color: #70818d !important;
+    color: var(--md-sys-color-on-surface-variant) !important;
+    box-shadow: 0 4px 10px #17222d18 !important;
+}
+html[data-nju-material-page="webportal"][data-nju-global-mode="liquid-glass"] .sidebar-sync-button {
+    background: #ffffff52 !important;
+    border-color: #ffffff9c !important;
+    color: var(--md-sys-color-on-surface) !important;
+    box-shadow: inset 0 1px 0 #ffffff8c, 0 8px 20px #14212b18 !important;
+    backdrop-filter: blur(14px) saturate(135%) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(135%) !important;
+}
+html[data-nju-material-page="webportal"][data-nju-global-mode="liquid-glass"] .sidebar-sync-button:hover {
+    background: #ffffff70 !important;
+}
+html[data-nju-material-page="webportal"][data-nju-global-mode="liquid-glass"] .nav-item.active {
+    background: #ffffff52 !important;
+    color: var(--md-sys-color-on-surface) !important;
+    box-shadow: inset 0 1px 0 #ffffff8c, 0 8px 20px #14212b18 !important;
+    filter: none !important;
+}
+html[data-nju-material-page="webportal"][data-nju-global-mode="liquid-glass"] .nav-item:hover {
+    background: #ffffff38 !important;
+    color: var(--md-sys-color-on-surface) !important;
+}
+html[data-nju-material-page="webportal"][data-nju-global-mode="enhanced"] .tab-item.active {
+    background: var(--md-sys-color-primary-container) !important;
+    color: var(--md-sys-color-on-primary-container) !important;
+}
+html[data-nju-material-page="webportal"][data-nju-global-mode="liquid-glass"] .tab-item.active {
+    background: rgba(255, 255, 255, .46) !important;
+    border: 1px solid rgba(255, 255, 255, .72) !important;
+    color: var(--md-sys-color-on-surface) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .64), 0 5px 12px rgba(20, 33, 43, .1);
 }
 
 html[data-nju-global-mode="enhanced"] :is(
@@ -239,6 +363,11 @@ html[data-nju-material-page="popup"][data-theme="dark"][data-nju-global-mode="de
     background: #000 !important;
     background-image: none !important;
 }
+html[data-nju-material-page="red-black"][data-theme="dark"][data-nju-global-mode="default"][data-nju-wallpaper-enabled="false"],
+html[data-nju-material-page="red-black"][data-theme="dark"][data-nju-global-mode="default"][data-nju-wallpaper-enabled="false"] body {
+    background: #000 !important;
+    background-image: none !important;
+}
 
 /* The campus selector is itself a material surface in liquid-glass mode.
    Keep the selected segment readable without introducing a second opaque
@@ -365,4 +494,121 @@ html[data-nju-global-mode="liquid-glass"] .nju-auto-login-notice {
     box-shadow: 0 14px 32px rgba(20, 33, 43, .18), inset 0 1px 0 rgba(255, 255, 255, .86) !important;
     backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%) !important;
     -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%) !important;
+}
+
+/* Sync and course-system notices use the same material language as the
+   surfaces they report on. Keep the xk status stripe supplied by its type. */
+html[data-nju-global-mode="enhanced"] .sync-message,
+html[data-nju-global-mode="enhanced"] .xk-bubble {
+    background: #f7f9fc !important;
+    box-shadow: var(--nju-global-shadow) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+html[data-nju-global-mode="enhanced"] .sync-message,
+html[data-nju-global-mode="enhanced"] .xk-bubble {
+    border-top-color: var(--nju-global-border) !important;
+    border-right-color: var(--nju-global-border) !important;
+    border-bottom-color: var(--nju-global-border) !important;
+}
+html[data-nju-global-mode="liquid-glass"] .sync-message,
+html[data-nju-global-mode="liquid-glass"] .xk-bubble {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .3), transparent 48%, rgba(255, 255, 255, .1)),
+        color-mix(in srgb, #f9f9ff min(var(--nju-global-opacity, 68%), 82%), transparent) !important;
+    box-shadow: var(--nju-global-shadow) !important;
+    backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%) !important;
+}
+html[data-nju-global-mode="liquid-glass"] .sync-message,
+html[data-nju-global-mode="liquid-glass"] .xk-bubble {
+    border-top-color: var(--nju-global-border) !important;
+    border-right-color: var(--nju-global-border) !important;
+    border-bottom-color: var(--nju-global-border) !important;
+}
+html[data-nju-global-mode="enhanced"] .xk-bubble-danger,
+html[data-nju-global-mode="liquid-glass"] .xk-bubble-danger {
+    border-left-color: #ff3b30 !important;
+}
+html[data-nju-global-mode="enhanced"] .xk-bubble-warning,
+html[data-nju-global-mode="liquid-glass"] .xk-bubble-warning {
+    border-left-color: #ff9500 !important;
+}
+html[data-nju-global-mode="enhanced"] .xk-bubble-success,
+html[data-nju-global-mode="liquid-glass"] .xk-bubble-success {
+    border-left-color: #34c759 !important;
+}
+html[data-nju-global-mode="enhanced"] .xk-bubble-info,
+html[data-nju-global-mode="liquid-glass"] .xk-bubble-info {
+    border-left-color: #007aff !important;
+}
+
+/* Red-black search controls are compact material objects, not text pills. */
+html[data-nju-material-page="red-black"][data-nju-global-mode="enhanced"] :is(.search-button, .icon-button) {
+    background: #f7f9fc !important;
+    border-color: var(--nju-global-border) !important;
+    box-shadow: var(--nju-global-shadow) !important;
+}
+html[data-nju-material-page="red-black"][data-nju-global-mode="liquid-glass"] :is(.search-button, .icon-button) {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .34), rgba(255, 255, 255, .12) 52%, rgba(255, 255, 255, .22)),
+        color-mix(in srgb, #f9f9ff 36%, transparent) !important;
+    border-color: rgba(255, 255, 255, .84) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .82), 0 10px 24px rgba(20, 33, 43, .14) !important;
+    backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(155%) !important;
+    -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(155%) !important;
+}
+html[data-nju-material-page="red-black"][data-nju-global-mode="enhanced"] .topbar {
+    background: #f7f9fc !important;
+    box-shadow: var(--nju-global-shadow) !important;
+}
+html[data-nju-material-page="red-black"][data-nju-global-mode="liquid-glass"] .topbar {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .42), rgba(255, 255, 255, .18) 52%, rgba(255, 255, 255, .28)),
+        color-mix(in srgb, #f9f9ff 68%, transparent) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .86), 0 10px 28px rgba(20, 33, 43, .12) !important;
+    backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(150%) !important;
+}
+html[data-nju-material-page="red-black"][data-nju-global-mode="enhanced"] .nav-links :is(.nav-link, .theme-toggle) {
+    border: 1px solid var(--nju-global-border) !important;
+    color: var(--md-sys-color-on-surface) !important;
+    background: #f7f9fc !important;
+    box-shadow: var(--nju-global-shadow) !important;
+}
+html[data-nju-material-page="red-black"][data-nju-global-mode="enhanced"] .nav-links .nav-link.active {
+    color: var(--md-sys-color-on-primary-container) !important;
+    background: var(--md-sys-color-primary-container) !important;
+}
+html[data-nju-material-page="red-black"][data-nju-global-mode="liquid-glass"] .nav-links :is(.nav-link, .theme-toggle) {
+    border: 1px solid rgba(255, 255, 255, .78) !important;
+    color: var(--md-sys-color-on-surface) !important;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .34), rgba(255, 255, 255, .12) 52%, rgba(255, 255, 255, .22)),
+        color-mix(in srgb, #f9f9ff 34%, transparent) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .78), 0 8px 20px rgba(20, 33, 43, .12) !important;
+    backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(155%) !important;
+    -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(155%) !important;
+}
+html[data-nju-material-page="red-black"][data-nju-global-mode="liquid-glass"] .nav-links .nav-link.active {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .54), rgba(255, 255, 255, .22)) !important;
+    color: var(--md-sys-color-on-surface) !important;
+}
+
+/* The standalone material shells should use the full available viewport.
+   Keep their inner gutters, but do not leave an unused right rail. */
+html[data-nju-material-page="red-black"][data-nju-global-mode] .app-shell {
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+    padding-right: 0;
+}
+html[data-nju-material-page="webportal"][data-nju-global-mode] .portal-container {
+    width: 100%;
+    max-width: none;
+    padding-right: 0;
+}
+html[data-nju-material-page="webportal"][data-nju-global-mode] .portal-container.akari-layout {
+    padding-right: 0;
 }

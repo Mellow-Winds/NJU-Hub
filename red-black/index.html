@@ -12,7 +12,7 @@
     <header class="topbar">
         <a class="brand" href="#search-view" data-view-link="search-view" aria-label="回到红黑榜搜索">
             <img class="brand-logo" src="../icons/icon128.png" alt="NJU-Hub">
-            <span class="brand-text"><strong>NJU-Hub</strong><small>课程红黑榜</small></span>
+            <span class="brand-text"><strong>课程红黑榜</strong></span>
         </a>
         <nav class="nav-links" aria-label="主导航">
             <button class="nav-link active" type="button" data-view-link="search-view">搜索</button>
@@ -30,11 +30,6 @@
 
     <main class="content">
         <section class="view active" id="search-view">
-            <div class="view-heading">
-                <h1>课程红黑榜</h1>
-                <p>搜索课程名称或老师，看看大家怎么评价。</p>
-            </div>
-
             <section class="search-card card" aria-label="课程搜索">
                 <form class="search-form" id="search-form">
                     <label class="floating-field floating-field-wide">
@@ -45,14 +40,18 @@
                         <input id="teacher" name="teacher" type="search" placeholder=" " autocomplete="off">
                         <span>老师</span>
                     </label>
-                    <button class="filled-button ripple-container" type="submit"><svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m16 16 4.3 4.3"></path></svg><span>搜索</span></button>
+                    <button class="filled-button search-button ripple-container" type="submit" aria-label="搜索" title="搜索"><svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m16 16 4.3 4.3"></path></svg></button>
                 </form>
                 <div class="search-helper">
                     <span>支持课程名称、老师和简称模糊搜索</span>
                     <div class="search-actions">
-                        <button class="text-button ripple-container" id="clear-button" type="button">清空条件</button>
-                        <button class="text-button ripple-container" id="show-all-button" type="button">显示所有</button>
+                        <button class="icon-button action-button ripple-container" id="clear-button" type="button" aria-label="清空条件" title="清空条件"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg><span>清空条件</span></button>
+                        <button class="icon-button action-button ripple-container" id="show-all-button" type="button" aria-label="显示所有" title="显示所有"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"></rect><rect x="14" y="4" width="6" height="6" rx="1"></rect><rect x="4" y="14" width="6" height="6" rx="1"></rect><rect x="14" y="14" width="6" height="6" rx="1"></rect></svg><span>显示所有</span></button>
                     </div>
+                </div>
+                <div class="search-status" aria-live="polite">
+                    <span id="result-summary">—</span>
+                    <span class="data-status"><i></i> <span id="data-source-label">课程评价库</span></span>
                 </div>
             </section>
 
@@ -61,7 +60,6 @@
                     <div>
                         <h2 id="results-title">搜索结果</h2>
                     </div>
-                    <div class="result-meta"><span id="result-summary">—</span><span class="data-status"><i></i> <span id="data-source-label">课程评价库</span></span></div>
                 </div>
                 <div class="results-grid" id="results-grid"></div>
             </section>

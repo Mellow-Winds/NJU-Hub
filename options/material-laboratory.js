@@ -49,10 +49,8 @@
         host.innerHTML = `
             <div class="lab-page"><div class="lab-card lab-controls" aria-labelledby="material-laboratory-title">
                 <div class="lab-controls-heading">
-                    <h3 id="material-laboratory-title">材质调校</h3>
-                    <span>即时生效</span>
+                    <h3 id="material-laboratory-title">细节打磨</h3>
                 </div>
-                <p class="lab-controls-intro">用同一组颜色，改变表面的厚度。</p>
                 <div class="lab-mode-list" role="group" aria-label="卡片材质">
                     <label><input type="radio" name="lab-mode" value="default">普通卡片</label>
                     <label><input type="radio" name="lab-mode" value="enhanced">更好的卡片</label>
@@ -72,7 +70,6 @@
                     <label><span>降低透明度</span><input id="lab-reduced-transparency" type="checkbox"></label>
                     <label><span>减少动态效果</span><input id="lab-still" type="checkbox"></label>
                 </div>
-                <p id="lab-status" class="lab-caption" role="status" aria-live="polite"></p>
                 <button type="button" class="lab-reset btn-small" data-lab-action="reset">恢复默认材质</button>
             </div></div>`;
     };
@@ -119,10 +116,11 @@
         if (glass) glass.checked = state.mode === 'liquid-glass';
         const darkToggle = document.getElementById('ui-dark-mode');
         if (darkToggle) {
-            darkToggle.disabled = state.mode !== 'default';
-            darkToggle.setAttribute('aria-disabled', String(darkToggle.disabled));
-            darkToggle.title = darkToggle.disabled ? '暗夜模式仅适用于普通卡片' : '';
-            if (darkToggle.disabled) darkToggle.checked = false;
+            const blocked = state.mode !== 'default';
+            darkToggle.disabled = false;
+            darkToggle.setAttribute('aria-disabled', String(blocked));
+            darkToggle.title = blocked ? '请先关闭当前材质模式' : '';
+            if (blocked) darkToggle.checked = false;
         }
         document.querySelectorAll('[name="lab-mode"]').forEach(input => {
             input.checked = input.value === state.mode;
@@ -141,14 +139,6 @@
         if (blurValue) blurValue.textContent = `${state.blur} px`;
         if (opacityValue) opacityValue.textContent = `${state.opacity}%`;
 
-        const status = document.getElementById('lab-status');
-        if (status) {
-            status.textContent = state.mode === 'default'
-                ? '关闭增强材质，显示默认卡片。'
-                : state.mode === 'enhanced'
-                    ? '更好的卡片：不透光，边界更清晰。'
-                    : '液态玻璃：背景透过卡片，模糊和高光保持开启。';
-        }
     };
 
     const saveConfig = () => {
@@ -176,8 +166,7 @@
             if (state.mode !== 'default') nextValues.ui_theme_mode = 'light';
             await storageCall(chrome.storage.sync, 'set', nextValues);
         } catch (error) {
-            const status = document.getElementById('lab-status');
-            if (status) status.textContent = `材质状态保存失败：${error.message}`;
+            console.warn('材质状态保存失败：', error);
         }
     };
 
@@ -321,10 +310,7 @@
             if (area === 'sync' && (changes[MODE_KEY] || changes[CONFIG_KEY] || changes[WALLPAPER_ENABLED_KEY])) loadState().catch(() => {});
             if (area === 'local' && changes[WALLPAPER_DATA_KEY]) loadState().catch(() => {});
         });
-        loadState().catch((error) => {
-            const status = document.getElementById('lab-status');
-            if (status) status.textContent = `材质配置读取失败，已使用默认材质：${error.message}`;
-        });
+        loadState().catch((error) => console.warn('材质配置读取失败，已使用默认材质：', error));
     };
 
     document.addEventListener('DOMContentLoaded', mount, { once: true });

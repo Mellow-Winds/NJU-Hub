@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initNav();
     initTheme();
     initRipples();
+    initPortalSync();
 });
 
 // ===== 0. 加载导航数据（三层策略：storage → GitHub → 内置回退） =====
@@ -84,6 +85,55 @@ function refreshPortalInBackground() {
         }
     }).catch(e => {
         console.warn('[NJU-Hub] 网址导航: 后台刷新失败', e);
+    });
+}
+
+function initPortalSync() {
+    const button = document.getElementById('portal-sync-button');
+    if (!button) return;
+
+    const defaultTitle = button.title || '同步网址导航';
+    const defaultLabel = button.getAttribute('aria-label') || defaultTitle;
+
+    button.addEventListener('click', async () => {
+        if (button.disabled) return;
+
+        button.disabled = true;
+        button.classList.add('syncing');
+        button.title = '正在同步网址导航';
+        button.setAttribute('aria-label', '正在同步网址导航');
+
+        try {
+            const remote = await fetchPortalFromGitHub();
+            if (!Array.isArray(remote) || remote.length === 0) {
+                throw new Error('远程网址导航数据为空');
+            }
+
+            portalData = remote;
+            await chrome.storage.local.set({
+                NJU_PORTAL: remote,
+                NJU_PORTAL_LAST_FETCH: Date.now()
+            });
+
+            if (!portalData.some(item => item.id === currentFirstId)) {
+                currentFirstId = portalData[0]?.id || '';
+            }
+            initNav();
+
+            button.title = '网址导航同步完成';
+            button.setAttribute('aria-label', '网址导航同步完成');
+        } catch (error) {
+            console.warn('[NJU-Hub] 网址导航: 手动同步失败', error);
+            button.title = '同步失败，点击重试';
+            button.setAttribute('aria-label', '同步失败，点击重试');
+        } finally {
+            button.disabled = false;
+            button.classList.remove('syncing');
+            window.setTimeout(() => {
+                button.title = defaultTitle;
+                button.setAttribute('aria-label', defaultLabel);
+            }, 1800);
+        }
     });
 }
 

@@ -45,32 +45,31 @@
                     </div>
                 </div>
 
-                <div class="divider">背景与材质</div>
-                <div class="wallpaper-picker">
-                    <div class="wallpaper-preview" id="ui-wallpaper-preview" role="img" aria-label="壁纸预览">
-                        <div class="wallpaper-preview-scrim"></div>
-                        <span class="wallpaper-preview-label">未选择壁纸</span>
+                <div class="wallpaper-settings">
+                    <div class="divider">背景与材质</div>
+                    <div class="wallpaper-picker">
+                        <div class="wallpaper-preview" id="ui-wallpaper-preview" role="img" aria-label="壁纸预览">
+                            <div class="wallpaper-preview-scrim"></div>
+                            <span class="wallpaper-preview-label">未选择壁纸</span>
+                        </div>
+                        <div class="wallpaper-actions">
+                            <button type="button" class="btn-small wallpaper-select-btn" id="ui-wallpaper-select">选择壁纸</button>
+                            <button id="ui-wallpaper-clear" class="btn-small wallpaper-clear-btn" type="button" hidden>清除壁纸</button>
+                        </div>
+                        <input id="ui-wallpaper-input" class="visually-hidden" type="file" accept="image/*">
                     </div>
-                    <div class="wallpaper-actions">
-                        <button type="button" class="btn-small wallpaper-select-btn" id="ui-wallpaper-select">选择壁纸</button>
-                        <button id="ui-wallpaper-clear" class="btn-small wallpaper-clear-btn" type="button" hidden>清除壁纸</button>
-                    </div>
-                    <input id="ui-wallpaper-input" class="visually-hidden" type="file" accept="image/*">
-                    <p id="ui-wallpaper-status" class="hint-text wallpaper-status" role="status" aria-live="polite">支持常见图片格式，图片会自动压缩后保存。</p>
                 </div>
 
                 <div class="material-mode-switches" aria-label="卡片材质模式">
                     <div class="toggle-group">
                         <div class="toggle-info">
                             <span class="label">更好的卡片</span>
-                            <p class="hint-text">不透光，边界更清晰。</p>
                         </div>
                         <label class="switch"><input type="checkbox" id="ui-better-card-mode" aria-label="更好的卡片"><span class="slider round"></span></label>
                     </div>
                     <div class="toggle-group">
                         <div class="toggle-info">
                             <span class="label">液态玻璃</span>
-                            <p class="hint-text">背景透过卡片，并保留模糊与边缘高光。</p>
                         </div>
                         <label class="switch"><input type="checkbox" id="ui-glass-mode" aria-label="液态玻璃"><span class="slider round"></span></label>
                     </div>

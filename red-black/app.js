@@ -12,6 +12,9 @@ const CACHE_KEY = 'NJU_DB';
 const LAST_SYNC_KEY = 'NJU_COURSE_RATINGS_LAST_SYNC';
 const INITIALIZED_KEY = 'NJU_DB_INITIALIZED';
 const RESULT_PAGE_SIZE = 90;
+const MATERIAL_MODE_KEY = 'ui_material_mode';
+const WALLPAPER_ENABLED_KEY = 'ui_wallpaper_enabled';
+const VALID_MATERIAL_MODES = new Set(['default', 'enhanced', 'liquid-glass']);
 const SEARCH_ALIASES = {
   '线代': ['线性代数'],
   '高数': ['高等数学', '微积分'],
@@ -31,6 +34,12 @@ const state = {
   lastDialogTrigger: null,
   loadedFrom: '示例数据',
   syncTimer: null
+};
+
+const themePolicy = {
+  materialMode: 'default',
+  wallpaperEnabled: false,
+  color: '#0ea5e9'
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -206,7 +215,9 @@ function renderSearchIdle() {
   section.hidden = true;
   state.renderedCount = 0;
   $('#results-title').textContent = '搜索结果';
-  $('#result-summary').textContent = '请输入搜索条件';
+  $('#result-summary').textContent = state.courses.length
+    ? `${formatNumber(state.courses.length)} 门课程`
+    : '请输入搜索条件';
   $('#results-grid').innerHTML = '';
 }
 
@@ -343,26 +354,56 @@ function fetchCloudJson() {
 
 function initTheme() {
   if (typeof chrome !== 'undefined' && chrome.storage?.sync) {
-    chrome.storage.sync.get(['ui_theme_color', 'ui_theme_mode'], (data) => applyTheme(data.ui_theme_color || '#0ea5e9', data.ui_theme_mode === 'dark'));
+    const refreshTheme = (notify = false) => {
+      chrome.storage.sync.get(['ui_theme_color', 'ui_theme_mode', MATERIAL_MODE_KEY, WALLPAPER_ENABLED_KEY], (data) => {
+        const wasDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        themePolicy.materialMode = VALID_MATERIAL_MODES.has(data[MATERIAL_MODE_KEY]) ? data[MATERIAL_MODE_KEY] : 'default';
+        themePolicy.wallpaperEnabled = data[WALLPAPER_ENABLED_KEY] === true;
+        themePolicy.color = data.ui_theme_color || '#0ea5e9';
+        const requestedDark = data.ui_theme_mode === 'dark';
+        const dark = requestedDark && canUseDarkTheme();
+        applyTheme(themePolicy.color, dark);
+        if (requestedDark && !dark) {
+          chrome.storage.sync.set({ ui_theme_mode: 'light' });
+          if (notify || wasDark) showSyncMessage('夜间模式仅适用于普通卡片且未启用壁纸。', 'error');
+        }
+      });
+    };
+    refreshTheme();
+    chrome.storage.onChanged?.addListener((changes, area) => {
+      if (area !== 'sync' || !(changes[MATERIAL_MODE_KEY] || changes[WALLPAPER_ENABLED_KEY] || changes.ui_theme_mode || changes.ui_theme_color)) return;
+      refreshTheme(true);
+    });
     return;
   }
-  applyTheme('#0ea5e9', localStorage.getItem('nju-hub-theme') === 'dark');
+  themePolicy.materialMode = 'default';
+  themePolicy.wallpaperEnabled = false;
+  themePolicy.color = '#0ea5e9';
+  applyTheme(themePolicy.color, localStorage.getItem('nju-hub-theme') === 'dark');
 }
 
 function toggleTheme() {
   const dark = document.documentElement.getAttribute('data-theme') !== 'dark';
-  const color = '#0ea5e9';
-  applyTheme(color, dark);
-  if (typeof chrome !== 'undefined' && chrome.storage?.sync) chrome.storage.sync.set({ ui_theme_color: color, ui_theme_mode: dark ? 'dark' : 'light' });
+  if (dark && !canUseDarkTheme()) {
+    showSyncMessage('夜间模式仅适用于普通卡片且未启用壁纸。', 'error');
+    return;
+  }
+  applyTheme(themePolicy.color, dark);
+  if (typeof chrome !== 'undefined' && chrome.storage?.sync) chrome.storage.sync.set({ ui_theme_color: themePolicy.color, ui_theme_mode: dark ? 'dark' : 'light' });
   else localStorage.setItem('nju-hub-theme', dark ? 'dark' : 'light');
 }
 
 function applyTheme(color, dark) {
-  document.documentElement.toggleAttribute('data-theme', dark);
-  if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+  const effectiveDark = Boolean(dark) && canUseDarkTheme();
+  document.documentElement.toggleAttribute('data-theme', effectiveDark);
+  if (effectiveDark) document.documentElement.setAttribute('data-theme', 'dark');
   else document.documentElement.removeAttribute('data-theme');
-  if (window.MaterialColorUtils) window.MaterialColorUtils.applyTheme(color, dark);
-  $('#theme-toggle').setAttribute('aria-label', dark ? '切换日间模式' : '切换夜间模式');
+  if (window.MaterialColorUtils) window.MaterialColorUtils.applyTheme(color, effectiveDark);
+  $('#theme-toggle').setAttribute('aria-label', effectiveDark ? '切换日间模式' : '切换夜间模式');
+}
+
+function canUseDarkTheme() {
+  return themePolicy.materialMode === 'default' && !themePolicy.wallpaperEnabled;
 }
 
 function updateStats() {

@@ -189,6 +189,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const normalizeMaterialMode = (mode) => VALID_MATERIAL_MODES.has(mode) ? mode : 'default';
 
+    let themeNoticeTimer = 0;
+    const showThemeNotice = (message) => {
+        let notice = document.getElementById('theme-mode-notice');
+        if (!notice) {
+            notice = document.createElement('div');
+            notice.id = 'theme-mode-notice';
+            notice.className = 'theme-mode-notice';
+            notice.setAttribute('role', 'alert');
+            document.body.appendChild(notice);
+        }
+        notice.textContent = message;
+        notice.classList.add('show');
+        window.clearTimeout(themeNoticeTimer);
+        themeNoticeTimer = window.setTimeout(() => notice.classList.remove('show'), 3000);
+    };
+
     const applyTheme = ({ color, mode }) => {
         const safeColor = (typeof color === 'string' && color.trim()) ? color.trim() : '#0ea5e9';
         const isDark = mode === 'dark' && _materialMode === 'default';
@@ -213,10 +229,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const darkToggle = document.getElementById('ui-dark-mode');
         if (darkToggle) {
-            darkToggle.disabled = _materialMode !== 'default';
+            const blocked = _materialMode !== 'default';
+            darkToggle.disabled = false;
             darkToggle.checked = isDark;
-            darkToggle.setAttribute('aria-disabled', String(darkToggle.disabled));
-            darkToggle.title = darkToggle.disabled ? '暗夜模式仅适用于普通卡片' : '';
+            darkToggle.setAttribute('aria-disabled', String(blocked));
+            darkToggle.title = blocked ? '请先关闭当前材质模式' : '';
+            if (blocked) darkToggle.checked = false;
         }
 
         document.querySelectorAll('.color-chip').forEach((btn) => {
@@ -355,9 +373,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Dark mode toggle
         const darkToggle = document.getElementById('ui-dark-mode');
         if (darkToggle) {
+            darkToggle.addEventListener('click', (event) => {
+                if (_materialMode === 'default') return;
+                event.preventDefault();
+                darkToggle.checked = false;
+                showThemeNotice('暗夜模式仅适用于普通卡片，请先关闭更好的卡片或液态玻璃。');
+            });
             darkToggle.addEventListener('change', async () => {
                 if (_materialMode !== 'default') {
                     darkToggle.checked = false;
+                    showThemeNotice('暗夜模式仅适用于普通卡片，请先关闭更好的卡片或液态玻璃。');
                     return;
                 }
                 const mode = darkToggle.checked ? 'dark' : 'light';
@@ -600,8 +625,16 @@ document.addEventListener('DOMContentLoaded', () => {
         initPortalModule();
     }
 
-    // 11. Privacy Policy Modal
+    // 11. About modals
     // ============================================================
+    const aiTutorialBtn = document.getElementById('btn-ai-config-tutorial');
+    if (aiTutorialBtn) {
+        aiTutorialBtn.onclick = () => {
+            const template = document.getElementById('ai-config-tutorial-template');
+            NjuModal.open('AI 配置教程', template?.innerHTML || '<p>暂无教程内容。</p>');
+        };
+    }
+
     const privacyBtn = document.getElementById('btn-privacy-policy');
     if (privacyBtn) {
         privacyBtn.onclick = () => {
