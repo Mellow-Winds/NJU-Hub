@@ -298,28 +298,88 @@ html[data-theme="dark"] {
     align-items: center;
 }
 
-.sidebar-github-link {
+.sidebar-social-links {
     display: flex;
     align-items: center;
-    gap: 8px;
-    color: var(--md-sys-color-on-surface-variant);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 8px 16px;
-    border-radius: 20px;
-    transition: background var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
-                color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+    justify-content: center;
+    gap: 10px;
 }
 
-.sidebar-github-link:hover {
+.sidebar-social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    color: var(--md-sys-color-on-surface-variant);
+    background: var(--md-sys-color-surface-container);
+    text-decoration: none;
+    transition: background var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+                color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+                transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-emphasized);
+}
+
+.sidebar-social-link:hover {
     background: var(--md-sys-color-surface-container-highest);
     color: var(--md-sys-color-on-surface);
 }
 
-.github-icon {
+.sidebar-social-link:active {
+    transform: scale(0.92);
+}
+
+.sidebar-social-link:focus-visible {
+    outline: 3px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+}
+
+.sidebar-social-icon {
     flex-shrink: 0;
-    opacity: 0.8;
+}
+
+/* Match the active sidebar navigation's translucent glass surface. */
+html[data-nju-mode="liquid-glass"] .sidebar-social-link {
+    background: #ffffff52;
+    border: none;
+    color: var(--md-sys-color-on-surface);
+    box-shadow: inset 0 1px 0 #ffffff8c, 0 8px 20px #14212b18;
+    backdrop-filter: blur(10px) saturate(135%);
+    -webkit-backdrop-filter: blur(10px) saturate(135%);
+}
+
+html[data-nju-mode="liquid-glass"] .sidebar-social-link:hover {
+    background: #ffffff70;
+}
+
+html[data-nju-mode="liquid-glass"] .sidebar-social-link:active {
+    background: #ffffff38;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar-social-link:active { transform: none; }
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+    html[data-nju-mode="liquid-glass"] .sidebar-social-link {
+        background: var(--md-sys-color-surface-container);
+        border-color: currentColor;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
+
+@media (forced-colors: active) {
+    html[data-nju-mode="liquid-glass"] .sidebar-social-link {
+        background: Canvas;
+        color: LinkText;
+        border-color: LinkText;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
 }
 
 /* ── Buttons ───────────────────────────────────────────────────── */
@@ -1473,6 +1533,29 @@ html[data-font="system"] body {
 
 .about-link-button {
     width: 100%;
+}
+
+.about-profile-card {
+    width: 100%;
+    max-width: 760px;
+}
+
+.about-profile-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    padding-top: 4px;
+}
+
+.about-profile-links a {
+    color: var(--md-sys-color-primary);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.about-profile-links a:hover {
+    text-decoration: underline;
 }
 
 .about-tutorial {

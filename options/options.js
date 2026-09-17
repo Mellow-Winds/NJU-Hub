@@ -180,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const MCU = window.MaterialColorUtils;
     const MATERIAL_MODE_KEY = 'ui_material_mode';
+    const SEASONAL_COLOR_KEY = 'ui_seasonal_color_enabled';
     const VALID_MATERIAL_MODES = new Set(['default', 'enhanced', 'liquid-glass']);
     let _materialMode = 'default';
     // Track the original source color to prevent tonal-palette drift
@@ -249,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fontDropdown) fontDropdown.setValue(nextFont, true);
     };
 
-    const UI_KEYS = ['ui_theme_color', 'ui_theme_mode', 'ui_font_family', MATERIAL_MODE_KEY];
+    const UI_KEYS = ['ui_theme_color', 'ui_theme_mode', 'ui_font_family', MATERIAL_MODE_KEY, SEASONAL_COLOR_KEY];
     const uiStorage = chrome.storage.sync;
 
     const refreshThemeForMaterialMode = () => {
@@ -267,6 +268,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (area !== 'sync') return;
         if (changes[MATERIAL_MODE_KEY] || changes.ui_theme_mode || changes.ui_theme_color) {
             refreshThemeForMaterialMode();
+        }
+        if (changes[SEASONAL_COLOR_KEY]) {
+            const seasonalToggle = document.getElementById('ui-seasonal-color');
+            if (seasonalToggle) seasonalToggle.checked = changes[SEASONAL_COLOR_KEY].newValue === true;
         }
     });
 
@@ -400,6 +405,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 await persistFont(val);
             });
         }
+
+        // Seasonal color toggle
+        const seasonalToggle = document.getElementById('ui-seasonal-color');
+        if (seasonalToggle) {
+            seasonalToggle.addEventListener('change', async () => {
+                await uiStorage.set({ [SEASONAL_COLOR_KEY]: seasonalToggle.checked });
+            });
+        }
     };
 
     bindPersonalize();
@@ -421,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'toggle-lms',
         'lms_video_remove_restrict', 'lms_video_autojump',
         'lms_dl_default_all', 'lms_dl_show_checkbox',
-        'toggle-seec-workpanel'
+        'toggle-seec-workpanel', 'toggle-selearning'
     ];
 
     Promise.all([
@@ -462,6 +475,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!el) return;
             el.checked = val === undefined || val === null ? defaultVal : val === true;
         };
+
+        setCheck('ui-seasonal-color', uiData[SEASONAL_COLOR_KEY]);
 
         setVal('common-name', data['common-name']);
         setVal('common-id', data.student_id);
@@ -520,6 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setCheckDefault('lms-dl-default-all', data.lms_dl_default_all, false);
         setCheckDefault('lms-dl-show-checkbox', data.lms_dl_show_checkbox, true);
         setCheckDefaultOn('toggle-seec-workpanel', data['toggle-seec-workpanel']);
+        setCheckDefaultOn('toggle-selearning', data['toggle-selearning']);
 
         // Initialize ripples after DOM is fully rendered
         initRipples();
@@ -567,7 +583,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'lms_video_autojump': checkedOf('lms-video-autojump'),
             'lms_dl_default_all': checkedOf('lms-dl-default-all'),
             'lms_dl_show_checkbox': checkedOf('lms-dl-show-checkbox'),
-            'toggle-seec-workpanel': checkedOf('toggle-seec-workpanel')
+            'toggle-seec-workpanel': checkedOf('toggle-seec-workpanel'),
+            'toggle-selearning': checkedOf('toggle-selearning')
         };
 
         config.login_user = config.student_id;
@@ -577,7 +594,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const uiConfig = {
             ui_theme_color: primaryColor,
             ui_theme_mode: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light',
-            ui_font_family: document.documentElement.getAttribute('data-font') || 'google-sans-flex'
+            ui_font_family: document.documentElement.getAttribute('data-font') || 'google-sans-flex',
+            [SEASONAL_COLOR_KEY]: checkedOf('ui-seasonal-color')
         };
 
         chrome.storage.local.set(config, () => {

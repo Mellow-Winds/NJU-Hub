@@ -84,10 +84,11 @@ function loadDashboardData() {
         'toggle-schedule',
         'toggle-eval',
         'toggle-lms',
-        'toggle-seec-workpanel'
+        'toggle-seec-workpanel',
+        'toggle-selearning'
     ];
     chrome.storage.local.get(keys, (data) => {
-        ['toggle-login', 'toggle-spoc-redirect', 'toggle-schedule', 'toggle-eval', 'toggle-lms', 'toggle-seec-workpanel'].forEach((id) => {
+        ['toggle-login', 'toggle-spoc-redirect', 'toggle-schedule', 'toggle-eval', 'toggle-lms', 'toggle-seec-workpanel', 'toggle-selearning'].forEach((id) => {
             const el = document.getElementById(id);
             if (!el) return;
             el.checked = data[id] !== false;

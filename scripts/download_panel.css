@@ -11,8 +11,9 @@
     --lms-color-trans: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
 }
 
-.lms-close { width: 28px; height: 28px; background: #f0f2f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #666; font-size: 18px; cursor: pointer; transition: all 0.2s var(--lms-ease); line-height: 1; }
+.lms-close { appearance: none; -webkit-appearance: none; width: 28px; height: 28px; padding: 0; border: 0; outline: none; font: inherit; background: #f0f2f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #666; font-size: 18px; cursor: pointer; transition: all 0.2s var(--lms-ease); line-height: 1; }
 .lms-close:hover { background: #e4e6e9; color: #333; transform: rotate(90deg); }
+.lms-close:focus-visible { outline: 2px solid var(--lms-main); outline-offset: 3px; }
 
 .lms-ios-checkbox {
     position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
@@ -37,9 +38,16 @@
 
 #lms-cfg-cont { bottom: 30px; left: 30px; }
 #lms-dl-ball-cont { bottom: 30px; right: 30px; }
+#seec-dl-ball { position: fixed; bottom: 30px; right: 30px; z-index: 100000; }
 .lms-ball-white { background: white; border: 1px solid rgba(0,0,0,0.1); color: #333; font-size: 22px; }
 .lms-ball-green { background: var(--lms-green); font-size: 20px; }
 .lms-ball-main { background: var(--lms-main); }
+
+.seec-download-mask .lms-panel { max-width: calc(100vw - 32px); max-height: calc(100vh - 40px); }
+.seec-download-mask .lms-list-container { min-height: 0; }
+.seec-download-mask .lms-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+.seec-download-mask .lms-dl-name { pointer-events: none; }
+.seec-download-mask .lms-footer { flex-wrap: wrap; gap: 12px; }
 
 .lms-mask { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.25); z-index: 200000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(var(--lms-blur)); -webkit-backdrop-filter: blur(var(--lms-blur)); animation: lmsFadeIn 0.3s var(--lms-ease) forwards; }
 .lms-mask.lms-closing { animation: lmsFadeOut 0.3s var(--lms-ease) forwards; pointer-events: none; }

@@ -52,6 +52,18 @@ test('download errors propagate and LMS saving still uses its existing filename'
     assert.equal(bg.downloads[1].filename, 'course/a.pdf');
 });
 
+test('SEEC display toggle does not gate the courseware downloader', () => {
+    const source = fs.readFileSync(path.join(root, 'scripts', 'seec_workpanel.js'), 'utf8');
+    const sharedCss = fs.readFileSync(path.join(root, 'scripts', 'download_panel.css'), 'utf8');
+    assert.match(source, /startEnhancement\(displayEnabled\)/);
+    assert.match(source, /if \(!visualEnhancementEnabled\) return;/);
+    assert.match(source, /if \(displayEnabled\) processAssignments\(false\)/);
+    assert.match(source, /if \(displayEnabled\) \{\s*const styleSheet = document\.createElement\('style'\)/);
+    assert.doesNotMatch(source, /if \(result\[TOGGLE_KEY\] === false\) return/);
+    assert.match(sharedCss, /^#seec-dl-ball\s*\{/m);
+    assert.match(sharedCss, /\.lms-close\s*\{[\s\S]*border:\s*0/);
+});
+
 // Minimal DOM for exercising the actual courseware handlers without a browser.
 class Element {
     constructor() {

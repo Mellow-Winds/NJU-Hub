@@ -23,18 +23,18 @@
 
     // 从 chrome.storage.local 读取开关（与 options/popup 的写入方式一致）
     chrome.storage.local.get([TOGGLE_KEY, 'ui_theme_color'], (result) => {
-        // 开关默认开启：仅在显式设为 false 时关闭
-        if (result[TOGGLE_KEY] === false) return;
+        // 显示增强开关默认开启；课件下载按钮始终初始化，不受此开关影响。
+        const displayEnabled = result[TOGGLE_KEY] !== false;
         const theme = result.ui_theme_color;
-        if (typeof theme === 'string' && /^#[\da-f]{6}$/i.test(theme)) {
+        if (displayEnabled && typeof theme === 'string' && /^#[\da-f]{6}$/i.test(theme)) {
             document.documentElement.style.setProperty('--lms-main', theme);
             document.documentElement.style.setProperty('--lms-rgb', [1, 3, 5].map(index => parseInt(theme.slice(index, index + 2), 16)).join(', '));
         }
 
-        startEnhancement();
+        startEnhancement(displayEnabled);
     });
 
-    function startEnhancement() {
+    function startEnhancement(displayEnabled = true) {
     let taskMap = {};
     let ignoredTasks = JSON.parse(localStorage.getItem(IGNORE_KEY) || '[]');
 
@@ -56,29 +56,32 @@
         (document.head || document.documentElement).appendChild(script);
     };
 
-    // 监听来自“主世界”的数据
-    window.addEventListener('seec_data_leak', (e) => {
-        try {
-            const res = JSON.parse(e.detail);
-            if (res.code === 0 && res.data) {
-                res.data.forEach(t => {
-                    if (t.result && t.result.score !== undefined) taskMap[t.name] = t.result.score;
-                    else if (t.joined) taskMap[t.name] = '待批改';
-                    else if (!taskMap[t.name]) taskMap[t.name] = undefined;
-                });
-                processAssignments(true); // 收到数据立刻强制重绘
-            }
-        } catch (err) {}
-    });
+    if (displayEnabled) {
+        // 监听来自“主世界”的数据
+        window.addEventListener('seec_data_leak', (e) => {
+            try {
+                const res = JSON.parse(e.detail);
+                if (res.code === 0 && res.data) {
+                    res.data.forEach(t => {
+                        if (t.result && t.result.score !== undefined) taskMap[t.name] = t.result.score;
+                        else if (t.joined) taskMap[t.name] = '待批改';
+                        else if (!taskMap[t.name]) taskMap[t.name] = undefined;
+                    });
+                    processAssignments(true); // 收到数据立刻强制重绘
+                }
+            } catch (err) {}
+        });
 
-    injectXHRSpy();
+        injectXHRSpy();
+    }
 
     // ==========================================
     // 2. 注入核心视觉规范 CSS
     // ==========================================
-    const styleSheet = document.createElement('style');
-    styleSheet.type = 'text/css';
-    styleSheet.innerText = `
+    if (displayEnabled) {
+        const styleSheet = document.createElement('style');
+        styleSheet.type = 'text/css';
+        styleSheet.innerText = `
         .global-footer-wrapper, #global-footer-body { display: none !important; }
         .el-timeline { display: none !important; }
         .courseware-tab > .el-table, .courseware-tab > .el-overlay { display: none !important; }
@@ -135,18 +138,12 @@
         .gemini-ios-switch { appearance: none; -webkit-appearance: none; width: 46px; height: 26px; background: #e9e9ea; border-radius: 13px; position: relative; cursor: pointer; outline: none; transition: 0.3s; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
         .gemini-ios-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; border-radius: 50%; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: transform 0.3s; }
         .gemini-ios-switch:checked { background: #28BD6E; } .gemini-ios-switch:checked::after { transform: translateX(20px); }
-        #seec-dl-ball { position: fixed; bottom: 30px; right: 30px; z-index: 100000; }
-        .seec-download-mask .lms-panel { max-width: calc(100vw - 32px); max-height: calc(100vh - 40px); }
-        .seec-download-mask .lms-list-container { min-height: 0; }
-        .seec-download-mask .lms-close { border: 0; flex-shrink: 0; }
-        .seec-download-mask .lms-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
-        .seec-download-mask .lms-dl-name { pointer-events: none; }
-        .seec-download-mask .lms-footer { flex-wrap: wrap; gap: 12px; }
         .seec-card-actions { display: flex; gap: 10px; margin-top: 12px; }
         .seec-card-actions .lms-btn { flex: 1; text-decoration: none; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-    `;
-    document.head.appendChild(styleSheet);
+        `;
+        document.head.appendChild(styleSheet);
+    }
 
     function getDDLInfo(timeStr) {
         try {
@@ -359,20 +356,14 @@
     }
 
     function processCourseware() {
+        // 测试环境没有外层参数时默认渲染完整面板；生产环境由显示增强开关决定是否生成卡片。
+        const visualEnhancementEnabled = typeof displayEnabled === 'boolean' ? displayEnabled : true;
         const cwTab = document.querySelector('.courseware-tab');
         const existingBall = document.getElementById('seec-dl-ball');
         if (existingBall) existingBall.style.display = cwTab && cwTab.getClientRects().length ? 'flex' : 'none';
         if (!cwTab) return;
 
         const rows = cwTab.querySelectorAll('.el-table__row');
-        let cwGridContainer = document.getElementById('gemini-cw-main');
-        if (!cwGridContainer) {
-            cwGridContainer = document.createElement('div');
-            cwGridContainer.id = 'gemini-cw-main';
-            cwGridContainer.className = 'gemini-main-container';
-            cwGridContainer.innerHTML = `<div class="gemini-section-title title-cw">课程资料库</div><div class="gemini-grid" id="grid-courseware"></div>`;
-            cwTab.appendChild(cwGridContainer);
-        }
         if (!existingBall) {
             const ball = document.createElement('button');
             ball.id = 'seec-dl-ball';
@@ -385,14 +376,38 @@
             document.body.appendChild(ball);
         }
 
-        const grid = document.getElementById('grid-courseware');
         const courseId = location.pathname.match(/\/course\/(\d+)/)?.[1];
         // Vue 可复用表格行；切课、翻页或更新资料后按当前列表重建，避免保存旧课程文件。
         const signature = JSON.stringify([location.pathname, Array.from(rows, row => row.innerText)]);
+
+        // 下载器独立于显示增强：即使关闭卡片化显示，也始终从原始表格同步文件。
+        const downloadBall = document.getElementById('seec-dl-ball');
+        if (downloadBall?.dataset.filesSignature !== signature) {
+            coursewareFiles = Array.from(rows, row => {
+                const nameCell = row.cells?.[1];
+                if (!nameCell) return null;
+                const fileName = nameCell.innerText.trim();
+                const ossUrl = courseId ? `https://seec-portal.oss-cn-hangzhou.aliyuncs.com/${courseId}/${encodeURIComponent(fileName)}` : null;
+                return { name: fileName, url: ossUrl };
+            }).filter(Boolean);
+            if (downloadBall) downloadBall.dataset.filesSignature = signature;
+        }
+
+        if (!visualEnhancementEnabled) return;
+
+        let cwGridContainer = document.getElementById('gemini-cw-main');
+        if (!cwGridContainer) {
+            cwGridContainer = document.createElement('div');
+            cwGridContainer.id = 'gemini-cw-main';
+            cwGridContainer.className = 'gemini-main-container';
+            cwGridContainer.innerHTML = `<div class="gemini-section-title title-cw">课程资料库</div><div class="gemini-grid" id="grid-courseware"></div>`;
+            cwTab.appendChild(cwGridContainer);
+        }
+
+        const grid = document.getElementById('grid-courseware');
         if (cwGridContainer.dataset.signature === signature) return;
         cwGridContainer.dataset.signature = signature;
         grid.replaceChildren();
-        coursewareFiles = [];
 
         rows.forEach(row => {
 
@@ -404,7 +419,6 @@
             const fileDate = dateCell ? dateCell.innerText.trim() : '';
             const ossUrl = courseId ? `https://seec-portal.oss-cn-hangzhou.aliyuncs.com/${courseId}/${encodeURIComponent(fileName)}` : null;
             const file = { name: fileName, url: ossUrl };
-            coursewareFiles.push(file);
 
             const ext = fileName.split('.').pop().toLowerCase();
             let borderColor = '#007bff';
@@ -461,31 +475,35 @@
     }
 
     setInterval(() => {
-        processAssignments(false);
+        if (displayEnabled) processAssignments(false);
         processCourseware();
     }, 800);
 
     // 5. 设置面板模块 (文字图标)
-    const settingBtn = document.createElement('div');
-    settingBtn.className = 'gemini-fab-setting';
-    settingBtn.style.right = '30px';
-    settingBtn.style.bottom = '90px';
-    settingBtn.title = '选择哪些作业显示在任务列表';
-    settingBtn.innerHTML = '设置';
-    document.body.appendChild(settingBtn);
-    settingBtn.onclick = () => {
-        const mask = document.createElement('div'); mask.className = 'gemini-mask';
-        const tasks = Object.keys(taskMap).length > 0 ? Object.keys(taskMap) : Array.from(document.querySelectorAll('.task-title')).map(n => n.innerText.trim());
-        const taskHtml = [...new Set(tasks)].map(t => `<div class="gemini-task-opt"><span style="font-size:14px; font-weight:600; color:#333;">${t}</span><input type="checkbox" class="gemini-ios-switch" data-task="${t}" ${!ignoredTasks.includes(t) ? 'checked' : ''}></div>`).join('');
-        mask.innerHTML = `<div class="gemini-panel"><div class="gemini-panel-header"><span>选择哪些作业显示在任务列表</span><span style="cursor:pointer; color:#999;" id="gemini-close-setting">×</span></div><div class="gemini-panel-body"><div style="font-size:12px;color:#888;padding-top:12px">开启表示显示，关闭表示隐藏。</div>${taskHtml || '<div style="text-align:center; color:#999; padding:20px;">请先打开“任务”页加载数据</div>'}</div></div>`;
-        document.body.appendChild(mask);
-        mask.querySelectorAll('.gemini-ios-switch').forEach(sw => sw.onchange = (e) => { const tName = e.target.dataset.task; if (!e.target.checked) { if (!ignoredTasks.includes(tName)) ignoredTasks.push(tName); } else { ignoredTasks = ignoredTasks.filter(t => t !== tName); } localStorage.setItem(IGNORE_KEY, JSON.stringify(ignoredTasks)); });
-        mask.querySelector('#gemini-close-setting').onclick = () => { mask.style.animation = 'fadeIn 0.3s reverse'; setTimeout(() => { mask.remove(); processAssignments(true); }, 280); };
-    };
+    if (displayEnabled) {
+        const settingBtn = document.createElement('div');
+        settingBtn.className = 'gemini-fab-setting';
+        settingBtn.style.right = '30px';
+        settingBtn.style.bottom = '90px';
+        settingBtn.title = '选择哪些作业显示在任务列表';
+        settingBtn.innerHTML = '设置';
+        document.body.appendChild(settingBtn);
+        settingBtn.onclick = () => {
+            const mask = document.createElement('div'); mask.className = 'gemini-mask';
+            const tasks = Object.keys(taskMap).length > 0 ? Object.keys(taskMap) : Array.from(document.querySelectorAll('.task-title')).map(n => n.innerText.trim());
+            const taskHtml = [...new Set(tasks)].map(t => `<div class="gemini-task-opt"><span style="font-size:14px; font-weight:600; color:#333;">${t}</span><input type="checkbox" class="gemini-ios-switch" data-task="${t}" ${!ignoredTasks.includes(t) ? 'checked' : ''}></div>`).join('');
+            mask.innerHTML = `<div class="gemini-panel"><div class="gemini-panel-header"><span>选择哪些作业显示在任务列表</span><span style="cursor:pointer; color:#999;" id="gemini-close-setting">×</span></div><div class="gemini-panel-body"><div style="font-size:12px;color:#888;padding-top:12px">开启表示显示，关闭表示隐藏。</div>${taskHtml || '<div style="text-align:center; color:#999; padding:20px;">请先打开“任务”页加载数据</div>'}</div></div>`;
+            document.body.appendChild(mask);
+            mask.querySelectorAll('.gemini-ios-switch').forEach(sw => sw.onchange = (e) => { const tName = e.target.dataset.task; if (!e.target.checked) { if (!ignoredTasks.includes(tName)) ignoredTasks.push(tName); } else { ignoredTasks = ignoredTasks.filter(t => t !== tName); } localStorage.setItem(IGNORE_KEY, JSON.stringify(ignoredTasks)); });
+            mask.querySelector('#gemini-close-setting').onclick = () => { mask.style.animation = 'fadeIn 0.3s reverse'; setTimeout(() => { mask.remove(); processAssignments(true); }, 280); };
+        };
+    }
 
     // 6. 报错清洗与初始唤醒
-    new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1 && (n.innerText?.includes('SQL') || n.innerText?.includes('Duplicate'))) n.remove(); }))).observe(document.body, { childList: true, subtree: true });
-    let clicked = false; const clickTimer = setInterval(() => { const tab = document.getElementById('tab-task'); if (tab && !clicked) { if(!tab.classList.contains('is-active')) tab.click(); clicked = true; clearInterval(clickTimer); } }, 100); setTimeout(() => clearInterval(clickTimer), 5000);
+    if (displayEnabled) {
+        new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1 && (n.innerText?.includes('SQL') || n.innerText?.includes('Duplicate'))) n.remove(); }))).observe(document.body, { childList: true, subtree: true });
+        let clicked = false; const clickTimer = setInterval(() => { const tab = document.getElementById('tab-task'); if (tab && !clicked) { if(!tab.classList.contains('is-active')) tab.click(); clicked = true; clearInterval(clickTimer); } }, 100); setTimeout(() => clearInterval(clickTimer), 5000);
+    }
 
     } // end startEnhancement
 

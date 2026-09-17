@@ -4,14 +4,21 @@
     const MODE_KEY = 'ui_material_mode';
     const CONFIG_KEY = 'ui_material_config';
     const THEME_COLOR_KEY = 'ui_theme_color';
+    const SEASONAL_COLOR_KEY = 'ui_seasonal_color_enabled';
     const WALLPAPER_ENABLED_KEY = 'ui_wallpaper_enabled';
     const WALLPAPER_DATA_KEY = 'ui_wallpaper_data';
     const defaults = { mode: 'default', blur: 24, opacity: 68, reducedTransparency: false, still: false };
-    const state = { ...defaults, themeColor: '#0ea5e9', wallpaperEnabled: false, wallpaperData: '' };
+    const state = {
+        ...defaults,
+        themeColor: '#0ea5e9',
+        seasonalColorEnabled: false,
+        wallpaperEnabled: false,
+        wallpaperData: ''
+    };
     const root = document.documentElement;
 
     const pageName = () => {
-        if (location.protocol !== 'chrome-extension:') return 'host';
+        if (!['chrome-extension:', 'moz-extension:'].includes(location.protocol)) return 'host';
         if (/\/popup\//.test(location.pathname)) return 'popup';
         if (/\/webportal\//.test(location.pathname)) return 'webportal';
         if (/\/red-black\//.test(location.pathname)) return 'red-black';
@@ -101,23 +108,39 @@
     };
 
     const apply = () => {
-        root.dataset.njuGlobalMode = ['default', 'enhanced', 'liquid-glass'].includes(state.mode) ? state.mode : defaults.mode;
+        const mode = ['default', 'enhanced', 'liquid-glass'].includes(state.mode) ? state.mode : defaults.mode;
+        root.dataset.njuGlobalMode = mode;
         root.dataset.njuGlobalStill = String(state.still);
         root.dataset.njuReducedTransparency = String(state.reducedTransparency);
         root.style.setProperty('--nju-global-blur', `${state.blur}px`);
         root.style.setProperty('--nju-global-opacity', `${state.reducedTransparency ? Math.max(88, state.opacity) : state.opacity}%`);
+
         const wallpaperActive = wallpaperPages.has(root.dataset.njuMaterialPage)
             && state.wallpaperEnabled
             && Boolean(state.wallpaperData);
-        root.dataset.njuWallpaperEnabled = String(wallpaperActive);
-        const gradientActive = gradientPages.has(root.dataset.njuMaterialPage)
-            && root.dataset.njuGlobalMode === 'liquid-glass'
+        const seasonalActive = gradientPages.has(root.dataset.njuMaterialPage)
+            && state.seasonalColorEnabled
+            && Boolean(window.NjuSeasonalBackground)
             && !wallpaperActive;
+        const blueGradientActive = gradientPages.has(root.dataset.njuMaterialPage)
+            && mode === 'liquid-glass'
+            && !wallpaperActive;
+        const gradientActive = seasonalActive || blueGradientActive;
+
+        root.dataset.njuWallpaperEnabled = String(wallpaperActive);
+        root.dataset.njuSeasonalEnabled = String(seasonalActive);
         root.dataset.njuGradientEnabled = String(gradientActive);
         if (wallpaperActive) root.style.setProperty('--nju-global-wallpaper-image', `url("${state.wallpaperData}")`);
         else root.style.removeProperty('--nju-global-wallpaper-image');
 
-        if (gradientActive) {
+        if (seasonalActive) {
+            window.NjuSeasonalBackground.apply();
+            window.NjuSeasonalBackground.start();
+            root.style.removeProperty('--nju-global-gradient-angle');
+            root.style.removeProperty('--nju-global-gradient-a');
+            root.style.removeProperty('--nju-global-gradient-b');
+            root.style.removeProperty('--nju-global-gradient-c');
+        } else if (blueGradientActive) {
             const gradient = createThemeGradient(state.themeColor);
             root.style.setProperty('--nju-global-gradient-angle', gradient.angle);
             root.style.setProperty('--nju-global-gradient-a', gradient.a);
@@ -132,12 +155,19 @@
     };
 
     const load = () => {
-        chrome.storage.sync.get([MODE_KEY, CONFIG_KEY, THEME_COLOR_KEY, WALLPAPER_ENABLED_KEY], (data) => {
+        chrome.storage.sync.get([
+            MODE_KEY,
+            CONFIG_KEY,
+            THEME_COLOR_KEY,
+            SEASONAL_COLOR_KEY,
+            WALLPAPER_ENABLED_KEY
+        ], (data) => {
             if (chrome.runtime.lastError) return;
             chrome.storage.local.get([WALLPAPER_DATA_KEY], (localData) => {
                 if (chrome.runtime.lastError) return;
                 state.mode = ['default', 'enhanced', 'liquid-glass'].includes(data[MODE_KEY]) ? data[MODE_KEY] : defaults.mode;
                 state.themeColor = safeThemeColor(data[THEME_COLOR_KEY]);
+                state.seasonalColorEnabled = data[SEASONAL_COLOR_KEY] === true;
                 Object.assign(state, normalize(data[CONFIG_KEY]));
                 state.wallpaperEnabled = data[WALLPAPER_ENABLED_KEY] === true;
                 state.wallpaperData = safeImageData(localData[WALLPAPER_DATA_KEY]);
@@ -149,7 +179,13 @@
     apply();
     load();
     chrome.storage.onChanged.addListener((changes, area) => {
-        if (area === 'sync' && (changes[MODE_KEY] || changes[CONFIG_KEY] || changes[THEME_COLOR_KEY] || changes[WALLPAPER_ENABLED_KEY])) load();
+        if (area === 'sync' && (
+            changes[MODE_KEY]
+            || changes[CONFIG_KEY]
+            || changes[THEME_COLOR_KEY]
+            || changes[SEASONAL_COLOR_KEY]
+            || changes[WALLPAPER_ENABLED_KEY]
+        )) load();
         if (area === 'local' && changes[WALLPAPER_DATA_KEY]) load();
     });
 })();

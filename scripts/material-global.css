@@ -23,8 +23,8 @@ html[data-nju-wallpaper-enabled="true"] :is(.akari-layout, .akari-content, .port
     background: transparent !important;
 }
 
-/* Popup is a compact control surface: it never uses the selected wallpaper. */
-html[data-nju-material-page="popup"] {
+/* Popup keeps the previous blue canvas until 流溯色彩 is enabled. */
+html[data-nju-material-page="popup"][data-nju-gradient-enabled="false"] {
     background-image: none !important;
     background: linear-gradient(
         180deg,
@@ -33,30 +33,66 @@ html[data-nju-material-page="popup"] {
     ) !important;
 }
 
-html[data-theme="dark"][data-nju-material-page="popup"] {
+html[data-theme="dark"][data-nju-material-page="popup"][data-nju-gradient-enabled="false"] {
     background: linear-gradient(
         180deg,
-        color-mix(in srgb, var(--md-sys-color-primary) 30%, var(--md-sys-color-background)),
-        var(--md-sys-color-background)
+        color-mix(in srgb, var(--md-sys-color-primary) 18%, #111827),
+        color-mix(in srgb, var(--md-sys-color-primary) 5%, var(--md-sys-color-background))
     ) !important;
 }
 
-html[data-nju-material-page="popup"] body {
+html[data-nju-material-page="popup"][data-nju-gradient-enabled="false"] body {
     background: inherit !important;
     background-image: none !important;
 }
 
-/* Liquid glass without a user wallpaper gets a generated theme-colored
-   substrate. It lives behind every supported material surface, including
-   the popup where the body otherwise paints over the document background. */
+/* Shared gradient canvas. Its substrate is the old blue gradient, or the
+   seasonal palette when 流溯色彩 is enabled. Material controls keep their
+   existing theme tokens. */
 html[data-nju-gradient-enabled="true"] {
+    --nju-gradient-a: var(--nju-global-gradient-a, #d9f4ff);
+    --nju-gradient-b: var(--nju-global-gradient-b, #f5dcf4);
+    --nju-gradient-c: var(--nju-global-gradient-c, #e4d9ff);
+    --nju-gradient-angle: var(--nju-global-gradient-angle, 135deg);
+    --nju-seasonal-wash: rgba(249, 249, 255, .26);
+    --nju-seasonal-glow: rgba(255, 255, 255, .30);
+    --nju-seasonal-shade: rgba(26, 27, 33, .08);
+    --nju-seasonal-gradient: linear-gradient(var(--nju-gradient-angle), var(--nju-gradient-a), var(--nju-gradient-b) 54%, var(--nju-gradient-c));
+    background-color: #f9f9ff;
     background-image:
-        radial-gradient(circle at 88% 10%, color-mix(in srgb, var(--nju-global-gradient-c, #e4d9ff) 76%, transparent), transparent 58%),
-        radial-gradient(circle at 10% 88%, color-mix(in srgb, var(--nju-global-gradient-a, #d9f4ff) 70%, transparent), transparent 60%),
-        linear-gradient(var(--nju-global-gradient-angle, 135deg), var(--nju-global-gradient-a, #d9f4ff), var(--nju-global-gradient-b, #f5dcf4) 52%, var(--nju-global-gradient-c, #e4d9ff));
+        linear-gradient(var(--nju-seasonal-wash), var(--nju-seasonal-wash)),
+        radial-gradient(circle at 10% 8%, var(--nju-seasonal-glow), transparent 48%),
+        radial-gradient(circle at 92% 92%, var(--nju-seasonal-shade), transparent 46%),
+        var(--nju-seasonal-gradient);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
+}
+
+html[data-nju-seasonal-enabled="true"][data-nju-gradient-enabled="true"] {
+    --nju-gradient-a: var(--nju-seasonal-a, var(--nju-global-gradient-a, #d9f4ff));
+    --nju-gradient-b: var(--nju-seasonal-b, var(--nju-global-gradient-b, #f5dcf4));
+    --nju-gradient-c: var(--nju-seasonal-c, var(--nju-global-gradient-c, #e4d9ff));
+    --nju-gradient-angle: 135deg;
+}
+
+@supports (background: linear-gradient(135deg in oklch, #000, #fff)) {
+    html[data-nju-gradient-enabled="true"] {
+        --nju-seasonal-gradient: linear-gradient(135deg in oklch, var(--nju-gradient-a), var(--nju-gradient-b) 54%, var(--nju-gradient-c));
+    }
+}
+
+html[data-theme="dark"][data-nju-gradient-enabled="true"] {
+    --nju-seasonal-wash: rgba(12, 16, 26, .86);
+    --nju-seasonal-glow: rgba(255, 255, 255, .08);
+    --nju-seasonal-shade: rgba(0, 0, 0, .24);
+    background-color: #0c101a;
+}
+
+@media (forced-colors: active) {
+    html[data-nju-gradient-enabled="true"] {
+        background: Canvas;
+    }
 }
 
 html[data-nju-gradient-enabled="true"] body {
@@ -72,6 +108,17 @@ html[data-nju-gradient-enabled="true"] :is(
 
 html[data-nju-material-page="extension"][data-nju-gradient-enabled="true"] body:has(#section-personalize.active)::before {
     background: transparent !important;
+}
+
+/* Preserve the previous dark canvas when no wallpaper or gradient is active. */
+html[data-nju-material-page="extension"][data-theme="dark"][data-nju-global-mode="default"][data-nju-gradient-enabled="false"][data-nju-wallpaper-enabled="false"],
+html[data-nju-material-page="extension"][data-theme="dark"][data-nju-global-mode="default"][data-nju-gradient-enabled="false"][data-nju-wallpaper-enabled="false"] body,
+html[data-nju-material-page="popup"][data-theme="dark"][data-nju-gradient-enabled="false"],
+html[data-nju-material-page="popup"][data-theme="dark"][data-nju-gradient-enabled="false"] body,
+html[data-nju-material-page="red-black"][data-theme="dark"][data-nju-gradient-enabled="false"][data-nju-wallpaper-enabled="false"],
+html[data-nju-material-page="red-black"][data-theme="dark"][data-nju-gradient-enabled="false"][data-nju-wallpaper-enabled="false"] body {
+    background: #000 !important;
+    background-image: none !important;
 }
 
 /* Popup cards and quick actions use the same translucent controls as options. */
@@ -354,23 +401,8 @@ html[data-nju-global-still="true"] :is(
    Cross-surface corrections
    ------------------------------------------------------------------------- */
 
-/* A dark theme belongs only to the default material. Its canvas is black on
-   both settings and popup pages; the state layer forces other materials back
-   to light before this fallback can be visible. */
-html[data-nju-material-page="extension"][data-theme="dark"][data-nju-global-mode="default"],
-html[data-nju-material-page="extension"][data-theme="dark"][data-nju-global-mode="default"] body,
-html[data-nju-material-page="extension"][data-theme="dark"][data-nju-global-mode="default"] .akari-layout,
-html[data-nju-material-page="extension"][data-theme="dark"][data-nju-global-mode="default"] .akari-content,
-html[data-nju-material-page="popup"][data-theme="dark"][data-nju-global-mode="default"],
-html[data-nju-material-page="popup"][data-theme="dark"][data-nju-global-mode="default"] body {
-    background: #000 !important;
-    background-image: none !important;
-}
-html[data-nju-material-page="red-black"][data-theme="dark"][data-nju-global-mode="default"][data-nju-wallpaper-enabled="false"],
-html[data-nju-material-page="red-black"][data-theme="dark"][data-nju-global-mode="default"][data-nju-wallpaper-enabled="false"] body {
-    background: #000 !important;
-    background-image: none !important;
-}
+/* Seasonal canvases and wallpapers also own the dark-mode background.
+   Card surfaces retain their existing dark Material tokens. */
 
 /* The campus selector is itself a material surface in liquid-glass mode.
    Keep the selected segment readable without introducing a second opaque

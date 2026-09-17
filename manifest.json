@@ -107,6 +107,12 @@
       "run_at": "document_end"
     },
     {
+      "matches": ["https://selearning.nju.edu.cn/*"],
+      "css": ["scripts/download_panel.css", "scripts/selearning_enhance.css"],
+      "js": ["scripts/selearning_enhance.js"],
+      "run_at": "document_end"
+    },
+    {
       "matches": ["*://ehallapp.nju.edu.cn/jwapp/sys/wspjyyapp/*"],
       "js": ["libs/nju-modal.js", "scripts/auto_eval.js"],
       "run_at": "document_end"
