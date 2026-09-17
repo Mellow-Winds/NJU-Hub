@@ -49,5 +49,7 @@ data/ai_persona_progress.json
 data/merged_ratings.backup.json
 
 # claude
-.claude
+.claude/
+
+# Codex instructions
 AGENTS.MD
