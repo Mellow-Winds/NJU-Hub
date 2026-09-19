@@ -4,11 +4,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const { webcrypto } = require('node:crypto');
-const source = fs.readFileSync(path.join(__dirname, '../message/background.js'), 'utf8');
+const source = ['templates.js', 'background.js'].map(file => fs.readFileSync(path.join(__dirname, '../message', file), 'utf8')).join('\n');
 const id = '11111111-1111-4111-8111-111111111111';
 const origin = 'chrome-extension://test/';
 function background(data = {}, transport) {
-    const storage = { resend_api_key: 'test-only-placeholder', resend_self_email: 'self@example.test', resend_from_name: 'NJU-Hub', ...data };
+    const storage = { NJU_MESSAGE_CONSENT_VERSION: 1, resend_api_key: 'test-only-placeholder', resend_self_email: 'self@example.test', resend_from_name: 'NJU-Hub', ...data };
     const requests = [], tabs = [], events = {}, menus = [];
     const event = name => ({ addListener(fn) { events[name] = fn; } });
     const chrome = {
@@ -26,7 +26,7 @@ function background(data = {}, transport) {
         }
     };
     const fetch = async (url, options) => { requests.push({ url, ...options }); return transport ? transport(url, options) : { ok: true, json: async () => ({ id: 'email-id' }) }; };
-    vm.runInNewContext(source, { chrome, fetch, crypto: webcrypto, TextEncoder, AbortSignal, console });
+    vm.runInNewContext(source, { chrome, fetch, crypto: webcrypto, URL, TextEncoder, AbortSignal, console });
     const payload = extra => ({ requestId: id, subject: '提醒', text: '<b>作业</b>\n明天截止', ...extra });
     return { storage, requests, events, tabs, menus, payload, send(p = payload(), sender = { id: 'test', url: origin + 'message/compose.html?draftId=' + id }) {
         return new Promise(resolve => events.message({ action: 'sendResendEmail', payload: p }, sender, resolve));
@@ -139,5 +139,73 @@ test('selection creates isolated local drafts with opaque URLs, and menu updates
     assert.ok(!bg.tabs[0].url.includes('private'));
     const draftId = new URL(bg.tabs[0].url).searchParams.get('draftId');
     assert.equal(bg.storage['NJU_MESSAGE_DRAFT_' + draftId].text, 'private text');
-    assert.equal(bg.storage['NJU_MESSAGE_DRAFT_' + draftId].sourceUrl, undefined);
+    assert.equal(bg.storage['NJU_MESSAGE_DRAFT_' + draftId].sourceUrl, 'https://example.test/?token=private');
+    assert.equal(bg.storage['NJU_MESSAGE_DRAFT_' + draftId].includeSource, false);
+});
+
+test('no consent or old consent blocks sending before any network request', async () => {
+    for (const version of [undefined, 0]) {
+        const bg = background({ NJU_MESSAGE_CONSENT_VERSION: version });
+        assert.match((await bg.send()).error, /同意/);
+        assert.equal(bg.requests.length, 0);
+    }
+});
+
+test('each child menu creates the chosen template and preserves original selected text', async () => {
+    const bg = background(); bg.events.installed();
+    assert.equal(bg.menus.length, 7);
+    for (const template of ['custom', 'homework', 'notice', 'exam', 'activity', 'todo']) {
+        await bg.events.click({ menuItemId: `nju-hub-message-subscription-${template}`, selectionText: '作业\n下周截止' }, {});
+        const draftId = new URL(bg.tabs.at(-1).url).searchParams.get('draftId');
+        const draft = bg.storage['NJU_MESSAGE_DRAFT_' + draftId];
+        assert.equal(draft.templateId, template);
+        assert.equal(draft.originalText, '作业\n下周截止');
+        assert.ok(draft.text.includes(draft.originalText));
+        assert.ok(!draft.subject.includes('\n'));
+    }
+});
+
+test('rich email escapes content, uses nickname, fixed footer and a deadline independent of delivery', async () => {
+    const bg = background();
+    const scheduledAt = new Date(Date.now() + 3600000).toISOString();
+    const result = await bg.send(bg.payload({ scheduledAt, presentation: {
+        templateId: 'homework', nickname: '<小明>', deadline: '2028-02-29T23:59', deadlineZone: 'Asia/Shanghai',
+        color: '#123456', includeSource: false, sourceUrl: 'https://example.test/private'
+    } }));
+    assert.equal(result.ok, true);
+    const body = JSON.parse(bg.requests[0].body);
+    assert.match(body.html, /亲爱的&lt;小明&gt;/);
+    assert.match(body.html, /<strong>&lt;b&gt;作业&lt;\/b&gt;<br>明天截止<\/strong>/);
+    assert.match(body.html, /border-left:5px solid #123456/);
+    assert.match(body.text, /2028-02-29 23:59（Asia\/Shanghai）/);
+    assert.equal(body.scheduled_at, scheduledAt);
+    assert.ok(body.text.endsWith('——来自 NJU-Hub 消息订阅'));
+    assert.doesNotMatch(body.html, /example.test|<b>作业/);
+    assert.deepEqual(body.to, ['self@example.test']);
+});
+
+test('source links are opt-in, escaped and restricted to HTTP(S)', async () => {
+    for (const [sourceUrl, allowed] of [['https://www.doubao.com/chat/?a=1&b=2', true], ['javascript:alert(1)', false], ['file:///secret', false], ['https://user:pass@example.test', false]]) {
+        const bg = background();
+        await bg.send(bg.payload({ presentation: { includeSource: true, sourceUrl, bold: false, card: false, color: 'red;position:fixed' } }));
+        const body = JSON.parse(bg.requests[0].body);
+        assert.equal(body.html.includes('点击跳转来源</a>'), allowed);
+        assert.doesNotMatch(body.html, /position:fixed|<strong>|border-left/);
+        if (allowed) assert.match(body.html, /href="https:\/\/www.doubao.com\/chat\/\?a=1&amp;b=2"/);
+    }
+});
+
+test('invalid DDL blocks fetch, while changing rich style cannot bypass retry fingerprint', async () => {
+    for (const deadline of ['2027-02-29T12:00', '2028-04-31T12:00', '2028-01-01T24:00']) {
+        const bg = background();
+        assert.equal((await bg.send(bg.payload({ presentation: { templateId: 'homework', deadline } }))).ok, false);
+        assert.equal(bg.requests.length, 0);
+    }
+    const bg = background({}, async () => { throw new Error('offline'); });
+    const payload = bg.payload({ presentation: { color: '#123456' } });
+    await bg.send(payload);
+    const retry = background(bg.storage);
+    assert.equal((await retry.send({ ...payload, presentation: { color: '#654321' } })).ok, false);
+    assert.equal(retry.requests.length, 0);
+    assert.equal((await retry.send(payload)).ok, true);
 });

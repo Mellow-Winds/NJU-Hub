@@ -129,5 +129,9 @@ function bindEvents() {
         chrome.tabs.create({ url: chrome.runtime.getURL('red-black/index.html') });
     };
 
+    document.getElementById('btn-message').onclick = () => {
+        chrome.tabs.create({ url: chrome.runtime.getURL('message/settings.html') });
+    };
+
 
 }

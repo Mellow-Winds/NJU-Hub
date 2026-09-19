@@ -1,7 +1,7 @@
 // background.js - 动态 AI 转发中枢
 
 // Keep the optional message feature separate from existing campus request handlers.
-if (typeof importScripts === 'function') importScripts('message/background.js');
+if (typeof importScripts === 'function') importScripts('message/templates.js', 'message/background.js');
 
 // ===== NJU 域名请求头伪装 =====
 // NJU 各系统（ehall / 教务 / SeaTable 等）会检查 Origin/Referer，

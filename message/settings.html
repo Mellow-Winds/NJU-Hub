@@ -19,14 +19,17 @@
                 <p class="hint-text" id="key-hint">仅保存在本地，仅向 Resend 官方接口发送用于鉴权。</p>
                 <label class="message-field"><span>我的邮箱</span><input id="self-email" type="email" required autocomplete="email" aria-describedby="email-hint"></label>
                 <p class="hint-text" id="email-hint">请填写注册 Resend 时使用的邮箱，仅支持发送给自己。</p>
+                <p class="mail-warning">请勿使用学校 edu.cn 邮箱，邮件可能被拒收或退回。建议使用自己的 QQ 邮箱或其他个人邮箱注册 Resend。</p>
                 <label class="message-field"><span>发件人显示名</span><input id="from-name" type="text" maxlength="80" value="NJU-Hub 消息订阅"></label>
                 <p class="hint-text">发件地址固定为 onboarding@resend.dev</p>
+                <label class="message-field"><span>称呼</span><input id="nickname" type="text" maxlength="80" placeholder="同学"></label>
                 <div class="actions"><button class="btn-save" type="submit">保存配置</button><button class="btn-small" id="test-send" type="button">保存并发送测试邮件</button></div>
             </fieldset>
         </form>
         <p id="status" role="status" aria-live="polite"></p>
         <details>
             <summary>帮助</summary>
+            <p class="mail-warning">请勿使用学校 edu.cn 邮箱注册 Resend 或收信，邮件可能被拒收或退回。建议使用自己的 QQ 邮箱或其他个人邮箱。</p>
             <ol>
                 <li>注册 <a href="https://resend.com/signup" target="_blank" rel="noopener noreferrer">Resend</a>，在 <a href="https://resend.com/api-keys" target="_blank" rel="noopener noreferrer">API Keys</a> 创建有发送权限的密钥。</li>
                 <li>填写该账号的注册邮箱，保存并发送测试邮件。</li>
@@ -34,13 +37,18 @@
             </ol>
             <p>共享测试发件地址无需验证域名，仅可发送到自己的 Resend 注册邮箱。插件无法提前核验邮箱归属，发送时由 Resend 校验。</p>
             <p>API Key 不经 NJU-Hub 中转；确认发送后，主题、正文、本人邮箱及预约时间会直接交给 Resend 处理。本地存储不是加密保险箱，请使用专用发送密钥。</p>
+            <p>来源链接默认不附上；开启后，邮件含“点击跳转来源”。发送前请检查链接是否包含私人参数。</p>
             <p>支持未来 30 天内预约，提交成功后由 Resend 执行。可在 <a href="https://resend.com/emails" target="_blank" rel="noopener noreferrer">Resend 控制台</a> 核实投递、调整或取消预约。额度以控制台为准。</p>
+            <button type="button" id="review-consent">查看教程与服务说明</button>
         </details>
     </section>
+    <section class="card drafts-section"><h2>未发送草稿</h2><div id="draft-list" aria-live="polite">加载中…</div></section>
 </main>
 <script src="../options/material-color-utils.js"></script>
 <script src="../scripts/seasonal-background.js"></script>
 <script src="../scripts/material-global.js"></script>
+<script src="../scripts/nju-dropdown.js"></script>
+<script src="templates.js"></script>
 <script src="page.js"></script>
 <script src="settings.js"></script>
 </body>

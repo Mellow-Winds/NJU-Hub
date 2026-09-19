@@ -1,7 +1,7 @@
 (() => {
     'use strict';
     const MENU = 'nju-hub-message-subscription';
-    const CONFIG = ['resend_api_key', 'resend_self_email', 'resend_from_name'];
+    const CONFIG = ['resend_api_key', 'resend_self_email', 'resend_from_name', 'NJU_MESSAGE_CONSENT_VERSION'];
     const DAY = 86400000;
     const active = new Map();
     const ownPages = ['message/settings.html', 'message/compose.html'].map(p => chrome.runtime.getURL(p));
@@ -21,6 +21,7 @@
     async function send(payload) {
         if (!payload || !validId(payload.requestId)) throw new Error('发送标识无效，请重新打开编辑页。');
         const config = await chrome.storage.local.get(CONFIG);
+        if (config.NJU_MESSAGE_CONSENT_VERSION !== MessageModel.consentVersion) throw new Error('请先阅读并同意消息订阅服务说明。');
         configValid(config);
         const subject = typeof payload.subject === 'string' ? payload.subject.trim() : '';
         const text = typeof payload.text === 'string' ? payload.text : '';
@@ -33,6 +34,8 @@
             from: name ? `"${name.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}" <onboarding@resend.dev>` : 'onboarding@resend.dev',
             to: [config.resend_self_email.trim()], subject, text
         };
+        // Render structured fields here; never accept caller-provided HTML.
+        if (payload.presentation) Object.assign(body, MessageModel.email({ ...payload.presentation, text }));
         if (payload.scheduledAt) {
             const date = new Date(payload.scheduledAt);
             if (!Number.isFinite(date.getTime())) throw new Error('请选择有效的发送时间。');
@@ -92,27 +95,40 @@
         if (request.action !== 'sendResendEmail') return false;
         if (!authorized(sender)) { respond({ ok: false, error: '仅允许消息订阅页面发送邮件。' }); return false; }
         const id = request.payload?.requestId;
-        if (!active.has(id)) active.set(id, send(request.payload).catch(error => ({ ok: false, error: error.message })));
-        active.get(id).then(respond).finally(() => active.delete(id));
+        // Clear the in-flight entry before replying so an immediate retry cannot
+        // accidentally receive the previous request's already-resolved error.
+        if (!active.has(id)) active.set(id, send(request.payload).catch(error => ({ ok: false, error: error.message })).finally(() => active.delete(id)));
+        active.get(id).then(respond);
         return true;
     });
 
     function ensureMenu() {
-        chrome.contextMenus.update(MENU, { title: '加入 NJU-Hub 消息订阅', contexts: ['selection'] }, () => {
-            if (chrome.runtime.lastError) chrome.contextMenus.create({ id: MENU, title: '加入 NJU-Hub 消息订阅', contexts: ['selection'] }, () => {
-                if (chrome.runtime.lastError) console.warn('[消息订阅] 右键菜单注册失败。');
+        function upsert(id, options, done = () => {}) {
+            chrome.contextMenus.update(id, options, () => {
+                if (!chrome.runtime.lastError) return done();
+                chrome.contextMenus.create({ id, ...options }, () => {
+                    if (chrome.runtime.lastError) console.warn('[消息订阅] 右键菜单注册失败。');
+                    else done();
+                });
             });
+        }
+        upsert(MENU, { title: '加入 NJU-Hub 消息订阅', contexts: ['selection'] }, () => {
+            for (const template of MessageModel.templates) upsert(`${MENU}-${template.id}`, { parentId: MENU, title: `发送为${template.label}`, contexts: ['selection'] });
         });
     }
     chrome.runtime.onInstalled.addListener(ensureMenu);
     chrome.runtime.onStartup.addListener(ensureMenu);
     chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-        if (info.menuItemId !== MENU || !info.selectionText?.trim()) return;
+        const templateId = info.menuItemId === MENU ? 'custom' : String(info.menuItemId).replace(`${MENU}-`, '');
+        if (!MessageModel.templates.some(t => t.id === templateId) || !info.selectionText?.trim()) return;
         const id = crypto.randomUUID();
         try {
             await chrome.storage.local.set({ [`NJU_MESSAGE_DRAFT_${id}`]: {
-                id, text: info.selectionText, subject: 'NJU-Hub 消息订阅',
-                sourceTitle: tab?.title || '', createdAt: Date.now()
+                id, ...MessageModel.render(templateId, info.selectionText), text: info.selectionText, formatVersion: 2, templateId, originalText: info.selectionText,
+                scheduleMode: 'immediate', scheduledAt: null,
+                // Kept locally; sent only after the user enables the source-link switch.
+                sourceUrl: MessageModel.sourceLink(info.pageUrl || tab?.url), includeSource: false,
+                sourceTitle: tab?.title || '', createdAt: Date.now(), updatedAt: Date.now()
             } });
             await chrome.tabs.create({ url: chrome.runtime.getURL(`message/compose.html?draftId=${id}`) });
         } catch (_) {
