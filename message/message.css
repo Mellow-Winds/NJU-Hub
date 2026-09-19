@@ -1,0 +1,28 @@
+html, body { height: auto; min-height: 100%; overflow: auto; }
+body { padding: 32px 20px; }
+.message-shell { max-width: 740px; margin: 0 auto; }
+.message-shell.settings-section.active { display: block; max-width: 740px; animation: none; }
+.message-shell header { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 20px; color: var(--muted); }
+.message-shell a { color: var(--md-sys-color-primary); text-underline-offset: 4px; }
+.message-shell .card { padding: 32px; border-radius: 24px; max-width: none; opacity: 1; transform: none; animation: none; background: var(--md-sys-color-surface-container-lowest); }
+.message-shell h1 { margin: 0 0 28px; font-size: 28px; }
+.message-shell fieldset { padding: 0; border: 0; margin: 0; min-width: 0; }
+.message-field { display: block; position: relative; margin-top: 24px; }
+.message-field span { position: absolute; top: 8px; left: 16px; font-size: 12px; color: var(--muted); pointer-events: none; }
+.message-field input, .message-field textarea {
+    display: block; width: 100%; box-sizing: border-box; margin: 0;
+    border: 1px solid var(--border); border-radius: 12px; padding: 28px 16px 12px;
+    background: var(--md-sys-color-surface-container-lowest); color: var(--text); font: inherit; line-height: 1.6;
+}
+.message-field textarea { resize: vertical; min-height: 200px; }
+.message-field :is(input, textarea):focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.message-shell .hint-text { margin: 8px 0 16px; line-height: 1.6; }
+.message-shell .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.message-shell button { width: auto; cursor: pointer; min-height: 44px; }
+.message-shell button:disabled { opacity: .6; cursor: wait; }
+.delivery strong { display: block; margin-top: 6px; overflow-wrap: anywhere; }
+#status { min-height: 24px; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; }
+#status.error { color: var(--md-sys-color-error); }
+.message-shell details { border-top: 1px solid var(--border); padding-top: 20px; line-height: 1.8; }
+.message-shell summary { cursor: pointer; }
+@media (max-width: 540px) { body { padding: 16px 12px; } .message-shell .card { padding: 20px; } }

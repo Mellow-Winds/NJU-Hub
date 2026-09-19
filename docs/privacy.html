@@ -131,7 +131,14 @@
         </div>
 
         <div class="card">
+            <h2>消息订阅</h2>
+            <p>仅支持发送到您自己的 Resend 注册邮箱。API Key 仅保存在本地浏览器，仅向 Resend 官方接口发送用于鉴权。确认发送后，主题、正文、本人邮箱和预约时间会直接交给 Resend 处理，不经过开发者服务器。</p>
+            <p>选中文字和草稿保存在本地，发送成功后清理；本地发送回执用于避免重复提交。预约在 Resend 执行，卸载扩展不会取消已提交的预约，请在 Resend 控制台管理。</p>
+        </div>
+
+        <div class="card">
             <h2>权限使用说明</h2>
+            <p><code>contextMenus</code> — 用于选中文字后的消息订阅入口；访问 <code>api.resend.com</code> 用于发送本人邮件。</p>
             <p><code>storage</code> — 用于在本地保存您的配置信息、课表数据和课程评价。</p>
             <p><code>declarativeNetRequest</code> — 用于移除向 NJU 系统发起的请求中的 Origin/Referer 头部，避免 CORS 拦截，确保自动登录和课程评价同步等功能正常运作。</p>
             <p><code>host_permissions</code> — 用于访问南大相关系统（统一认证、教务系统、LMS、SEEC 等）以提供自动登录、课表同步、LMS 增强等核心功能，以及访问您配置的 AI API 地址以提供 AI 辅助功能。</p>

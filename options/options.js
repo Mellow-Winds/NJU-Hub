@@ -664,7 +664,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p style="margin-top:20px;"><strong style="color:#1A1B21;font-size:16px;">第三方 AI 服务</strong></p>
                     <p>当您使用选课助手的 AI 分析功能时，插件会将相关请求数据（如课程信息等）发送至<strong>您自行配置</strong>的第三方 AI 服务提供商（如 SiliconFlow、OpenAI、智谱 AI 等）。这些请求<strong>直接由您的浏览器发送至对应 API 地址</strong>，不经过开发者服务器。请参阅对应服务提供商的隐私政策以了解其数据处理方式。</p>
 
+                    <p style="margin-top:20px;"><strong style="color:#1A1B21;font-size:16px;">消息订阅</strong></p>
+                    <p>仅支持发送到您自己的 Resend 注册邮箱。API Key 保存在本地，仅向 Resend 官方接口发送用于鉴权；确认发送时，邮件主题、正文、本人邮箱和预约时间会直接交给 Resend，不经过开发者服务器。草稿保存在本地，发送成功后清理；预约和投递状态可在 Resend 控制台管理。</p>
                     <p style="margin-top:20px;"><strong style="color:#1A1B21;font-size:16px;">权限使用说明</strong></p>
+                    <p><code>contextMenus</code> — 用于选中文字后的消息订阅入口；访问 <code>api.resend.com</code> 用于发送本人邮件。</p>
                     <p><code style="background:#E8E8EF;padding:1px 6px;border-radius:4px;font-size:13px;">storage</code> — 用于在本地保存您的配置信息、课表数据和课程评价。</p>
                     <p><code style="background:#E8E8EF;padding:1px 6px;border-radius:4px;font-size:13px;">declarativeNetRequest</code> — 用于移除向 NJU 系统发起的请求中的 Origin/Referer 头部，避免 CORS 拦截，确保自动登录和课程评价同步等功能正常运作。</p>
                     <p><code style="background:#E8E8EF;padding:1px 6px;border-radius:4px;font-size:13px;">host_permissions</code> — 用于访问南大相关系统（统一认证、教务系统、LMS、SEEC 等）以提供自动登录、课表同步、LMS 增强等核心功能，以及访问您配置的 AI API 地址以提供 AI 辅助功能。</p>
