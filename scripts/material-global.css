@@ -647,3 +647,74 @@ html[data-nju-material-page="webportal"][data-nju-global-mode] .portal-container
 html[data-nju-material-page="webportal"][data-nju-global-mode] .portal-container.akari-layout {
     padding-right: 0;
 }
+
+/* Message subscription controls share the same material source of truth as
+   the rest of NJU-Hub. Pages provide only shape and layout; personalization
+   decides whether the surface is plain, enhanced, or liquid glass. */
+html[data-nju-material-page="extension"][data-nju-global-mode="enhanced"] :is(
+    .message-shell .btn-save,
+    .message-shell .btn-small,
+    .message-shell .message-pill,
+    .message-shell .nju-dropdown-trigger,
+    .message-dialog .btn-save,
+    .message-dialog .btn-small
+) {
+    color: var(--md-sys-color-on-surface) !important;
+    background: #f7f9fc !important;
+    border: 1px solid var(--nju-global-border) !important;
+    box-shadow: var(--nju-global-shadow) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+html[data-nju-material-page="extension"][data-nju-global-mode="liquid-glass"] :is(
+    .message-shell .btn-save,
+    .message-shell .btn-small,
+    .message-shell .message-pill,
+    .message-shell .nju-dropdown-trigger,
+    .message-dialog .btn-save,
+    .message-dialog .btn-small
+) {
+    color: var(--md-sys-color-on-surface) !important;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .4), rgba(255, 255, 255, .12) 52%, rgba(255, 255, 255, .24)),
+        color-mix(in srgb, #f9f9ff min(var(--nju-global-opacity, 68%), 82%), transparent) !important;
+    border: 1px solid rgba(255, 255, 255, .84) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .84), var(--nju-global-shadow) !important;
+    backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(155%) !important;
+    -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(155%) !important;
+}
+html[data-nju-material-page="extension"][data-nju-global-mode] .message-shell :is(.btn-save, .btn-small, .message-pill, .nju-dropdown-trigger)[aria-pressed="true"] {
+    color: var(--md-sys-color-on-primary-container) !important;
+    background: var(--md-sys-color-primary-container) !important;
+    border-color: color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent) !important;
+}
+html[data-nju-material-page="extension"][data-nju-global-mode="enhanced"] .message-dialog {
+    background: #f7f9fc !important;
+    border-color: var(--nju-global-border) !important;
+    box-shadow: 0 24px 64px rgba(20, 33, 43, .2) !important;
+}
+html[data-nju-material-page="extension"][data-nju-global-mode="liquid-glass"] .message-dialog {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .42), rgba(255, 255, 255, .14) 52%, rgba(255, 255, 255, .26)),
+        color-mix(in srgb, #f9f9ff min(var(--nju-global-opacity, 68%), 84%), transparent) !important;
+    border-color: rgba(255, 255, 255, .88) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .88), 0 24px 64px rgba(20, 33, 43, .2) !important;
+    backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(150%) !important;
+}
+html[data-nju-material-page="extension"][data-nju-global-mode="enhanced"] .message-toast {
+    color: var(--md-sys-color-on-surface) !important;
+    background: #f7f9fc !important;
+    border-color: var(--nju-global-border) !important;
+    box-shadow: var(--nju-global-shadow) !important;
+}
+html[data-nju-material-page="extension"][data-nju-global-mode="liquid-glass"] .message-toast {
+    color: var(--md-sys-color-on-surface) !important;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .4), rgba(255, 255, 255, .12) 52%, rgba(255, 255, 255, .24)),
+        color-mix(in srgb, #f9f9ff min(var(--nju-global-opacity, 68%), 82%), transparent) !important;
+    border-color: rgba(255, 255, 255, .86) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .84), var(--nju-global-shadow) !important;
+    backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(150%) !important;
+}

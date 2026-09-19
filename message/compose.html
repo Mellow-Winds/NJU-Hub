@@ -10,50 +10,48 @@
 </head>
 <body>
 <main class="message-shell compose-shell settings-section active">
-    <header><h1>发送邮件</h1><a href="settings.html" target="_blank" rel="noopener">消息订阅设置</a></header>
+    <header><h1>发送邮件</h1><a class="btn-small ripple-container message-header-link" data-nju-ripple href="settings.html" target="_blank" rel="noopener">消息订阅设置</a></header>
     <div class="compose-layout"><section class="card">
-        <p class="delivery">发送到我的邮箱 <strong id="self-email">加载中…</strong></p>
-        <p class="hint-text" id="source"></p>
         <form id="compose-form">
             <fieldset id="fields" disabled>
-                <span class="select-label">消息模板</span>
+                <h2 class="section-label">消息模板</h2>
                 <div id="template-buttons" class="template-buttons" role="group" aria-label="消息模板"></div>
                 <select id="template" hidden tabindex="-1" aria-hidden="true"></select>
                 <label class="message-field"><span>邮件主题</span><input id="subject" required maxlength="200"></label>
                 <label class="message-field"><span>消息内容</span><textarea id="text" required maxlength="50000" rows="10"></textarea></label>
                 <div id="presentation-controls">
-                    <div class="actions" aria-label="内容样式">
-                        <button id="content-bold" type="button" aria-pressed="true">内容加粗</button>
-                        <button id="content-card" type="button" aria-pressed="true">彩色卡片</button>
-                        <label class="color-control">内容颜色 <input id="content-color" type="color" value="#475569"></label>
+                    <div class="presentation-switches" aria-label="内容样式">
+                        <div class="toggle-group"><div class="toggle-info"><span class="label">内容加粗</span></div><label class="switch"><input id="content-bold" type="checkbox" checked aria-label="内容加粗"><span class="slider round"></span></label></div>
+                        <div class="toggle-group"><div class="toggle-info"><span class="label">彩色卡片</span></div><label class="switch"><input id="content-card" type="checkbox" checked aria-label="彩色卡片"><span class="slider round"></span></label></div>
+                        <label class="color-control"><span>内容颜色</span><input id="content-color" type="color" value="#475569" aria-label="内容颜色"></label>
+                    </div>
+                    <div id="deadline-control" class="toggle-group">
+                        <div class="toggle-info"><span class="label">附上 DDL</span></div>
+                        <label class="switch"><input id="include-deadline" type="checkbox" aria-label="附上 DDL"><span class="slider round"></span></label>
                     </div>
                     <div id="deadline-fields" hidden>
-                        <h2 class="section-label">截止日期（DDL）</h2>
+                        <h2 class="section-label">截止日期（UTC+8）</h2>
                         <div class="custom-time">
                             <div><label for="ddl-month">月份</label><select id="ddl-month"></select></div>
                             <div><label for="ddl-day">日期</label><select id="ddl-day"></select></div>
                             <div><label for="ddl-hour">时</label><select id="ddl-hour"></select></div>
                             <div><label for="ddl-minute">分</label><select id="ddl-minute"></select></div>
                         </div>
-                        <div class="actions"><button type="button" id="apply-deadline">使用所选截止日期</button><button type="button" id="clear-deadline">清除截止日期</button></div>
-                        <p id="deadline-status" class="hint-text">未设置截止日期；DDL 与发送时间独立。</p>
                     </div>
                     <div class="toggle-group">
                         <div class="toggle-info"><span class="label">附上来源链接</span></div>
                         <label class="switch"><input id="include-source" type="checkbox" aria-label="附上来源链接"><span class="slider round"></span></label>
                     </div>
-                    <p id="source-link-hint" class="hint-text"></p>
-                    <p class="hint-text">固定后缀：——来自 NJU-Hub 消息订阅</p>
                 </div>
                 <h2 class="section-label">发送时间</h2>
                 <div class="time-presets" role="group" aria-label="常用发送时间">
-                    <button type="button" data-time="immediate" aria-pressed="true">立即发送</button>
-                    <button type="button" data-time="3" aria-pressed="false">3 小时后</button>
-                    <button type="button" data-time="12" aria-pressed="false">12 小时后</button>
-                    <button type="button" data-time="24" aria-pressed="false">24 小时后</button>
-                    <button type="button" data-time="72" aria-pressed="false">3 天后</button>
-                    <button type="button" data-time="168" aria-pressed="false">7 天后</button>
-                    <button type="button" data-time="custom" aria-pressed="false" aria-expanded="false" aria-controls="custom-time">自定义时间</button>
+                    <button class="btn-small ripple-container" data-nju-ripple type="button" data-time="immediate" aria-pressed="true">立即发送</button>
+                    <button class="btn-small ripple-container" data-nju-ripple type="button" data-time="3" aria-pressed="false">3 小时后</button>
+                    <button class="btn-small ripple-container" data-nju-ripple type="button" data-time="12" aria-pressed="false">12 小时后</button>
+                    <button class="btn-small ripple-container" data-nju-ripple type="button" data-time="24" aria-pressed="false">24 小时后</button>
+                    <button class="btn-small ripple-container" data-nju-ripple type="button" data-time="72" aria-pressed="false">3 天后</button>
+                    <button class="btn-small ripple-container" data-nju-ripple type="button" data-time="168" aria-pressed="false">7 天后</button>
+                    <button class="btn-small ripple-container" data-nju-ripple type="button" data-time="custom" aria-pressed="false" aria-expanded="false" aria-controls="custom-time">自定义时间</button>
                 </div>
                 <div id="custom-time" class="custom-time" hidden>
                     <div><label for="month">月份</label><select id="month" class="glass-select"></select></div>
@@ -64,14 +62,12 @@
                 <p class="hint-text" id="time-hint">按本机时区，限未来 30 天。</p>
                 <p id="time-error" class="mail-warning" role="status"></p>
                 <p id="draft-status" class="hint-text" role="status"></p>
-                <div class="actions"><button id="send" class="btn-save" type="submit">发送到我的邮箱</button></div>
             </fieldset>
         </form>
-        <p id="status" role="status" aria-live="polite"></p>
         <a class="hint-text" href="https://resend.com/emails" target="_blank" rel="noopener noreferrer">在 Resend 查看投递和预约状态 ↗</a>
     </section>
     <aside class="card message-preview" aria-label="邮件实时预览">
-        <h2>邮件预览</h2>
+        <div class="preview-header"><h2>邮件预览</h2><button id="send" class="btn-save ripple-container" data-nju-ripple type="submit" form="compose-form" disabled>发送到我的邮箱</button></div>
         <dl><dt>发件人</dt><dd id="preview-from">onboarding@resend.dev</dd><dt>发送到我的邮箱</dt><dd id="preview-to"></dd><dt>发送时间</dt><dd id="preview-time"></dd></dl>
         <h3 id="preview-subject"></h3><div id="preview-text"></div>
         <p class="hint-text" id="preview-config"></p>

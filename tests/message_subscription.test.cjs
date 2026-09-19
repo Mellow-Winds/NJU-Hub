@@ -151,6 +151,14 @@ test('no consent or old consent blocks sending before any network request', asyn
     }
 });
 
+test('paused service blocks sending without deleting local configuration', async () => {
+    const bg = background({ NJU_MESSAGE_PAUSED: true });
+    assert.match((await bg.send()).error, /暂停/);
+    assert.equal(bg.requests.length, 0);
+    assert.equal(bg.storage.resend_self_email, 'self@example.test');
+    assert.equal(bg.storage.resend_api_key, 'test-only-placeholder');
+});
+
 test('each child menu creates the chosen template and preserves original selected text', async () => {
     const bg = background(); bg.events.installed();
     assert.equal(bg.menus.length, 7);
@@ -169,15 +177,16 @@ test('rich email escapes content, uses nickname, fixed footer and a deadline ind
     const bg = background();
     const scheduledAt = new Date(Date.now() + 3600000).toISOString();
     const result = await bg.send(bg.payload({ scheduledAt, presentation: {
-        templateId: 'homework', nickname: '<小明>', deadline: '2028-02-29T23:59', deadlineZone: 'Asia/Shanghai',
+        templateId: 'homework', nickname: '<小明>', includeDeadline: true, deadline: '2028-02-29T23:59',
         color: '#123456', includeSource: false, sourceUrl: 'https://example.test/private'
     } }));
     assert.equal(result.ok, true);
     const body = JSON.parse(bg.requests[0].body);
     assert.match(body.html, /亲爱的&lt;小明&gt;/);
     assert.match(body.html, /<strong>&lt;b&gt;作业&lt;\/b&gt;<br>明天截止<\/strong>/);
-    assert.match(body.html, /border-left:5px solid #123456/);
-    assert.match(body.text, /2028-02-29 23:59（Asia\/Shanghai）/);
+    assert.match(body.html, /border:1px solid #123456/);
+    assert.doesNotMatch(body.html, /border-left/);
+    assert.match(body.text, /2028-02-29 23:59（UTC\+8）/);
     assert.equal(body.scheduled_at, scheduledAt);
     assert.ok(body.text.endsWith('——来自 NJU-Hub 消息订阅'));
     assert.doesNotMatch(body.html, /example.test|<b>作业/);
@@ -198,7 +207,7 @@ test('source links are opt-in, escaped and restricted to HTTP(S)', async () => {
 test('invalid DDL blocks fetch, while changing rich style cannot bypass retry fingerprint', async () => {
     for (const deadline of ['2027-02-29T12:00', '2028-04-31T12:00', '2028-01-01T24:00']) {
         const bg = background();
-        assert.equal((await bg.send(bg.payload({ presentation: { templateId: 'homework', deadline } }))).ok, false);
+        assert.equal((await bg.send(bg.payload({ presentation: { templateId: 'homework', includeDeadline: true, deadline } }))).ok, false);
         assert.equal(bg.requests.length, 0);
     }
     const bg = background({}, async () => { throw new Error('offline'); });

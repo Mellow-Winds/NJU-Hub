@@ -188,4 +188,41 @@
         )) load();
         if (area === 'local' && changes[WALLPAPER_DATA_KEY]) load();
     });
+
+    const reduceMotion = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+    const attachRipple = (element, animation = 'animate') => {
+        if (!element || element.dataset.njuRippleReady === 'true') return element;
+        element.dataset.njuRippleReady = 'true';
+        const spawn = (event, centered = false) => {
+            if (element.matches(':disabled') || reduceMotion()) return;
+            const rect = element.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height) * 2;
+            const x = centered ? rect.width / 2 : event.clientX - rect.left;
+            const y = centered ? rect.height / 2 : event.clientY - rect.top;
+            const ripple = document.createElement('span');
+            ripple.className = `ripple ${animation}`;
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${x - size / 2}px`;
+            ripple.style.top = `${y - size / 2}px`;
+            ripple.setAttribute('aria-hidden', 'true');
+            element.append(ripple);
+            ripple.addEventListener('animationend', () => ripple.remove(), { once: true });
+        };
+        element.addEventListener('pointerdown', event => {
+            if (event.button === 0) spawn(event);
+        });
+        element.addEventListener('click', event => {
+            if (event.detail === 0) spawn(event, true);
+        });
+        return element;
+    };
+    globalThis.NjuRipple = {
+        attach: attachRipple,
+        attachAll(scope = document) {
+            if (!scope?.querySelectorAll) return;
+            scope.querySelectorAll('[data-nju-ripple]').forEach(element => attachRipple(element));
+        }
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => globalThis.NjuRipple.attachAll(), { once: true });
+    else globalThis.NjuRipple.attachAll();
 })();

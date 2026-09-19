@@ -34,6 +34,9 @@ function page(file, initial, response = { ok: true, id: 'mail-id' }, consent = t
         document, window, chrome, crypto: webcrypto, URL, URLSearchParams, structuredClone, setTimeout, clearTimeout,
         location, sessionStorage: { getItem() { return null; }, setItem() {} },
         messageConsent: async () => consent, messageRefreshFields() {},
+        messageConfirm: async ({ message }) => window.confirm(message),
+        messageNotice: async () => true,
+        NjuRipple: { attach() {}, attachAll() {} },
         NjuDropdown: { fromSelect() { return { setValue() {} }; } },
         messageStatus(text, error) { statuses.push({ text, error }); },
         messageResult: result => `accepted:${result.id}`,
@@ -54,7 +57,7 @@ test('compose restores the draft, sends no key/from/to and cleans up only after 
     });
     await flush();
     assert.equal(app.get('text').value, '<script>plain text</script>');
-    assert.equal(app.get('self-email').textContent, 'self@example.test');
+    assert.equal(app.get('preview-to').textContent, 'self@example.test');
     assert.equal(app.get('fields').disabled, false);
     app.get('text').value = 'edited';
     await app.get('compose-form').handlers.submit({ preventDefault() {} });
@@ -127,11 +130,11 @@ test('template cancellation keeps edits, confirmation uses original selection', 
     const app = page('compose.js', { [draftKey]: { templateId: 'custom', subject: 'NJU-Hub 消息', text: 'original', originalText: 'original' } });
     await flush();
     app.get('text').value = 'manual changes'; app.window.confirm = () => false;
-    app.get('template').value = 'homework'; app.get('template').handlers.change();
+    app.get('template').value = 'homework'; await app.get('template').handlers.change();
     assert.equal(app.get('text').value, 'manual changes');
     assert.equal(app.get('template').value, 'custom');
     app.window.confirm = () => true;
-    app.get('template').value = 'homework'; app.get('template').handlers.change(); await flush();
+    app.get('template').value = 'homework'; await app.get('template').handlers.change(); await flush();
     assert.match(app.get('text').value, /original/);
     assert.match(app.get('preview-subject').textContent, /作业/);
     assert.equal(app.storage[draftKey].templateId, 'homework');
@@ -177,17 +180,20 @@ test('rich draft saves independent DDL, styles and source choice and restores ma
     } });
     await flush();
     assert.equal(app.get('include-source').checked, false);
+    assert.equal(app.get('deadline-fields').hidden, true);
+    app.get('include-deadline').checked = true; app.get('include-deadline').handlers.change();
     assert.equal(app.get('deadline-fields').hidden, false);
     assert.match(app.get('preview-text').innerHTML, /亲爱的小明/);
     app.get('ddl-month').value = '2028-02'; app.get('ddl-month').handlers.change();
     app.get('ddl-day').value = '29'; app.get('ddl-day').handlers.change();
-    app.get('content-bold').handlers.click();
-    app.get('content-card').handlers.click();
+    app.get('content-bold').checked = false; app.get('content-bold').handlers.change({ target: app.get('content-bold') });
+    app.get('content-card').checked = false; app.get('content-card').handlers.change({ target: app.get('content-card') });
     app.get('content-color').value = '#123456'; app.get('content-color').handlers.change();
     app.get('include-source').checked = true; app.get('include-source').handlers.change();
     await flush();
     assert.equal(app.storage[draftKey].scheduledAt, null);
     assert.match(app.storage[draftKey].deadline, /^2028-02-29T/);
+    assert.equal(app.storage[draftKey].includeDeadline, true);
     assert.equal(app.storage[draftKey].bold, false);
     assert.equal(app.storage[draftKey].card, false);
     const restored = page('compose.js', app.storage); await flush();

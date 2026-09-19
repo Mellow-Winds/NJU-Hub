@@ -45,20 +45,20 @@
         const intro = item.id === 'custom' ? '' : item.id === 'homework' ? '您有一项作业需要关注：' : item.intro.trim();
         const greeting = `亲爱的${nickname}：`;
         let deadline = '';
-        if (item.hasDeadline && model.deadline) {
+        if (item.hasDeadline && model.includeDeadline && model.deadline) {
             if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(model.deadline)) throw new Error('请选择有效的 DDL 日期。');
             const [date, time] = model.deadline.split('T');
             const [year, month, day] = date.split('-').map(Number);
             const check = new Date(Date.UTC(year, month - 1, day));
             const [hour, minute] = time.split(':').map(Number);
             if (check.getUTCFullYear() !== year || check.getUTCMonth() !== month - 1 || check.getUTCDate() !== day || hour > 23 || minute > 59) throw new Error('请选择有效的 DDL 日期。');
-            deadline = `截止日期是：${date} ${time}${model.deadlineZone ? `（${String(model.deadlineZone).slice(0, 80)}）` : ''}`;
+            deadline = `截止日期是：${date} ${time}（UTC+8）`;
         }
         const link = model.includeSource ? sourceLink(model.sourceUrl) : '';
         const lines = [greeting, intro, content, deadline, item.outro.trim(), link ? `点击跳转来源：${link}` : '', footer].filter(Boolean);
         const body = escape(content).replace(/\r?\n/g, '<br>');
         const card = model.card !== false;
-        const html = `<div style="font-family:Arial,sans-serif;color:#1f2937;line-height:1.8;max-width:640px;margin:auto;padding:24px;background:#ffffff"><p>${escape(greeting)}</p>${intro ? `<p>${escape(intro)}</p>` : ''}<div style="padding:${card ? '20px' : '0'};${card ? `border:1px solid ${color};border-left:5px solid ${color};border-radius:12px;background:${color}0d;` : ''}color:${color};overflow-wrap:anywhere">${model.bold !== false ? `<strong>${body}</strong>` : body}</div>${deadline ? `<p><strong>${escape(deadline)}</strong></p>` : ''}${item.outro ? `<p>${escape(item.outro.trim())}</p>` : ''}${link ? `<p><a href="${escape(link)}" target="_blank" rel="noopener noreferrer" style="color:${color}">点击跳转来源</a></p>` : ''}<p style="margin-top:28px;color:#64748b;font-size:13px">${footer}</p></div>`;
+        const html = `<div style="font-family:Arial,sans-serif;color:#1f2937;line-height:1.8;max-width:640px;margin:auto;padding:24px;background:#ffffff"><p>${escape(greeting)}</p>${intro ? `<p>${escape(intro)}</p>` : ''}<div style="padding:${card ? '20px' : '0'};${card ? `border:1px solid ${color};border-radius:12px;background:${color}0d;` : ''}color:${color};overflow-wrap:anywhere">${model.bold !== false ? `<strong>${body}</strong>` : body}</div>${deadline ? `<p><strong>${escape(deadline)}</strong></p>` : ''}${item.outro ? `<p>${escape(item.outro.trim())}</p>` : ''}${link ? `<p><a href="${escape(link)}" target="_blank" rel="noopener noreferrer" style="color:${color}">点击跳转来源</a></p>` : ''}<p style="margin-top:28px;color:#64748b;font-size:13px">${footer}</p></div>`;
         return { text: lines.join('\n\n'), html };
     }
     globalThis.MessageModel = { templates, render, validateTime, customTime, email, sourceLink, footer, consentVersion: 1 };

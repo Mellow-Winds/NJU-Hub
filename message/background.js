@@ -1,7 +1,7 @@
 (() => {
     'use strict';
     const MENU = 'nju-hub-message-subscription';
-    const CONFIG = ['resend_api_key', 'resend_self_email', 'resend_from_name', 'NJU_MESSAGE_CONSENT_VERSION'];
+    const CONFIG = ['resend_api_key', 'resend_self_email', 'resend_from_name', 'NJU_MESSAGE_CONSENT_VERSION', 'NJU_MESSAGE_PAUSED'];
     const DAY = 86400000;
     const active = new Map();
     const ownPages = ['message/settings.html', 'message/compose.html'].map(p => chrome.runtime.getURL(p));
@@ -22,6 +22,7 @@
         if (!payload || !validId(payload.requestId)) throw new Error('发送标识无效，请重新打开编辑页。');
         const config = await chrome.storage.local.get(CONFIG);
         if (config.NJU_MESSAGE_CONSENT_VERSION !== MessageModel.consentVersion) throw new Error('请先阅读并同意消息订阅服务说明。');
+        if (config.NJU_MESSAGE_PAUSED === true) throw new Error('消息订阅服务已暂停，请重新阅读并同意隐私声明后恢复。');
         configValid(config);
         const subject = typeof payload.subject === 'string' ? payload.subject.trim() : '';
         const text = typeof payload.text === 'string' ? payload.text : '';
@@ -128,7 +129,7 @@
                 scheduleMode: 'immediate', scheduledAt: null,
                 // Kept locally; sent only after the user enables the source-link switch.
                 sourceUrl: MessageModel.sourceLink(info.pageUrl || tab?.url), includeSource: false,
-                sourceTitle: tab?.title || '', createdAt: Date.now(), updatedAt: Date.now()
+                createdAt: Date.now(), updatedAt: Date.now()
             } });
             await chrome.tabs.create({ url: chrome.runtime.getURL(`message/compose.html?draftId=${id}`) });
         } catch (_) {
