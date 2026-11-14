@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "NJU Hub - 南大智慧终端",
-  "version": "26.7.0",
+  "version": "26.8.0",
   "default_locale": "zh_CN",
   "description": "NJU功能增强：GPA快速查询 | 课表抓取 | 自动登录 | LMS增强",
   "permissions": [
@@ -17,6 +17,7 @@
       "resources": [
         "scripts/seec_xhr_bridge.js",
         "scripts/lms_preview_bridge.js",
+        "scripts/ehall/bridge.js",
         "data/ai_cache.json",
         "data/merged_ratings.json"
       ],
@@ -55,6 +56,12 @@
     }
   },
   "content_scripts": [
+    {
+      "matches": ["https://ehall.nju.edu.cn/ywtb-portal/official/*"],
+      "css": ["scripts/ehall/enhance.css"],
+      "js": ["libs/pinyin-pro.js", "scripts/ehall/core.js", "scripts/ehall/enhance.js"],
+      "run_at": "document_idle"
+    },
     {
       "matches": [
         "*://*.nju.edu.cn/*",

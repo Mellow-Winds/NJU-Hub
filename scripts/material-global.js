@@ -194,7 +194,7 @@
         if (!element || element.dataset.njuRippleReady === 'true') return element;
         element.dataset.njuRippleReady = 'true';
         const spawn = (event, centered = false) => {
-            if (element.matches(':disabled') || reduceMotion()) return;
+            if (element.matches(':disabled') || reduceMotion() || root.dataset.njuGlobalStill === 'true') return;
             const rect = element.getBoundingClientRect();
             const size = Math.max(rect.width, rect.height) * 2;
             const x = centered ? rect.width / 2 : event.clientX - rect.left;

@@ -1,5 +1,84 @@
 /* Shared material layer. It is intentionally scoped to NJU-Hub surfaces. */
 
+/* Opt-in controls used by injected pages. Layout stays with the page stylesheet. */
+.nju-material-control, .nju-material-surface {
+    --nju-material-purple: #660874;
+    color: #30303a;
+    background: #f5f5f8;
+    border: 1px solid #e2e2e8;
+    border-radius: 16px;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+.nju-material-control {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    cursor: pointer;
+    text-decoration: none;
+}
+.nju-material-control:disabled { opacity: .45; cursor: default; }
+.nju-material-control:not(:disabled):hover { filter: brightness(.97); }
+html[data-nju-global-mode="enhanced"] :is(.nju-material-control, .nju-material-surface) {
+    background: #f7f9fc;
+    border-color: var(--nju-global-border);
+    box-shadow: var(--nju-global-shadow);
+}
+html[data-nju-global-mode="liquid-glass"] :is(.nju-material-control, .nju-material-surface) {
+    background: linear-gradient(135deg, #ffffff38, transparent 46%, #ffffff14),
+        color-mix(in srgb, #f9f9ff var(--nju-global-opacity, 68%), transparent);
+    border-color: var(--nju-global-border);
+    box-shadow: var(--nju-global-shadow);
+    backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%);
+    -webkit-backdrop-filter: blur(var(--nju-global-blur, 24px)) saturate(145%);
+}
+/* Search results need a legible substrate in the ordinary material mode. */
+html[data-nju-global-mode="default"] .nju-material-surface { background: #fff; }
+
+/* Brand tones keep the same personalized material parameters. */
+html[data-nju-global-mode] .nju-material-control[data-nju-material-tone="purple"] {
+    color: #fff;
+    background: var(--nju-material-purple);
+    border-color: #ffffff42;
+}
+html[data-nju-global-mode="liquid-glass"] .nju-material-control[data-nju-material-tone="purple"] {
+    background: var(--nju-material-purple);
+    text-shadow: none;
+}
+html[data-nju-global-mode] .nju-material-surface[data-nju-material-tone="white-purple"] {
+    color: var(--nju-material-purple);
+    background: #fff !important;
+}
+html[data-nju-global-mode="liquid-glass"] .nju-material-surface[data-nju-material-tone="white-purple"] {
+    background: linear-gradient(135deg, #ffffff38, transparent 55%),
+        color-mix(in srgb, #fff var(--nju-global-opacity, 68%), transparent) !important;
+}
+html[data-nju-global-mode] .nju-material-surface[data-nju-material-tone="white-purple"] li {
+    color: #30303a !important;
+    background: transparent;
+    border-radius: 12px;
+}
+html[data-nju-global-mode] .nju-material-surface[data-nju-material-tone="white-purple"] li.active {
+    color: var(--nju-material-purple) !important;
+    font-weight: 700;
+    background: color-mix(in srgb, var(--nju-material-purple) 10%, transparent) !important;
+}
+.nju-material-control > .ripple {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: .14;
+    transform: scale(0);
+    animation: nju-material-ripple .45s ease-out;
+}
+@keyframes nju-material-ripple { to { transform: scale(1); opacity: 0; } }
+html[data-nju-global-still="true"] .nju-material-control > .ripple { display: none; }
+@media (prefers-reduced-motion: reduce) { .nju-material-control > .ripple { display: none; } }
+
 html[data-nju-wallpaper-enabled="true"] {
     background-image:
         linear-gradient(rgba(249, 249, 255, .42), rgba(249, 249, 255, .42)),

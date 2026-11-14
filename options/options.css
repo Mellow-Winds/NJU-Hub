@@ -22,6 +22,20 @@
     font-style: normal;
     font-display: swap;
 }
+@font-face {
+    font-family: "Maple Mono Sans";
+    src: url("./fonts/MapleMono-VF.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Maple Mono Sans";
+    src: url("./fonts/MapleMono-Italic-VF.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+}
 
 /* ── MD3 Motion Tokens ─────────────────────────────────────────── */
 :root {
@@ -1503,6 +1517,9 @@ html[data-font="misans"] body {
 }
 html[data-font="system"] body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+}
+code {
+    font-family: "Maple Mono Sans";
 }
 
 /* ── About Section ─────────────────────────────────────────────── */

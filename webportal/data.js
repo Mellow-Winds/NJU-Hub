@@ -17,8 +17,7 @@ const PORTAL_DATA = [
           { id: "p-nju", name: "上网服务", desc: "校园网登录的认证和管理页面", url: "https://p.nju.edu.cn" },
           { id: "nju-box", name: "南大云盘：NJU Box", desc: "南大云盘，有很多实用的功能", url: "https://box.nju.edu.cn/" },
           {id:"nju-table",name:"南大表格：NJU Table",desc:"南大表格服务",url:"https://table.nju.edu.cn/"},
-          {id:"vpn",name:"南京大学VPN网站服务平台(旧)",desc:"提供VPN服务，可以在校外访问校内网站",url:"https://vpn.nju.edu.cn/"},
-          {id:"vpn-new",name:"南京大学VPN网站服务平台(新)",desc:"提供VPN服务，可以在校外访问校内网站",url:"https://ztna.nju.edu.cn/"},
+          {id:"vpn",name:"南京大学VPN网站服务平台",desc:"提供VPN服务，可以在校外访问校内网站",url:"https://vpn.nju.edu.cn/"}
         ]
       },
       {

@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'toggle-lms',
         'lms_video_remove_restrict', 'lms_video_autojump',
         'lms_dl_default_all', 'lms_dl_show_checkbox',
-        'toggle-seec-workpanel', 'toggle-selearning'
+        'toggle-seec-workpanel', 'toggle-selearning', 'toggle-ehall'
     ];
 
     Promise.all([
@@ -427,6 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setCheckDefault('lms-dl-show-checkbox', data.lms_dl_show_checkbox, true);
         setCheckDefaultOn('toggle-seec-workpanel', data['toggle-seec-workpanel']);
         setCheckDefaultOn('toggle-selearning', data['toggle-selearning']);
+        setCheckDefaultOn('toggle-ehall', data['toggle-ehall']);
 
         // Initialize ripples after DOM is fully rendered
         initRipples();
@@ -475,7 +476,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'lms_dl_default_all': checkedOf('lms-dl-default-all'),
             'lms_dl_show_checkbox': checkedOf('lms-dl-show-checkbox'),
             'toggle-seec-workpanel': checkedOf('toggle-seec-workpanel'),
-            'toggle-selearning': checkedOf('toggle-selearning')
+            'toggle-selearning': checkedOf('toggle-selearning'),
+            'toggle-ehall': checkedOf('toggle-ehall')
         };
 
         config.login_user = config.student_id;
@@ -558,7 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p style="margin-top:20px;"><strong style="color:#1A1B21;font-size:16px;">消息订阅</strong></p>
                     <p>仅支持发送到您自己的 Resend 注册邮箱。API Key 保存在本地，仅向 Resend 官方接口发送用于鉴权；确认发送时，邮件主题、正文、本人邮箱和预约时间会直接交给 Resend，不经过开发者服务器。草稿保存在本地，发送成功后清理；预约和投递状态可在 Resend 控制台管理。</p>
                     <p style="margin-top:20px;"><strong style="color:#1A1B21;font-size:16px;">权限使用说明</strong></p>
-                    <p><code>contextMenus</code> — 用于选中文字后的消息订阅入口；访问 <code>api.resend.com</code> 用于发送本人邮件。</p>
+                    <p><code style="background:#E8E8EF;padding:1px 6px;border-radius:4px;font-size:13px;">contextMenus</code> — 用于选中文字后的消息订阅入口；访问 <code style="background:#E8E8EF;padding:1px 6px;border-radius:4px;font-size:13px;">api.resend.com</code> 用于发送本人邮件。</p>
                     <p><code style="background:#E8E8EF;padding:1px 6px;border-radius:4px;font-size:13px;">storage</code> — 用于在本地保存您的配置信息、课表数据和课程评价。</p>
                     <p><code style="background:#E8E8EF;padding:1px 6px;border-radius:4px;font-size:13px;">declarativeNetRequest</code> — 用于移除向 NJU 系统发起的请求中的 Origin/Referer 头部，避免 CORS 拦截，确保自动登录和课程评价同步等功能正常运作。</p>
                     <p><code style="background:#E8E8EF;padding:1px 6px;border-radius:4px;font-size:13px;">host_permissions</code> — 用于访问南大相关系统（统一认证、教务系统、LMS、SEEC 等）以提供自动登录、课表同步、LMS 增强等核心功能，以及访问您配置的 AI API 地址以提供 AI 辅助功能。</p>

@@ -1,6 +1,6 @@
 {
   "name": "nju-hub",
-  "version": "1.0.0",
+  "version": "26.8.0",
   "description": "> 南京大学个人学术指挥中心：一站式浏览器扩展，覆盖 GPA 查询、自动登录、智能选课分析、LMS 增强、自动评教与 SEEC 门户优化。",
   "main": "background.js",
   "scripts": {
